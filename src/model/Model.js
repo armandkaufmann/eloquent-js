@@ -26,7 +26,7 @@ export class Model {
             values.push(value);
         }
 
-        return "INSERT INTO " + this.table + "(" + columns.join(', ') +
+        return "INSERT INTO " + this.table + " (" + columns.join(', ') +
             ") VALUES (" + this.__valuesToString(values) + ")";
     }
 
@@ -41,7 +41,7 @@ export class Model {
            }
 
            if (idx < values.length - 1){
-               result += ",";
+               result += ", ";
            }
         });
 
