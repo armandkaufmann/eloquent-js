@@ -3,6 +3,8 @@ import pluralize from "pluralize"
 
 export class Model {
     table = null;
+    __queryWhere = [];
+    __querySelect = [];
 
     constructor() {
         this.table = this.__getTableName();
@@ -11,6 +13,7 @@ export class Model {
     __getModelName() {
         return this.constructor.name;
     }
+
     __getTableName() {
         return snakeCase(
             pluralize.plural(this.__getModelName())
@@ -30,19 +33,31 @@ export class Model {
             ") VALUES (" + this.__valuesToString(values) + ")";
     }
 
+    where(column, operator, value) {
+        let query = "";
+        if (this.__queryWhere.length === 0) {
+            query += "WHERE ";
+        }
+
+        query += column + " " + operator + " " + value;
+        this.__queryWhere.push(query);
+        return this;
+    }
+
+
     __valuesToString(values) {
         let result = "";
 
         values.forEach((value, idx) => {
-           if (typeof value === 'string'){
-               result += "'" + value + "'";
-           } else {
-               result += value;
-           }
+            if (typeof value === 'string') {
+                result += "'" + value + "'";
+            } else {
+                result += value;
+            }
 
-           if (idx < values.length - 1){
-               result += ", ";
-           }
+            if (idx < values.length - 1) {
+                result += ", ";
+            }
         });
 
         return result;

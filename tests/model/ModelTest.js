@@ -53,3 +53,21 @@ test("Can create a model using object", () => {
 
     assert.equal(result, expectedResult);
 });
+
+// test("Can build where query", () => {
+//     class TestModel extends Model {
+//         constructor() {
+//             super();
+//         }
+//     }
+//
+//     let fields = {
+//         test_id: 5,
+//         test_name: 'John',
+//     };
+//
+//     const result = new TestModel().where('test_id', '=', 5);
+//     const expectedResult = "INSERT INTO test_models (test_id, test_name) VALUES (5, 'John')";
+//
+//     assert.equal(result, expectedResult);
+// });
