@@ -16,6 +16,11 @@ export class Model {
         return this;
     }
 
+    select(...columns) {
+        columns.forEach((column) => this.__querySelect.push(column))
+        return this;
+    }
+
     __getModelName() {
         return this.constructor.name;
     }

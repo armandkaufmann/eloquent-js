@@ -72,3 +72,20 @@ test("Can properly store where query strings", () => {
 
     assert.deepEqual(result, expectedResult);
 });
+
+test("Can properly store select query strings", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .select('test_id', 'test_name')
+        .__querySelect;
+
+
+    const expectedResult = [ 'test_id', 'test_name' ];
+
+    assert.deepEqual(result, expectedResult);
+});
