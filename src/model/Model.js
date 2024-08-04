@@ -10,6 +10,12 @@ export class Model {
         this.table = this.__getTableName();
     }
 
+    where(column, operator, value) {
+        let query = column + " " + operator + " " + this.__valuesToString([value]);
+        this.__queryWhere.push(query);
+        return this;
+    }
+
     __getModelName() {
         return this.constructor.name;
     }
@@ -32,18 +38,6 @@ export class Model {
         return "INSERT INTO " + this.table + " (" + columns.join(', ') +
             ") VALUES (" + this.__valuesToString(values) + ")";
     }
-
-    where(column, operator, value) {
-        let query = "";
-        if (this.__queryWhere.length === 0) {
-            query += "WHERE ";
-        }
-
-        query += column + " " + operator + " " + value;
-        this.__queryWhere.push(query);
-        return this;
-    }
-
 
     __valuesToString(values) {
         let result = "";

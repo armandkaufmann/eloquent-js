@@ -27,6 +27,7 @@ test("Base class constructs proper table name", () => {
 test("Base class doesn't construct table name if already exists on model", () => {
     class TestModel extends Model {
         table = 'my_table';
+
         constructor() {
             super();
         }
@@ -54,20 +55,20 @@ test("Can create a model using object", () => {
     assert.equal(result, expectedResult);
 });
 
-// test("Can build where query", () => {
-//     class TestModel extends Model {
-//         constructor() {
-//             super();
-//         }
-//     }
-//
-//     let fields = {
-//         test_id: 5,
-//         test_name: 'John',
-//     };
-//
-//     const result = new TestModel().where('test_id', '=', 5);
-//     const expectedResult = "INSERT INTO test_models (test_id, test_name) VALUES (5, 'John')";
-//
-//     assert.equal(result, expectedResult);
-// });
+test("Can build where query", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .where('test_id', '=', 5)
+        .where('test_name', '=', 'John')
+        .__queryWhere;
+
+
+    const expectedResult = [ 'test_id = 5', "test_name = 'John'" ];
+
+    assert.deepEqual(result, expectedResult);
+});
