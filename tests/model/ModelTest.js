@@ -89,3 +89,39 @@ test("Can properly store select query strings", () => {
 
     assert.deepEqual(result, expectedResult);
 });
+
+test("Can properly store order by query strings", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .orderBy('test_id')
+        .orderBy('test_name', 'ASC')
+        .__queryOrderBy;
+
+
+    const expectedResult = [ 'test_id DESC', 'test_name ASC' ];
+
+    assert.deepEqual(result, expectedResult);
+});
+
+// test("Can build complete query string", () => {
+//     class TestModel extends Model {
+//         constructor() {
+//             super();
+//         }
+//     }
+//
+//     const result = new TestModel()
+//         .select('test_id', 'test_name')
+//         .where('test_id', '>=', 5)
+//         .where('test_name', 'LIKE', "%test%")
+//         .toSql();
+//
+//     const expectedResult = "SELECT test_id, test_name FROM test_model WHERE test_id >= 5 AND test_name LIKE '%test%'";
+//
+//     assert.equal(result, expectedResult);
+// });

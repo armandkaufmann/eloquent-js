@@ -1,23 +1,31 @@
 import {snakeCase} from "change-case";
 import pluralize from "pluralize"
+import {Utility} from "../utils/Utility.js";
 
 export class Model {
     table = null;
     __queryWhere = [];
     __querySelect = [];
+    __queryOrderBy = [];
 
     constructor() {
         this.table = this.__getTableName();
     }
 
     where(column, operator, value) {
-        let query = column + " " + operator + " " + this.__valuesToString([value]);
+        const query = column + " " + operator + " " + Utility.valuesToString([value]);
         this.__queryWhere.push(query);
         return this;
     }
 
     select(...columns) {
         columns.forEach((column) => this.__querySelect.push(column))
+        return this;
+    }
+
+    orderBy(column, order = "DESC") {
+        const query = column + " " + order;
+        this.__queryOrderBy.push(query)
         return this;
     }
 
@@ -41,24 +49,6 @@ export class Model {
         }
 
         return "INSERT INTO " + this.table + " (" + columns.join(', ') +
-            ") VALUES (" + this.__valuesToString(values) + ")";
-    }
-
-    __valuesToString(values) {
-        let result = "";
-
-        values.forEach((value, idx) => {
-            if (typeof value === 'string') {
-                result += "'" + value + "'";
-            } else {
-                result += value;
-            }
-
-            if (idx < values.length - 1) {
-                result += ", ";
-            }
-        });
-
-        return result;
+            ") VALUES (" + Utility.valuesToString(values) + ")";
     }
 }
