@@ -55,7 +55,7 @@ test("Can create a model using object", () => {
     assert.equal(result, expectedResult);
 });
 
-test("Can build where query", () => {
+test("Can properly store where query strings", () => {
     class TestModel extends Model {
         constructor() {
             super();
