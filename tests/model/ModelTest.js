@@ -73,6 +73,40 @@ test("Can properly store where query strings", () => {
     assert.deepEqual(result, expectedResult);
 });
 
+test("Can build where query string", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .where('test_id', '=', 5)
+        .where('test_name', '=', 'John')
+        .__buildWhereQuery();
+
+
+    const expectedResult = "WHERE test_id = 5 AND test_name = 'John'";
+
+    assert.equal(result, expectedResult);
+});
+
+test("Build empty where query string when no where specified", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .__buildWhereQuery();
+
+
+    const expectedResult = "";
+
+    assert.equal(result, expectedResult);
+});
+
 test("Can properly store select query strings", () => {
     class TestModel extends Model {
         constructor() {
@@ -90,6 +124,39 @@ test("Can properly store select query strings", () => {
     assert.deepEqual(result, expectedResult);
 });
 
+test("Can build select query string", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .select('test_id', 'test_name')
+        .__buildSelectQuery();
+
+
+    const expectedResult = "SELECT test_id, test_name FROM test_models";
+
+    assert.equal(result, expectedResult);
+});
+
+test("Can build select query string with select all if no select specified", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .__buildSelectQuery();
+
+
+    const expectedResult = "SELECT * FROM test_models";
+
+    assert.equal(result, expectedResult);
+});
+
 test("Can properly store order by query strings", () => {
     class TestModel extends Model {
         constructor() {
@@ -104,6 +171,55 @@ test("Can properly store order by query strings", () => {
 
 
     const expectedResult = [ 'test_id DESC', 'test_name ASC' ];
+
+    assert.deepEqual(result, expectedResult);
+});
+
+test("Can build order by query string", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .orderBy('test_id')
+        .orderBy('test_name', 'ASC')
+        .__buildOrderByQuery();
+
+
+    const expectedResult = "ORDER BY test_id DESC, test_name ASC";
+
+    assert.equal(result, expectedResult);
+});
+
+test("Build empty order by query string when no order by specified", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .__buildOrderByQuery();
+
+    const expectedResult = "";
+
+    assert.equal(result, expectedResult);
+});
+
+test("Can properly store group by query strings", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .groupBy('test_id', 'test_name')
+        .__queryGroupBy;
+
+    const expectedResult = [ 'test_id', 'test_name' ];
 
     assert.deepEqual(result, expectedResult);
 });

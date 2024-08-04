@@ -4,12 +4,18 @@ import {Utility} from "../utils/Utility.js";
 
 export class Model {
     table = null;
-    __queryWhere = [];
     __querySelect = [];
+    __queryWhere = [];
+    __queryGroupBy = [];
     __queryOrderBy = [];
 
     constructor() {
         this.table = this.__getTableName();
+    }
+
+    select(...columns) {
+        columns.forEach((column) => this.__querySelect.push(column))
+        return this;
     }
 
     where(column, operator, value) {
@@ -18,8 +24,8 @@ export class Model {
         return this;
     }
 
-    select(...columns) {
-        columns.forEach((column) => this.__querySelect.push(column))
+    groupBy(...columns) {
+        columns.forEach((column) => this.__queryGroupBy.push(column))
         return this;
     }
 
@@ -27,6 +33,36 @@ export class Model {
         const query = column + " " + order;
         this.__queryOrderBy.push(query)
         return this;
+    }
+
+    __buildSelectQuery() {
+        let query = "SELECT ";
+        query += this.__querySelect.join(', ') || '*';
+        query += ' FROM ' + this.table;
+
+        return query;
+    }
+
+    __buildWhereQuery() {
+        if (this.__queryWhere.length === 0) {
+            return "";
+        }
+
+        let query = "WHERE ";
+        query += this.__queryWhere.join(' AND ');
+
+        return query;
+    }
+
+    __buildOrderByQuery() {
+        if (this.__queryOrderBy.length === 0) {
+            return "";
+        }
+
+        let query = "ORDER BY ";
+        query += this.__queryOrderBy.join(', ');
+
+        return query;
     }
 
     __getModelName() {
