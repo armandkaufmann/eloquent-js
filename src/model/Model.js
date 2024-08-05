@@ -54,6 +54,17 @@ export class Model {
         return query;
     }
 
+    __buildGroupByQuery() {
+        if (this.__queryGroupBy.length === 0) {
+            return "";
+        }
+
+        let query = "GROUP BY ";
+        query += this.__queryGroupBy.join(', ');
+
+        return query;
+    }
+
     __buildOrderByQuery() {
         if (this.__queryOrderBy.length === 0) {
             return "";

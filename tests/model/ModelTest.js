@@ -224,6 +224,37 @@ test("Can properly store group by query strings", () => {
     assert.deepEqual(result, expectedResult);
 });
 
+test("Can build group by query string", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .groupBy('test_id', 'test_name')
+        .__buildGroupByQuery();
+
+    const expectedResult = "GROUP BY test_id, test_name";
+
+    assert.equal(result, expectedResult);
+});
+
+test("Can build empty group by query string when no group by provided", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .__buildGroupByQuery();
+
+    const expectedResult = "";
+
+    assert.equal(result, expectedResult);
+});
+
 // test("Can build complete query string", () => {
 //     class TestModel extends Model {
 //         constructor() {
