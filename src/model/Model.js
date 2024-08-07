@@ -7,10 +7,18 @@ export class Model {
     __querySelect = [];
     __queryWhere = [];
     __queryGroupBy = [];
+    __queryHaving = [];
     __queryOrderBy = [];
 
     constructor() {
         this.table = this.__getTableName();
+        //query builder class
+        // can extend multiple classes with class Model extends query builder
+        //new QueryBuilder()
+        //  everytime I use the query builder
+        //  this.queryBuilder
+        //      .table(this.table)
+        //      .select(columns)
     }
 
     select(...columns) {
@@ -26,6 +34,12 @@ export class Model {
 
     groupBy(...columns) {
         columns.forEach((column) => this.__queryGroupBy.push(column))
+        return this;
+    }
+
+    having(column, operator, value) {
+        const query = column + " " + operator + " " + Utility.valuesToString([value]);
+        this.__queryHaving.push(query);
         return this;
     }
 
@@ -61,6 +75,17 @@ export class Model {
 
         let query = "GROUP BY ";
         query += this.__queryGroupBy.join(', ');
+
+        return query;
+    }
+
+    __buildHavingQuery() {
+        if (this.__queryHaving.length === 0) {
+            return "";
+        }
+
+        let query = "HAVING ";
+        query += this.__queryHaving.join(' AND ');
 
         return query;
     }

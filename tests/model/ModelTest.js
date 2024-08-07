@@ -255,6 +255,40 @@ test("Can build empty group by query string when no group by provided", () => {
     assert.equal(result, expectedResult);
 });
 
+test("Can properly store having query strings", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .having('test_id', '=', 5)
+        .having('test_name', '=', 'test')
+        .__queryHaving;
+
+    const expectedResult = [ 'test_id = 5', "test_name = 'test'" ];
+
+    assert.deepEqual(result, expectedResult);
+});
+
+test("Can build having query string", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .having('test_id', '=', 5)
+        .having('test_name', '=', 'test')
+        .__buildHavingQuery();
+
+    const expectedResult = "HAVING test_id = 5 AND test_name = 'test'";
+
+    assert.equal(result, expectedResult);
+});
+
 // test("Can build complete query string", () => {
 //     class TestModel extends Model {
 //         constructor() {
