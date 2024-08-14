@@ -289,6 +289,21 @@ test("Can build having query string", () => {
     assert.equal(result, expectedResult);
 });
 
+test("Can build empty having by query string when no having by provided", () => {
+    class TestModel extends Model {
+        constructor() {
+            super();
+        }
+    }
+
+    const result = new TestModel()
+        .__buildHavingQuery();
+
+    const expectedResult = "";
+
+    assert.equal(result, expectedResult);
+});
+
 // test("Can build complete query string", () => {
 //     class TestModel extends Model {
 //         constructor() {
