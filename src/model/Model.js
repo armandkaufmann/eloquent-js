@@ -27,7 +27,7 @@ export class Model {
     }
 
     where(column, operator, value) {
-        const query = column + " " + operator + " " + Utility.valuesToString([value]);
+        const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.__queryWhere.push(query);
         return this;
     }
@@ -38,13 +38,13 @@ export class Model {
     }
 
     having(column, operator, value) {
-        const query = column + " " + operator + " " + Utility.valuesToString([value]);
+        const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.__queryHaving.push(query);
         return this;
     }
 
     orderBy(column, order = "DESC") {
-        const query = column + " " + order;
+        const query = `${column} ${order}`;
         this.__queryOrderBy.push(query)
         return this;
     }
