@@ -289,7 +289,7 @@ test("Can build having query string", () => {
     assert.equal(result, expectedResult);
 });
 
-test("Can build empty having by query string when no having by provided", () => {
+test("Can build empty having query string when no having provided", () => {
     class TestModel extends Model {
         constructor() {
             super();
