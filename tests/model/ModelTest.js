@@ -1,40 +1,42 @@
-import test from "node:test";
+import {test, describe, mock} from "node:test";
 import assert from "node:assert/strict";
 import {Model} from "../../src/model/Model.js";
 
-test("can retrieve model name from object", () => {
-    class TestModel extends Model {
-        constructor() {
-            super();
+describe('initialization', () => {
+    test("can retrieve model name from object", () => {
+        class TestModel extends Model {
+            constructor() {
+                super();
+            }
         }
-    }
 
-    const result = new TestModel();
-    assert.equal(result.__getModelName(), 'TestModel')
-});
+        const result = new TestModel();
+        assert.equal(result.__getModelName(), 'TestModel')
+    });
 
-test("Base class constructs proper table name", () => {
-    class TestModel extends Model {
-        constructor() {
-            super();
+    test("Base class constructs proper table name", () => {
+        class TestModel extends Model {
+            constructor() {
+                super();
+            }
         }
-    }
 
-    const result = new TestModel();
-    assert.equal(result.table, 'test_models')
-});
+        const result = new TestModel();
+        assert.equal(result.table, 'test_models')
+    });
 
-test("Base class doesn't construct table name if already exists on model", () => {
-    class TestModel extends Model {
-        table = 'my_table';
+    test("Base class doesn't construct table name if already exists on model", () => {
+        class TestModel extends Model {
+            table = 'my_table';
 
-        constructor() {
-            super();
+            constructor() {
+                super();
+            }
         }
-    }
 
-    const result = new TestModel();
-    assert.equal(result.table, 'my_table')
+        const result = new TestModel();
+        assert.equal(result.table, 'my_table')
+    });
 });
 
 test("Can create a model using object", () => {
@@ -49,7 +51,7 @@ test("Can create a model using object", () => {
         test_name: 'John',
     };
 
-    const result = new TestModel().__insert(fields);
+    const result = new TestModel().create(fields);
     const expectedResult = "INSERT INTO test_models (test_id, test_name) VALUES (5, 'John')";
 
     assert.equal(result, expectedResult);
