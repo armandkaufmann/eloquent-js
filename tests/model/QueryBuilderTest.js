@@ -1,7 +1,6 @@
 import {test, describe} from "node:test";
 import assert from "node:assert/strict";
 import {QueryBuilder} from "../../src/model/QueryBuilder.js";
-import {Model} from "../../src/model/Model.js";
 
 describe('QueryBuilderTest', () => {
     describe('Building Query Strings', () => {
