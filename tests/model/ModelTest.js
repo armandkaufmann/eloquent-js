@@ -58,8 +58,6 @@ describe('ModelTest', () => {
 
         assert.equal(result, expectedResult);
     });
-
-
 });
 
 

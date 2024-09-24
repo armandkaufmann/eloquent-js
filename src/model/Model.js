@@ -4,48 +4,48 @@ import {QueryBuilder} from "./QueryBuilder.js";
 
 export class Model {
     table = null;
-    __queryBuilder = null;
+    #queryBuilder = null;
 
     constructor() {
         this.table = this.__getTableName();
-        this.__queryBuilder = new QueryBuilder().from(this.table);
+        this.#queryBuilder = new QueryBuilder().from(this.table);
     }
 
     create(fields) {
-        return this.__queryBuilder
+        return this.#queryBuilder
             .insert(fields);
     }
 
     select(...columns) {
-        this.__queryBuilder
+        this.#queryBuilder
             .select(...columns);
 
         return this;
     }
 
     where(column, operator, value) {
-        this.__queryBuilder
+        this.#queryBuilder
             .where(column, operator, value);
 
         return this;
     }
 
     groupBy(...columns) {
-        this.__queryBuilder
+        this.#queryBuilder
             .groupBy(...columns);
 
         return this;
     }
 
     having(column, operator, value) {
-        this.__queryBuilder
+        this.#queryBuilder
             .having(column, operator, value);
 
         return this;
     }
 
     orderBy(column, order = "DESC") {
-        this.__queryBuilder
+        this.#queryBuilder
             .orderBy(column, order);
 
         return this;

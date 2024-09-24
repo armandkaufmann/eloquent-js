@@ -4,61 +4,6 @@ import {QueryBuilder} from "../../src/model/QueryBuilder.js";
 import {Model} from "../../src/model/Model.js";
 
 describe('QueryBuilderTest', () => {
-    describe('Appending Queries', () => {
-        test("Select query string", () => {
-            const result = new QueryBuilder()
-                .select('test_id', 'test_name')
-                .__querySelect;
-
-            const expectedResult = ['test_id', 'test_name'];
-
-            assert.deepEqual(result, expectedResult);
-        });
-
-        test("Where query strings", () => {
-            const result = new QueryBuilder()
-                .where('test_id', '=', 5)
-                .where('test_name', '=', 'John')
-                .__queryWhere;
-
-            const expectedResult = ['test_id = 5', "test_name = 'John'"];
-
-            assert.deepEqual(result, expectedResult);
-        });
-
-        test("Order by query strings", () => {
-            const result = new QueryBuilder()
-                .orderBy('test_id')
-                .orderBy('test_name', 'ASC')
-                .__queryOrderBy;
-
-            const expectedResult = ['test_id DESC', 'test_name ASC'];
-
-            assert.deepEqual(result, expectedResult);
-        });
-
-        test("Group by query strings", () => {
-            const result = new QueryBuilder()
-                .groupBy('test_id', 'test_name')
-                .__queryGroupBy;
-
-            const expectedResult = ['test_id', 'test_name'];
-
-            assert.deepEqual(result, expectedResult);
-        });
-
-        test("Having query strings", () => {
-            const result = new QueryBuilder()
-                .having('test_id', '=', 5)
-                .having('test_name', '=', 'test')
-                .__queryHaving;
-
-            const expectedResult = ['test_id = 5', "test_name = 'test'"];
-
-            assert.deepEqual(result, expectedResult);
-        });
-    });
-
     describe('Building Query Strings', () => {
         describe('Where', () => {
             test("Query String", () => {

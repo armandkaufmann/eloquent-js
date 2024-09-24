@@ -2,11 +2,11 @@ import {Utility} from "../utils/Utility.js";
 
 export class QueryBuilder {
     table = null;
-    __querySelect = [];
-    __queryWhere = [];
-    __queryGroupBy = [];
-    __queryHaving = [];
-    __queryOrderBy = [];
+    #querySelect = [];
+    #queryWhere = [];
+    #queryGroupBy = [];
+    #queryHaving = [];
+    #queryOrderBy = [];
 
     from(table) {
         this.table = table;
@@ -27,81 +27,81 @@ export class QueryBuilder {
     }
 
     select(...columns) {
-        columns.forEach((column) => this.__querySelect.push(column))
+        columns.forEach((column) => this.#querySelect.push(column))
         return this;
     }
 
     where(column, operator, value) {
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        this.__queryWhere.push(query);
+        this.#queryWhere.push(query);
         return this;
     }
 
     groupBy(...columns) {
-        columns.forEach((column) => this.__queryGroupBy.push(column))
+        columns.forEach((column) => this.#queryGroupBy.push(column))
         return this;
     }
 
     having(column, operator, value) {
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        this.__queryHaving.push(query);
+        this.#queryHaving.push(query);
         return this;
     }
 
     orderBy(column, order = "DESC") {
         const query = `${column} ${order}`;
-        this.__queryOrderBy.push(query)
+        this.#queryOrderBy.push(query)
         return this;
     }
 
     __buildSelectQuery() {
         let query = "SELECT ";
-        query += this.__querySelect.join(', ') || '*';
+        query += this.#querySelect.join(', ') || '*';
         query += ' FROM ' + this.table;
 
         return query;
     }
 
     __buildWhereQuery() {
-        if (this.__queryWhere.length === 0) {
+        if (this.#queryWhere.length === 0) {
             return "";
         }
 
         let query = "WHERE ";
-        query += this.__queryWhere.join(' AND ');
+        query += this.#queryWhere.join(' AND ');
 
         return query;
     }
 
     __buildGroupByQuery() {
-        if (this.__queryGroupBy.length === 0) {
+        if (this.#queryGroupBy.length === 0) {
             return "";
         }
 
         let query = "GROUP BY ";
-        query += this.__queryGroupBy.join(', ');
+        query += this.#queryGroupBy.join(', ');
 
         return query;
     }
 
     __buildHavingQuery() {
-        if (this.__queryHaving.length === 0) {
+        if (this.#queryHaving.length === 0) {
             return "";
         }
 
         let query = "HAVING ";
-        query += this.__queryHaving.join(' AND ');
+        query += this.#queryHaving.join(' AND ');
 
         return query;
     }
 
     __buildOrderByQuery() {
-        if (this.__queryOrderBy.length === 0) {
+        if (this.#queryOrderBy.length === 0) {
             return "";
         }
 
         let query = "ORDER BY ";
-        query += this.__queryOrderBy.join(', ');
+        query += this.#queryOrderBy.join(', ');
 
         return query;
     }
