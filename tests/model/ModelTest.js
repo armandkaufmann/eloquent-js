@@ -41,42 +41,45 @@ describe('ModelTest', () => {
         });
     });
 
-    test("Can create a model using table attribute name", () => {
-        class TestModel extends Model {
-            table = 'my_table';
-            constructor() {
-                super();
+    describe('create', () => {
+        test("Can create a model using table attribute name", () => {
+            class TestModel extends Model {
+                table = 'my_table';
+                constructor() {
+                    super();
+                }
             }
-        }
 
-        let fields = {
-            test_id: 5,
-            test_name: 'John',
-        };
+            let fields = {
+                test_id: 5,
+                test_name: 'John',
+            };
 
-        const result = new TestModel().create(fields);
-        const expectedResult = "INSERT INTO my_table (test_id, test_name) VALUES (5, 'John')";
+            const result = new TestModel().create(fields);
+            const expectedResult = "INSERT INTO my_table (test_id, test_name) VALUES (5, 'John')";
 
-        assert.equal(result, expectedResult);
+            assert.equal(result, expectedResult);
+        });
+
+        test("Can create a model using object", () => {
+            class TestModel extends Model {
+                constructor() {
+                    super();
+                }
+            }
+
+            let fields = {
+                test_id: 5,
+                test_name: 'John',
+            };
+
+            const result = new TestModel().create(fields);
+            const expectedResult = "INSERT INTO test_models (test_id, test_name) VALUES (5, 'John')";
+
+            assert.equal(result, expectedResult);
+        });
     });
 
-    test("Can create a model using object", () => {
-        class TestModel extends Model {
-            constructor() {
-                super();
-            }
-        }
-
-        let fields = {
-            test_id: 5,
-            test_name: 'John',
-        };
-
-        const result = new TestModel().create(fields);
-        const expectedResult = "INSERT INTO test_models (test_id, test_name) VALUES (5, 'John')";
-
-        assert.equal(result, expectedResult);
-    });
 });
 
 
