@@ -41,7 +41,7 @@ describe('ModelTest', () => {
         });
     });
 
-    describe('create', () => {
+    describe('Create', () => {
         test("Can create a model using table attribute name", () => {
             class TestModel extends Model {
                 table = 'my_table';

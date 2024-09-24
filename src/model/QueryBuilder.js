@@ -7,6 +7,11 @@ export class QueryBuilder {
     #queryGroupBy = [];
     #queryHaving = [];
     #queryOrderBy = [];
+    #limit = null;
+
+    static table(table) {
+        return new QueryBuilder().from(table)
+    }
 
     from(table) {
         this.table = table;
@@ -51,6 +56,11 @@ export class QueryBuilder {
     orderBy(column, order = "DESC") {
         const query = `${column} ${order}`;
         this.#queryOrderBy.push(query)
+        return this;
+    }
+
+    limit(number) {
+        this.#limit = number;
         return this;
     }
 
@@ -104,5 +114,13 @@ export class QueryBuilder {
         query += this.#queryOrderBy.join(', ');
 
         return query;
+    }
+
+    __buildLimitQuery() {
+        if (!this.#limit) {
+            return "";
+        }
+
+        return "LIMIT " + this.#limit;
     }
 }

@@ -118,6 +118,27 @@ describe('QueryBuilderTest', () => {
             });
         });
 
+        describe('Limit', () => {
+            test("Limit query string", () => {
+                const result = new QueryBuilder()
+                    .limit(1)
+                    .__buildLimitQuery();
+
+                const expectedResult = "LIMIT 1";
+
+                assert.equal(result, expectedResult);
+            });
+
+            test("Empty limit query string", () => {
+                const result = new QueryBuilder()
+                    .__buildLimitQuery();
+
+                const expectedResult = "";
+
+                assert.equal(result, expectedResult);
+            });
+        });
+
     });
 
 });
