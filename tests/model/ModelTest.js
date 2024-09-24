@@ -13,7 +13,7 @@ describe('ModelTest', () => {
             }
 
             const result = new TestModel();
-            assert.equal(result.__getModelName(), 'TestModel')
+            assert.equal(result._getModelName(), 'TestModel')
         });
 
         test("Base class constructs proper table name", () => {
@@ -39,6 +39,25 @@ describe('ModelTest', () => {
             const result = new TestModel();
             assert.equal(result.table, 'my_table')
         });
+    });
+
+    test("Can create a model using table attribute name", () => {
+        class TestModel extends Model {
+            table = 'my_table';
+            constructor() {
+                super();
+            }
+        }
+
+        let fields = {
+            test_id: 5,
+            test_name: 'John',
+        };
+
+        const result = new TestModel().create(fields);
+        const expectedResult = "INSERT INTO my_table (test_id, test_name) VALUES (5, 'John')";
+
+        assert.equal(result, expectedResult);
     });
 
     test("Can create a model using object", () => {

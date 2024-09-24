@@ -7,17 +7,19 @@ export class Model {
     #queryBuilder = null;
 
     constructor() {
-        this.table = this.__getTableName();
-        this.#queryBuilder = new QueryBuilder().from(this.table);
+        this.table = this._getTableName();
+        this.#queryBuilder = new QueryBuilder();
     }
 
     create(fields) {
         return this.#queryBuilder
+            .from(this.table)
             .insert(fields);
     }
 
     select(...columns) {
         this.#queryBuilder
+            .from(this.table)
             .select(...columns);
 
         return this;
@@ -25,6 +27,7 @@ export class Model {
 
     where(column, operator, value) {
         this.#queryBuilder
+            .from(this.table)
             .where(column, operator, value);
 
         return this;
@@ -32,6 +35,7 @@ export class Model {
 
     groupBy(...columns) {
         this.#queryBuilder
+            .from(this.table)
             .groupBy(...columns);
 
         return this;
@@ -39,6 +43,7 @@ export class Model {
 
     having(column, operator, value) {
         this.#queryBuilder
+            .from(this.table)
             .having(column, operator, value);
 
         return this;
@@ -46,18 +51,19 @@ export class Model {
 
     orderBy(column, order = "DESC") {
         this.#queryBuilder
+            .from(this.table)
             .orderBy(column, order);
 
         return this;
     }
 
-    __getModelName() {
+    _getModelName() {
         return this.constructor.name;
     }
 
-    __getTableName() {
+    _getTableName() {
         return snakeCase(
-            pluralize.plural(this.__getModelName())
+            pluralize.plural(this._getModelName())
         );
     }
 }
