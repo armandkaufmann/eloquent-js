@@ -9,7 +9,7 @@ describe('QueryBuilderTest', () => {
                 const result = new QueryBuilder()
                     .where('test_id', '=', 5)
                     .where('test_name', '=', 'John')
-                    .__buildWhereQuery();
+                    ._buildWhereQuery();
 
 
                 const expectedResult = "WHERE test_id = 5 AND test_name = 'John'";
@@ -19,7 +19,7 @@ describe('QueryBuilderTest', () => {
 
             test("Empty where query string", () => {
                 const result = new QueryBuilder()
-                    .__buildWhereQuery();
+                    ._buildWhereQuery();
 
                 const expectedResult = "";
 
@@ -32,7 +32,7 @@ describe('QueryBuilderTest', () => {
                 const result = new QueryBuilder()
                     .from('test_models')
                     .select('test_id', 'test_name')
-                    .__buildSelectQuery();
+                    ._buildSelectQuery();
 
                 const expectedResult = "SELECT test_id, test_name FROM test_models";
 
@@ -42,7 +42,7 @@ describe('QueryBuilderTest', () => {
             test("Empty select query string", () => {
                 const result = new QueryBuilder()
                     .from('test_models')
-                    .__buildSelectQuery();
+                    ._buildSelectQuery();
 
 
                 const expectedResult = "SELECT * FROM test_models";
@@ -56,7 +56,7 @@ describe('QueryBuilderTest', () => {
                 const result = new QueryBuilder()
                     .orderBy('test_id')
                     .orderBy('test_name', 'ASC')
-                    .__buildOrderByQuery();
+                    ._buildOrderByQuery();
 
 
                 const expectedResult = "ORDER BY test_id DESC, test_name ASC";
@@ -66,7 +66,7 @@ describe('QueryBuilderTest', () => {
 
             test("Empty order by query string", () => {
                 const result = new QueryBuilder()
-                    .__buildOrderByQuery();
+                    ._buildOrderByQuery();
 
                 const expectedResult = "";
 
@@ -78,7 +78,7 @@ describe('QueryBuilderTest', () => {
             test("Group by query string", () => {
                 const result = new QueryBuilder()
                     .groupBy('test_id', 'test_name')
-                    .__buildGroupByQuery();
+                    ._buildGroupByQuery();
 
                 const expectedResult = "GROUP BY test_id, test_name";
 
@@ -87,7 +87,7 @@ describe('QueryBuilderTest', () => {
 
             test("Empty group by query string", () => {
                 const result = new QueryBuilder()
-                    .__buildGroupByQuery();
+                    ._buildGroupByQuery();
 
                 const expectedResult = "";
 
@@ -100,7 +100,7 @@ describe('QueryBuilderTest', () => {
                 const result = new QueryBuilder()
                     .having('test_id', '=', 5)
                     .having('test_name', '=', 'test')
-                    .__buildHavingQuery();
+                    ._buildHavingQuery();
 
                 const expectedResult = "HAVING test_id = 5 AND test_name = 'test'";
 
@@ -109,7 +109,7 @@ describe('QueryBuilderTest', () => {
 
             test("Empty having query string", () => {
                 const result = new QueryBuilder()
-                    .__buildHavingQuery();
+                    ._buildHavingQuery();
 
                 const expectedResult = "";
 
@@ -121,7 +121,7 @@ describe('QueryBuilderTest', () => {
             test("Limit query string", () => {
                 const result = new QueryBuilder()
                     .limit(1)
-                    .__buildLimitQuery();
+                    ._buildLimitQuery();
 
                 const expectedResult = "LIMIT 1";
 
@@ -130,7 +130,7 @@ describe('QueryBuilderTest', () => {
 
             test("Empty limit query string", () => {
                 const result = new QueryBuilder()
-                    .__buildLimitQuery();
+                    ._buildLimitQuery();
 
                 const expectedResult = "";
 
@@ -140,4 +140,7 @@ describe('QueryBuilderTest', () => {
 
     });
 
+    test('builds full query in correct order', () => {
+
+    });
 });

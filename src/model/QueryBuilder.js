@@ -64,7 +64,7 @@ export class QueryBuilder {
         return this;
     }
 
-    __buildSelectQuery() {
+    _buildSelectQuery() {
         let query = "SELECT ";
         query += this.#querySelect.join(', ') || '*';
         query += ' FROM ' + this.table;
@@ -72,7 +72,7 @@ export class QueryBuilder {
         return query;
     }
 
-    __buildWhereQuery() {
+    _buildWhereQuery() {
         if (this.#queryWhere.length === 0) {
             return "";
         }
@@ -83,7 +83,7 @@ export class QueryBuilder {
         return query;
     }
 
-    __buildGroupByQuery() {
+    _buildGroupByQuery() {
         if (this.#queryGroupBy.length === 0) {
             return "";
         }
@@ -94,7 +94,7 @@ export class QueryBuilder {
         return query;
     }
 
-    __buildHavingQuery() {
+    _buildHavingQuery() {
         if (this.#queryHaving.length === 0) {
             return "";
         }
@@ -105,7 +105,7 @@ export class QueryBuilder {
         return query;
     }
 
-    __buildOrderByQuery() {
+    _buildOrderByQuery() {
         if (this.#queryOrderBy.length === 0) {
             return "";
         }
@@ -116,7 +116,7 @@ export class QueryBuilder {
         return query;
     }
 
-    __buildLimitQuery() {
+    _buildLimitQuery() {
         if (!this.#limit) {
             return "";
         }
