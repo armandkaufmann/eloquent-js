@@ -151,10 +151,18 @@ describe('QueryBuilderTest', () => {
         });
     });
 
-    test.skip('builds full query in correct order', () => {
-        const query = QueryBuilder.table('my_table')
-            .select(['id', 'name'])
+    test('builds full query in correct order', () => {
+        const result = QueryBuilder.table('my_table')
+            .select('id', 'name')
             .where('name', '=', 'John')
-            .where('id', '>=', 5)
+            .groupBy('class')
+            .having('class', 'LIKE', '%example%')
+            .orderBy('id')
+            .limit(2)
+            .toSql();
+
+        const expectedResult = "SELECT id, name FROM my_table WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2"
+
+        assert.equal(result, expectedResult);
     });
 });
