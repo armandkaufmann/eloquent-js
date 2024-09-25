@@ -13,6 +13,10 @@ export class QueryBuilder {
         return new QueryBuilder().from(table)
     }
 
+    toSql() {
+        return this._buildSelectQuery();
+    }
+
     from(table) {
         this.table = table;
         return this;

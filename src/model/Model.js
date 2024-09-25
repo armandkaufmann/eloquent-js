@@ -11,6 +11,16 @@ export class Model {
         this.#queryBuilder = new QueryBuilder();
     }
 
+    static all() {
+        return new this().get();
+    }
+
+    get() {
+        return this.#queryBuilder
+            .from(this.table)
+            .toSql();
+    }
+
     create(fields) {
         return this.#queryBuilder
             .from(this.table)

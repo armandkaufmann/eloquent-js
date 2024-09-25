@@ -140,7 +140,21 @@ describe('QueryBuilderTest', () => {
 
     });
 
-    test('builds full query in correct order', () => {
+    describe('toSql', () => {
+        test('Select', () => {
+            const result = QueryBuilder.table('my_table')
+                .toSql();
 
+            const expectedResult = "SELECT * FROM my_table";
+
+            assert.equal(result, expectedResult);
+        });
+    });
+
+    test.skip('builds full query in correct order', () => {
+        const query = QueryBuilder.table('my_table')
+            .select(['id', 'name'])
+            .where('name', '=', 'John')
+            .where('id', '>=', 5)
     });
 });

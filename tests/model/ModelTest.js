@@ -80,6 +80,20 @@ describe('ModelTest', () => {
         });
     });
 
+    describe('static methods', () => {
+        test('all', () => {
+            class TestModel extends Model {
+                constructor() {
+                    super();
+                }
+            }
+
+            const result = TestModel.all();
+
+            assert.equal(result, "SELECT * FROM test_models")
+        });
+    });
+
 });
 
 
