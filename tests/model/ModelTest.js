@@ -80,7 +80,7 @@ describe('ModelTest', () => {
         });
     });
 
-    describe('static methods', () => {
+    describe('convenience methods', () => {
         test('all', () => {
             class TestModel extends Model {
                 constructor() {
@@ -90,27 +90,33 @@ describe('ModelTest', () => {
 
             const result = TestModel.all();
 
-            assert.equal(result, "SELECT * FROM test_models")
+            assert.equal(result, "SELECT * FROM test_models");
+        });
+
+        describe('first', () => {
+            test('first static', () => {
+                class TestModel extends Model {
+                    constructor() {
+                        super();
+                    }
+                }
+
+                const result = TestModel.first();
+
+                assert.equal(result, "SELECT * FROM test_models LIMIT 1");
+            });
+
+            test('first model method', () => {
+                class TestModel extends Model {
+                    constructor() {
+                        super();
+                    }
+                }
+
+                const result = new TestModel().orderBy('id').first();
+
+                assert.equal(result, "SELECT * FROM test_models ORDER BY id DESC LIMIT 1");
+            });
         });
     });
-
 });
-
-
-// test("Can build complete query string", () => {
-//     class TestModel extends Model {
-//         constructor() {
-//             super();
-//         }
-//     }
-//
-//     const result = new TestModel()
-//         .select('test_id', 'test_name')
-//         .where('test_id', '>=', 5)
-//         .where('test_name', 'LIKE', "%test%")
-//         .toSql();
-//
-//     const expectedResult = "SELECT test_id, test_name FROM test_model WHERE test_id >= 5 AND test_name LIKE '%test%'";
-//
-//     assert.equal(result, expectedResult);
-// });

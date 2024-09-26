@@ -14,7 +14,17 @@ export class QueryBuilder {
     }
 
     toSql() {
-        return this._buildSelectQuery();
+        let result = "";
+
+        [
+            this._buildSelectQuery(), this._buildWhereQuery(),
+            this._buildGroupByQuery(), this._buildHavingQuery(),
+            this._buildOrderByQuery(), this._buildLimitQuery(),
+        ].forEach((queryString, idx) => {
+            queryString !== "" ? result += (idx > 0? ' ': '') + queryString : ''
+        });
+
+        return result;
     }
 
     from(table) {

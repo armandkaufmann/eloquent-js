@@ -15,6 +15,17 @@ export class Model {
         return new this().get();
     }
 
+    static first(limit = null) {
+        return new this().first(limit);
+    }
+
+    first(limit = null) {
+        return this.#queryBuilder
+            .from(this.table)
+            .limit(limit || 1)
+            .toSql();
+    }
+
     get() {
         return this.#queryBuilder
             .from(this.table)
