@@ -4,6 +4,7 @@ import {QueryBuilder} from "./QueryBuilder.js";
 
 export class Model {
     table = null;
+    /** @type QueryBuilder  */
     #queryBuilder = null;
 
     constructor() {
@@ -11,14 +12,24 @@ export class Model {
         this.#queryBuilder = new QueryBuilder();
     }
 
+    /**
+     * @returns string
+     */
     static all() {
         return new this().get();
     }
 
+    /**
+     * @returns string
+     */
     static first(limit = null) {
         return new this().first(limit);
     }
 
+    /**
+     * @param {number} limit
+     * @returns string
+     */
     first(limit = null) {
         return this.#queryBuilder
             .from(this.table)
@@ -26,18 +37,29 @@ export class Model {
             .toSql();
     }
 
+    /**
+     * @returns string
+     */
     get() {
         return this.#queryBuilder
             .from(this.table)
             .toSql();
     }
 
+    /**
+     * @param {Object} fields
+     * @returns string
+     */
     create(fields) {
         return this.#queryBuilder
             .from(this.table)
             .insert(fields);
     }
 
+    /**
+     * @param {string} columns
+     * @returns Model
+     */
     select(...columns) {
         this.#queryBuilder
             .from(this.table)
@@ -46,6 +68,12 @@ export class Model {
         return this;
     }
 
+    /**
+     * @param {string} column
+     * @param {string} operator
+     * @param {string | number } value
+     * @returns Model
+     */
     where(column, operator, value) {
         this.#queryBuilder
             .from(this.table)
@@ -54,6 +82,10 @@ export class Model {
         return this;
     }
 
+    /**
+     * @param {string} columns
+     * @returns Model
+     */
     groupBy(...columns) {
         this.#queryBuilder
             .from(this.table)
@@ -62,6 +94,12 @@ export class Model {
         return this;
     }
 
+    /**
+     * @param {string} column
+     * @param {string} operator
+     * @param {string | number } value
+     * @returns Model
+     */
     having(column, operator, value) {
         this.#queryBuilder
             .from(this.table)
@@ -70,6 +108,11 @@ export class Model {
         return this;
     }
 
+    /**
+     * @param {string} column
+     * @param {"ASC" | "DESC"} order
+     * @returns Model
+     */
     orderBy(column, order = "DESC") {
         this.#queryBuilder
             .from(this.table)
@@ -78,10 +121,16 @@ export class Model {
         return this;
     }
 
+    /**
+     * @returns string
+     */
     _getModelName() {
         return this.constructor.name;
     }
 
+    /**
+     * @returns string
+     */
     _getTableName() {
         return snakeCase(
             pluralize.plural(this._getModelName())
