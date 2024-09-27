@@ -47,7 +47,7 @@ export class Model {
     }
 
     /**
-     * @param {Object} fields
+     * @param {Object<string, string | number>} fields
      * @returns string
      */
     create(fields) {
