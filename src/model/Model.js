@@ -13,6 +13,14 @@ export class Model {
     }
 
     /**
+     * @param {Object<string, string | number>} fields
+     * @returns string
+     */
+    static create(fields) {
+        return new this().create(fields);
+    }
+
+    /**
      * @returns string
      */
     static all() {

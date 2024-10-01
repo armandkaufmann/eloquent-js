@@ -1,10 +1,10 @@
-import {test, describe} from "node:test";
+import {describe, test} from 'vitest';
 import assert from "node:assert/strict";
 import {QueryBuilder} from "../../src/model/QueryBuilder.js";
 
-describe('QueryBuilderTest', () => {
-    describe('Building Query Strings', () => {
-        describe('Where', () => {
+describe("QueryBuilderTest", () => {
+    describe("Building Query Strings", () => {
+        describe("Where", () => {
             test("Query String", () => {
                 const result = new QueryBuilder()
                     .where('test_id', '=', 5)
@@ -27,7 +27,7 @@ describe('QueryBuilderTest', () => {
             });
         });
 
-        describe('Select', () => {
+        describe("Select", () => {
             test("Select query string", () => {
                 const result = new QueryBuilder()
                     .from('test_models')
@@ -51,7 +51,7 @@ describe('QueryBuilderTest', () => {
             });
         });
 
-        describe('Order by', () => {
+        describe("Order by", () => {
             test("Order by query string", () => {
                 const result = new QueryBuilder()
                     .orderBy('test_id')
@@ -74,7 +74,7 @@ describe('QueryBuilderTest', () => {
             });
         });
 
-        describe('Group by', () => {
+        describe("Group by", () => {
             test("Group by query string", () => {
                 const result = new QueryBuilder()
                     .groupBy('test_id', 'test_name')
@@ -95,7 +95,7 @@ describe('QueryBuilderTest', () => {
             });
         });
 
-        describe('Having', () => {
+        describe("Having", () => {
             test("Having query string", () => {
                 const result = new QueryBuilder()
                     .having('test_id', '=', 5)
@@ -117,7 +117,7 @@ describe('QueryBuilderTest', () => {
             });
         });
 
-        describe('Limit', () => {
+        describe("Limit", () => {
             test("Limit query string", () => {
                 const result = new QueryBuilder()
                     .limit(1)
@@ -140,8 +140,8 @@ describe('QueryBuilderTest', () => {
 
     });
 
-    describe('toSql', () => {
-        test('Select', () => {
+    describe("toSql", () => {
+        test("Select", () => {
             const result = QueryBuilder.table('my_table')
                 .toSql();
 
@@ -151,7 +151,7 @@ describe('QueryBuilderTest', () => {
         });
     });
 
-    test.skip('builds full query in correct order', () => {
+    test.skip("builds full query in correct order", () => {
         const result = QueryBuilder.table('my_table')
             .where('name', '=', 'John')
             .select('id', 'name')

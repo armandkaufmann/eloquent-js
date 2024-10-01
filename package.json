@@ -2,15 +2,18 @@
   "name": "orm",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node --test tests/*/*.js"
+    "test": "vitest --watch=false"
   },
-  "type": "module",
   "author": "",
   "license": "ISC",
   "dependencies": {
     "change-case": "^5.4.4",
     "pluralize": "^8.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.1"
   }
 }
