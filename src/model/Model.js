@@ -5,11 +5,10 @@ import {QueryBuilder} from "./QueryBuilder.js";
 export class Model {
     table = null;
     /** @type QueryBuilder  */
-    #queryBuilder = null;
+    #queryBuilder = new QueryBuilder();
 
     constructor() {
         this.table = this._getTableName();
-        this.#queryBuilder = new QueryBuilder();
     }
 
     /**
