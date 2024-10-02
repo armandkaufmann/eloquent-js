@@ -1,5 +1,4 @@
-import {describe, test} from 'vitest';
-import assert from "node:assert/strict";
+import {describe, test, expect} from 'vitest';
 import {QueryBuilder} from "../../src/model/QueryBuilder.js";
 
 describe("QueryBuilderTest", () => {
@@ -11,10 +10,9 @@ describe("QueryBuilderTest", () => {
                     .where('test_name', '=', 'John')
                     ._buildWhereQuery();
 
-
                 const expectedResult = "WHERE test_id = 5 AND test_name = 'John'";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
 
             test("Empty where query string", () => {
@@ -23,7 +21,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
         });
 
@@ -36,7 +34,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "SELECT test_id, test_name FROM test_models";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
 
             test("Empty select query string", () => {
@@ -47,7 +45,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "SELECT * FROM test_models";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
         });
 
@@ -61,7 +59,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "ORDER BY test_id DESC, test_name ASC";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
 
             test("Empty order by query string", () => {
@@ -70,7 +68,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
         });
 
@@ -82,7 +80,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "GROUP BY test_id, test_name";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
 
             test("Empty group by query string", () => {
@@ -91,7 +89,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
         });
 
@@ -104,7 +102,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "HAVING test_id = 5 AND test_name = 'test'";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
 
             test("Empty having query string", () => {
@@ -113,7 +111,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
         });
 
@@ -125,7 +123,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "LIMIT 1";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
 
             test("Empty limit query string", () => {
@@ -134,7 +132,7 @@ describe("QueryBuilderTest", () => {
 
                 const expectedResult = "";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
         });
 
@@ -147,11 +145,11 @@ describe("QueryBuilderTest", () => {
 
             const expectedResult = "SELECT * FROM my_table";
 
-            assert.equal(result, expectedResult);
+            expect(result).toBe(expectedResult);
         });
     });
 
-    test.skip("builds full query in correct order", () => {
+    test("builds full query in correct order", () => {
         const result = QueryBuilder.table('my_table')
             .where('name', '=', 'John')
             .select('id', 'name')
@@ -163,6 +161,6 @@ describe("QueryBuilderTest", () => {
 
         const expectedResult = "SELECT id, name FROM my_table WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2"
 
-        assert.equal(result, expectedResult);
+        expect(result).toBe(expectedResult);
     });
 });

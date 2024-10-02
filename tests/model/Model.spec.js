@@ -1,5 +1,4 @@
 import {describe, test, expect} from 'vitest';
-import assert from "node:assert/strict";
 import {Model} from "../../src/model/Model.js";
 
 
@@ -58,7 +57,7 @@ describe("ModelTest", () => {
             const result = new TestModel().create(fields);
             const expectedResult = "INSERT INTO test_models (test_id, test_name) VALUES (5, 'John')";
 
-            assert.equal(result, expectedResult);
+            expect(result).toBe(expectedResult);
         });
     });
 
@@ -93,15 +92,16 @@ describe("ModelTest", () => {
                 const result = TestModel.first();
                 const expectedResult = "SELECT * FROM test_models LIMIT 1";
 
-                assert.equal(result, expectedResult);
+                expect(result).toBe(expectedResult);
             });
 
             test("First model method", () => {
                 class TestModel extends Model {}
 
                 const result = new TestModel().orderBy('id').first();
+                let expectedResult = "SELECT * FROM test_models ORDER BY id DESC LIMIT 1";
 
-                assert.equal(result, "SELECT * FROM test_models ORDER BY id DESC LIMIT 1");
+                expect(result).toBe(expectedResult);
             });
         });
     });
