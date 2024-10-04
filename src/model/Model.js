@@ -27,20 +27,21 @@ export class Model {
     }
 
     /**
+     * @param {number} [limit=1]
      * @returns string
      */
-    static first(limit = null) {
+    static first(limit = 1) {
         return new this().first(limit);
     }
 
     /**
-     * @param {number} limit
+     * @param {number} [limit=1]
      * @returns string
      */
-    first(limit = null) {
+    first(limit = 1) {
         return this.#queryBuilder
             .from(this.table)
-            .limit(limit || 1)
+            .limit(limit)
             .toSql();
     }
 
@@ -64,7 +65,7 @@ export class Model {
     }
 
     /**
-     * @param {string} columns
+     * @param {...string} columns
      * @returns Model
      */
     select(...columns) {
@@ -90,7 +91,7 @@ export class Model {
     }
 
     /**
-     * @param {string} columns
+     * @param {...string} columns
      * @returns Model
      */
     groupBy(...columns) {
@@ -117,7 +118,7 @@ export class Model {
 
     /**
      * @param {string} column
-     * @param {"ASC" | "DESC"} order
+     * @param {"ASC" | "DESC"} [order=DESC]
      * @returns Model
      */
     orderBy(column, order = "DESC") {
