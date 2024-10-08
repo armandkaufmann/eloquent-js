@@ -1,5 +1,6 @@
 import {describe, expect, test} from 'vitest';
 import {QueryBuilder} from "../../src/model/QueryBuilder.js";
+import {TableNotSetError} from "../../src/model/errors/QueryBuilder/Errors.js";
 
 describe("QueryBuilderTest", () => {
     describe("Building Query Strings", () => {
@@ -13,7 +14,7 @@ describe("QueryBuilderTest", () => {
             });
 
             test('throws when table is not set', () => {
-                expect(() => new QueryBuilder().toSql()).toThrow();
+                expect(() => new QueryBuilder().toSql()).toThrow(TableNotSetError);
             });
 
             test("Select", () => {

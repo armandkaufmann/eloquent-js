@@ -1,4 +1,5 @@
 import {Utility} from "../utils/Utility.js";
+import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 
 export class QueryBuilder {
     table = null;
@@ -14,6 +15,10 @@ export class QueryBuilder {
     }
 
     toSql() {
+        if (!this.table) {
+            throw new TableNotSetError("Query Builder");
+        }
+
         let result = "";
 
         [
