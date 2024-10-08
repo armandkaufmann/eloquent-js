@@ -17,9 +17,9 @@ export class QueryBuilder {
         let result = "";
 
         [
-            this._buildSelectQuery(), this._buildWhereQuery(),
-            this._buildGroupByQuery(), this._buildHavingQuery(),
-            this._buildOrderByQuery(), this._buildLimitQuery(),
+            this.#buildSelectQuery(), this.#buildWhereQuery(),
+            this.#buildGroupByQuery(), this.#buildHavingQuery(),
+            this.#buildOrderByQuery(), this.#buildLimitQuery(),
         ].forEach((queryString, idx) => {
             queryString !== "" ? result += (idx > 0? ' ': '') + queryString : ''
         });
@@ -78,7 +78,7 @@ export class QueryBuilder {
         return this;
     }
 
-    _buildSelectQuery() {
+    #buildSelectQuery() {
         let query = "SELECT ";
         query += this.#querySelect.join(', ') || '*';
         query += ' FROM ' + this.table;
@@ -86,7 +86,7 @@ export class QueryBuilder {
         return query;
     }
 
-    _buildWhereQuery() {
+    #buildWhereQuery() {
         if (this.#queryWhere.length === 0) {
             return "";
         }
@@ -97,7 +97,7 @@ export class QueryBuilder {
         return query;
     }
 
-    _buildGroupByQuery() {
+    #buildGroupByQuery() {
         if (this.#queryGroupBy.length === 0) {
             return "";
         }
@@ -108,7 +108,7 @@ export class QueryBuilder {
         return query;
     }
 
-    _buildHavingQuery() {
+    #buildHavingQuery() {
         if (this.#queryHaving.length === 0) {
             return "";
         }
@@ -119,7 +119,7 @@ export class QueryBuilder {
         return query;
     }
 
-    _buildOrderByQuery() {
+    #buildOrderByQuery() {
         if (this.#queryOrderBy.length === 0) {
             return "";
         }
@@ -130,7 +130,7 @@ export class QueryBuilder {
         return query;
     }
 
-    _buildLimitQuery() {
+    #buildLimitQuery() {
         if (!this.#limit) {
             return "";
         }
