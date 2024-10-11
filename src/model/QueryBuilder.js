@@ -2,7 +2,7 @@ import {Utility} from "../utils/Utility.js";
 import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 
 export class QueryBuilder {
-    table = null;
+    #table = null;
     #querySelect = [];
     #queryWhere = [];
     #queryGroupBy = [];
@@ -11,11 +11,11 @@ export class QueryBuilder {
     #limit = null;
 
     static table(table) {
-        return new QueryBuilder().from(table)
+        return new QueryBuilder().table(table)
     }
 
     toSql() {
-        if (!this.table) {
+        if (!this.#table) {
             throw new TableNotSetError("Query Builder");
         }
 
@@ -32,8 +32,8 @@ export class QueryBuilder {
         return result;
     }
 
-    from(table) {
-        this.table = table;
+    table(table) {
+        this.#table = table;
         return this;
     }
 
@@ -46,7 +46,7 @@ export class QueryBuilder {
             values.push(value);
         }
 
-        return "INSERT INTO " + this.table + " (" + columns.join(', ') +
+        return "INSERT INTO " + this.#table + " (" + columns.join(', ') +
             ") VALUES (" + Utility.valuesToString(values) + ")";
     }
 
@@ -86,7 +86,7 @@ export class QueryBuilder {
     #buildSelectQuery() {
         let query = "SELECT ";
         query += this.#querySelect.join(', ') || '*';
-        query += ' FROM ' + this.table;
+        query += ' FROM ' + this.#table;
 
         return query;
     }

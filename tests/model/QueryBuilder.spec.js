@@ -7,7 +7,7 @@ describe("QueryBuilderTest", () => {
         describe("To Sql", () => {
             test("Base query string", () => {
                 const result = new QueryBuilder()
-                    .from('my_table')
+                    .table('my_table')
                     .toSql();
 
                 expect(result).toBe("SELECT * FROM my_table");
@@ -47,7 +47,7 @@ describe("QueryBuilderTest", () => {
         describe("Where", () => {
             test("Query String", () => {
                 const result = new QueryBuilder()
-                    .from('my_table')
+                    .table('my_table')
                     .where('test_id', '=', 5)
                     .where('test_name', '=', 'John')
                     .toSql();
@@ -61,7 +61,7 @@ describe("QueryBuilderTest", () => {
         describe("Select", () => {
             test("Select query string", () => {
                 const result = new QueryBuilder()
-                    .from('test_models')
+                    .table('test_models')
                     .select('test_id', 'test_name')
                     .toSql();
 
@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
         describe("Order by", () => {
             test("Order by query string", () => {
                 const result = new QueryBuilder()
-                    .from('my_table')
+                    .table('my_table')
                     .orderBy('test_id')
                     .orderBy('test_name', 'ASC')
                     .toSql();
@@ -89,7 +89,7 @@ describe("QueryBuilderTest", () => {
         describe("Group by", () => {
             test("Group by query string", () => {
                 const result = new QueryBuilder()
-                    .from('my_table')
+                    .table('my_table')
                     .groupBy('test_id', 'test_name')
                     .toSql();
 
@@ -100,7 +100,7 @@ describe("QueryBuilderTest", () => {
         describe("Having", () => {
             test("Having query string", () => {
                 const result = new QueryBuilder()
-                    .from('my_table')
+                    .table('my_table')
                     .having('test_id', '=', 5)
                     .having('test_name', '=', 'test')
                     .toSql();
@@ -112,7 +112,7 @@ describe("QueryBuilderTest", () => {
         describe("Limit", () => {
             test("Limit query string", () => {
                 const result = new QueryBuilder()
-                    .from('my_table')
+                    .table('my_table')
                     .limit(1)
                     .toSql();
 

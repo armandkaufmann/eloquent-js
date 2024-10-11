@@ -4,7 +4,7 @@ import {QueryBuilder} from "../../src/model/QueryBuilder.js";
 
 vi.mock("../../src/model/QueryBuilder.js", () => {
     const QueryBuilder = vi.fn();
-    QueryBuilder.prototype.from = vi.fn().mockReturnThis();
+    QueryBuilder.prototype.table = vi.fn().mockReturnThis();
     QueryBuilder.prototype.insert = vi.fn().mockReturnThis();
     QueryBuilder.prototype.orderBy = vi.fn().mockReturnThis();
     QueryBuilder.prototype.limit = vi.fn().mockReturnThis();
@@ -28,7 +28,7 @@ describe("ModelTest", () => {
     })
 
     describe("Initialization", () => {
-        test("Can retrieve model name from object", () => {
+        test("Can retrieve model name table object", () => {
             const result = new TestModel();
             expect(result._getModelName()).toBe(testModelBaseName);
         });
@@ -62,7 +62,7 @@ describe("ModelTest", () => {
 
                 new TestModel().create(fields);
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith('my_table');
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith('my_table');
                 expect(QueryBuilder.prototype.insert).toHaveBeenCalledWith(fields);
             });
 
@@ -75,7 +75,7 @@ describe("ModelTest", () => {
 
                 new TestModel().create(fields);
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
                 expect(QueryBuilder.prototype.insert).toHaveBeenCalledWith(fields);
             });
         });
@@ -84,14 +84,14 @@ describe("ModelTest", () => {
             test("Select: single column", () => {
                 new TestModel().select('name');
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
                 expect(QueryBuilder.prototype.select).toHaveBeenCalledWith('name');
             });
 
             test("Select: multi column", () => {
                 new TestModel().select('id', 'name', 'email');
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
                 expect(QueryBuilder.prototype.select).toHaveBeenCalledWith('id', 'name', 'email');
             });
         });
@@ -99,7 +99,7 @@ describe("ModelTest", () => {
         test("Where", () => {
             new TestModel().where('id', '=', 5);
 
-            expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+            expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
             expect(QueryBuilder.prototype.where).toHaveBeenCalledWith('id', '=', 5);
         });
 
@@ -108,14 +108,14 @@ describe("ModelTest", () => {
                 const column = 'name';
                 new TestModel().groupBy(column);
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
                 expect(QueryBuilder.prototype.groupBy).toHaveBeenCalledWith(column);
             });
 
             test("Group By: multi column", () => {
                 new TestModel().groupBy('id', 'name', 'email');
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
                 expect(QueryBuilder.prototype.groupBy).toHaveBeenCalledWith('id', 'name', 'email');
             });
         });
@@ -123,7 +123,7 @@ describe("ModelTest", () => {
         test("Having", () => {
             new TestModel().having('id', '=', 5);
 
-            expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+            expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
             expect(QueryBuilder.prototype.having).toHaveBeenCalledWith('id', '=', 5);
         });
     });
@@ -134,7 +134,7 @@ describe("ModelTest", () => {
 
             TestModel.all();
 
-            expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+            expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
             expect(QueryBuilder.prototype.toSql).toHaveBeenCalled();
         });
 
@@ -147,7 +147,7 @@ describe("ModelTest", () => {
 
             TestModel.create(fields);
 
-            expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+            expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
             expect(QueryBuilder.prototype.insert).toHaveBeenCalledWith(fields);
         });
 
@@ -156,7 +156,7 @@ describe("ModelTest", () => {
 
                 TestModel.first();
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
                 expect(QueryBuilder.prototype.limit).toHaveBeenCalledWith(1);
                 expect(QueryBuilder.prototype.toSql).toHaveBeenCalled();
             });
@@ -165,7 +165,7 @@ describe("ModelTest", () => {
 
                 new TestModel().orderBy('id').first();
 
-                expect(QueryBuilder.prototype.from).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
                 expect(QueryBuilder.prototype.limit).toHaveBeenCalledWith(1);
                 expect(QueryBuilder.prototype.toSql).toHaveBeenCalled();
             });

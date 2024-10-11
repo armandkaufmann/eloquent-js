@@ -40,7 +40,7 @@ export class Model {
      */
     first(limit = 1) {
         return this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .limit(limit)
             .toSql();
     }
@@ -50,7 +50,7 @@ export class Model {
      */
     get() {
         return this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .toSql();
     }
 
@@ -60,7 +60,7 @@ export class Model {
      */
     create(fields) {
         return this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .insert(fields);
     }
 
@@ -70,7 +70,7 @@ export class Model {
      */
     select(...columns) {
         this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .select(...columns);
 
         return this;
@@ -84,7 +84,7 @@ export class Model {
      */
     where(column, operator, value) {
         this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .where(column, operator, value);
 
         return this;
@@ -96,7 +96,7 @@ export class Model {
      */
     groupBy(...columns) {
         this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .groupBy(...columns);
 
         return this;
@@ -110,7 +110,7 @@ export class Model {
      */
     having(column, operator, value) {
         this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .having(column, operator, value);
 
         return this;
@@ -123,7 +123,7 @@ export class Model {
      */
     orderBy(column, order = "DESC") {
         this.#queryBuilder
-            .from(this.table)
+            .table(this.table)
             .orderBy(column, order);
 
         return this;
