@@ -5,10 +5,14 @@ import {QueryBuilder} from "./QueryBuilder.js";
 export class Model {
     table = null;
     /** @type QueryBuilder  */
-    #queryBuilder = new QueryBuilder();
+    #queryBuilder = null;
 
-    constructor() {
-        this.table = this._getTableName();
+    /**
+     * @param {Object<string, string | number>} [options]
+     */
+    constructor(options) {
+        this.table = options?.table || this._getTableName();
+        this.#queryBuilder = new QueryBuilder().table(this.table);
     }
 
     /**
@@ -40,7 +44,6 @@ export class Model {
      */
     first(limit = 1) {
         return this.#queryBuilder
-            .table(this.table)
             .limit(limit)
             .toSql();
     }
@@ -50,7 +53,6 @@ export class Model {
      */
     get() {
         return this.#queryBuilder
-            .table(this.table)
             .toSql();
     }
 
@@ -60,7 +62,6 @@ export class Model {
      */
     create(fields) {
         return this.#queryBuilder
-            .table(this.table)
             .insert(fields);
     }
 
@@ -70,7 +71,6 @@ export class Model {
      */
     select(...columns) {
         this.#queryBuilder
-            .table(this.table)
             .select(...columns);
 
         return this;
@@ -84,7 +84,6 @@ export class Model {
      */
     where(column, operator, value) {
         this.#queryBuilder
-            .table(this.table)
             .where(column, operator, value);
 
         return this;
@@ -96,7 +95,6 @@ export class Model {
      */
     groupBy(...columns) {
         this.#queryBuilder
-            .table(this.table)
             .groupBy(...columns);
 
         return this;
@@ -110,7 +108,6 @@ export class Model {
      */
     having(column, operator, value) {
         this.#queryBuilder
-            .table(this.table)
             .having(column, operator, value);
 
         return this;
@@ -123,7 +120,6 @@ export class Model {
      */
     orderBy(column, order = "DESC") {
         this.#queryBuilder
-            .table(this.table)
             .orderBy(column, order);
 
         return this;

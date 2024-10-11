@@ -39,20 +39,27 @@ describe("ModelTest", () => {
         });
 
         test("Base class doesn't construct table name if already exists on model", () => {
+
+            const table = 'my_table'
             class TestModel extends Model {
-                table = 'my_table';
+                constructor() {
+                    super({table});
+                }
             }
 
             const result = new TestModel();
-            expect(result.table).toBe('my_table')
+            expect(result.table).toBe(table)
         });
     });
 
     describe("Model methods", () => {
         describe("Create", () => {
             test("Can create a model using table attribute name", () => {
+                const table = 'my_table';
                 class TestModel extends Model {
-                    table = 'my_table';
+                    constructor() {
+                        super({table});
+                    }
                 }
 
                 let fields = {
@@ -62,7 +69,7 @@ describe("ModelTest", () => {
 
                 new TestModel().create(fields);
 
-                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith('my_table');
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(table);
                 expect(QueryBuilder.prototype.insert).toHaveBeenCalledWith(fields);
             });
 
