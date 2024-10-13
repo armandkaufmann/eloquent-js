@@ -110,6 +110,28 @@ describe("ModelTest", () => {
             expect(QueryBuilder.prototype.where).toHaveBeenCalledWith('id', '=', 5);
         });
 
+        describe('When', () => {
+           test('It executes callback when conditional is true', () => {
+               const callbackSpy = vi.fn();
+
+               let model = new TestModel();
+
+               model.when(true, callbackSpy);
+
+               expect(callbackSpy).toHaveBeenCalledWith(model);
+           });
+
+            test('It does not execute call back when conditional is false', () => {
+                const callbackSpy = vi.fn();
+
+                let model = new TestModel();
+
+                model.when(false, callbackSpy);
+
+                expect(callbackSpy).not.toHaveBeenCalled();
+            });
+        });
+
         describe("Group By", () => {
             test("Group By: single column", () => {
                 const column = 'name';

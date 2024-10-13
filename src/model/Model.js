@@ -90,6 +90,17 @@ export class Model {
     }
 
     /**
+     * @param {boolean} conditional
+     * @param {function(Model)} callback
+     * @returns {void}
+     */
+    when(conditional, callback){
+        if (conditional) {
+            callback(this);
+        }
+    }
+
+    /**
      * @param {...string} columns
      * @returns Model
      */
