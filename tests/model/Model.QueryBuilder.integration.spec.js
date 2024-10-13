@@ -27,7 +27,23 @@ describe('Model Query Builder integration Test', () => {
 
            new TestModel();
 
-           expect(queryBuilderTableSpy).toHaveBeenCalledWith('users');
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table);
+       });
+
+       test('static create on model loads config', () => {
+           const queryBuilderTableSpy = vi.spyOn(QueryBuilder.prototype, "table");
+
+           const table = 'users';
+
+           class TestModel extends Model {
+               constructor() {
+                   super({table});
+               }
+           }
+
+           TestModel.first();
+
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table);
        });
 
    });

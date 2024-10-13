@@ -94,7 +94,7 @@ export class Model {
      * @param {function(Model)} callback
      * @returns {void}
      */
-    when(conditional, callback){
+    when(conditional, callback) {
         if (conditional) {
             callback(this);
         }
