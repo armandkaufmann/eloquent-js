@@ -157,7 +157,6 @@ describe("ModelTest", () => {
         });
     });
 
-
     describe("Convenience methods", () => {
         test("All static", () => {
 

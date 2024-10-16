@@ -1,4 +1,4 @@
-import {afterEach, describe, expect, test, vi} from 'vitest';
+import {describe, expect, test, vi} from 'vitest';
 import {Model} from "../../src/model/Model.js";
 import {QueryBuilder} from "../../src/model/QueryBuilder.js";
 
