@@ -1,6 +1,6 @@
 import {describe, expect, test} from 'vitest';
-import {QueryBuilder} from "../../src/model/QueryBuilder.js";
-import {TableNotSetError} from "../../src/model/errors/QueryBuilder/Errors.js";
+import {QueryBuilder} from "../src/QueryBuilder.js";
+import {TableNotSetError} from "../src/errors/QueryBuilder/Errors.js";
 
 describe("QueryBuilderTest", () => {
     describe("Building Query Strings", () => {

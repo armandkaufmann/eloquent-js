@@ -1,6 +1,6 @@
 import {describe, expect, test, vi} from 'vitest';
-import {Model} from "../../src/model/Model.js";
-import {QueryBuilder} from "../../src/model/QueryBuilder.js";
+import {Model} from "../src/Model.js";
+import {QueryBuilder} from "../src/QueryBuilder.js";
 
 describe('Model Query Builder integration Test', () => {
    describe('Initialization', () => {

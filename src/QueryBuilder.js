@@ -1,4 +1,4 @@
-import {Utility} from "../utils/Utility.js";
+import {Utility} from "./utils/Utility.js";
 import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 
 export class QueryBuilder {

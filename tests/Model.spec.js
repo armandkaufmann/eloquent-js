@@ -1,8 +1,8 @@
 import {afterEach, describe, expect, test, vi} from 'vitest';
-import {Model} from "../../src/model/Model.js";
-import {QueryBuilder} from "../../src/model/QueryBuilder.js";
+import {Model} from "../src/Model.js";
+import {QueryBuilder} from "../src/QueryBuilder.js";
 
-vi.mock("../../src/model/QueryBuilder.js", () => {
+vi.mock("../src/QueryBuilder.js", () => {
     const QueryBuilder = vi.fn();
     QueryBuilder.prototype.table = vi.fn().mockReturnThis();
     QueryBuilder.prototype.insert = vi.fn().mockReturnThis();
