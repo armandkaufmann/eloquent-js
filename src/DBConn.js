@@ -24,7 +24,7 @@ export class DBConn {
      */
     async execute(query, bindings) {
         if (!this.#db) {
-            return;
+            return Promise.resolve(null);
         }
 
         const statement = await this.#db.prepare(query);
