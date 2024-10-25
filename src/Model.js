@@ -8,7 +8,7 @@ export class Model {
     #queryBuilder = null;
 
     /**
-     * @param {Object<string, string | number>} [options]
+     * @param {Object} [options]
      */
     constructor(options) {
         this.table = options?.table || this._getTableName();
