@@ -3,6 +3,7 @@ import pluralize from "pluralize"
 import {QueryBuilder} from "./QueryBuilder.js";
 
 export class Model {
+    /** @type string  */
     table = null;
     /** @type QueryBuilder  */
     #queryBuilder = null;

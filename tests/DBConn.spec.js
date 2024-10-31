@@ -16,7 +16,7 @@ describe('DBConn Test', () => {
 
         afterEach(() => {
             vi.clearAllMocks();
-        })
+        });
 
         test.skip('it opens a connection to the database', async () => {
             const db = await DBConn.connect();
