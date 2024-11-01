@@ -3,11 +3,20 @@ import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 
 export class QueryBuilder {
     #table = null;
+    /** @type []  */
     #querySelect = [];
+    /** @type []  */
     #queryWhere = [];
+    /** @type []  */
     #queryGroupBy = [];
+    /** @type []  */
     #queryHaving = [];
+    /** @type []  */
     #queryOrderBy = [];
+    /** @type string  */
+    #queryInsert = "";
+    /** @type string  */
+    #queryUpdate = "";
     #limit = null;
 
     /**
@@ -26,17 +35,11 @@ export class QueryBuilder {
             throw new TableNotSetError("Query Builder");
         }
 
-        let result = "";
+        if (this.#queryInsert) {
+            return this.#queryInsert;
+        }
 
-        [
-            this.#buildSelectQuery(), this.#buildWhereQuery(),
-            this.#buildGroupByQuery(), this.#buildHavingQuery(),
-            this.#buildOrderByQuery(), this.#buildLimitQuery(),
-        ].forEach((queryString, idx) => {
-            queryString !== "" ? result += (idx > 0? ' ': '') + queryString : ''
-        });
-
-        return result;
+        return this.#buildFullSelectQuery();
     }
 
     /**
@@ -50,19 +53,22 @@ export class QueryBuilder {
 
     /**
      * @param {Object} fields
-     * @returns string
+     * @returns QueryBuilder
      */
     insert(fields) {
-        let columns = [];
-        let values = [];
+        this.#queryInsert = this.#buildInsertQuery(fields);
 
-        for (const [column, value] of Object.entries(fields)) {
-            columns.push(column);
-            values.push(value);
-        }
+        return this;
+    }
 
-        return "INSERT INTO " + this.#table + " (" + columns.join(', ') +
-            ") VALUES (" + Utility.valuesToString(values) + ")";
+    /**
+     * @param {Object} fields
+     * @returns QueryBuilder
+     */
+    update(fields) {
+        this.#queryUpdate = this.#buildUpdateQuery(fields);
+
+        return this;
     }
 
     /**
@@ -81,6 +87,7 @@ export class QueryBuilder {
      * @returns QueryBuilder
      */
     where(column, operator, value) {
+        //todo: push where sql into
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.#queryWhere.push(query);
         return this;
@@ -125,6 +132,43 @@ export class QueryBuilder {
     limit(number) {
         this.#limit = number;
         return this;
+    }
+
+    #buildInsertQuery(fields) {
+        let columns = [];
+        let values = [];
+
+        for (const [column, value] of Object.entries(fields)) {
+            columns.push(column);
+            values.push(value);
+        }
+
+        return "INSERT INTO " + this.#table + " (" + columns.join(', ') +
+            ") VALUES (" + Utility.valuesToString(values) + ")";
+    }
+
+    #buildUpdateQuery(fields) {
+        let pairs = [];
+
+        for (const [column, value] of Object.entries(fields)) {
+            pairs.push(`${column}=${value}`)
+        }
+
+        return "UPDATE " + this.#table + " SET " + pairs.join(', ') + " " + this.#buildWhereQuery();
+    }
+
+    #buildFullSelectQuery() {
+        let result = "";
+
+        [
+            this.#buildSelectQuery(), this.#buildWhereQuery(),
+            this.#buildGroupByQuery(), this.#buildHavingQuery(),
+            this.#buildOrderByQuery(), this.#buildLimitQuery(),
+        ].forEach((queryString, idx) => {
+            queryString !== "" ? result += (idx > 0 ? ' ' : '') + queryString : ''
+        });
+
+        return result;
     }
 
     /**

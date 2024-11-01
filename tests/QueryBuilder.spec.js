@@ -120,5 +120,62 @@ describe("QueryBuilderTest", () => {
             });
         });
 
+        describe("Insert", () => {
+            test("Insert query string", () => {
+                const fields = {
+                    name: 'john',
+                    address: '123 Taco Lane Ave St'
+                }
+
+                const result = QueryBuilder
+                    .table('users')
+                    .insert(fields)
+                    .toSql()
+
+                expect(result).toBe("INSERT INTO users (name, address) VALUES ('john', '123 Taco Lane Ave St')");
+            })
+        })
+
+        describe("Update", () => {
+            test("update query string", () => {
+                const fields = {
+                    name: 'john',
+                    address: '123 Taco Lane Ave St'
+                }
+
+                const result = QueryBuilder
+                    .table('users')
+                    .update(fields)
+                    .where('id', '=', 5)
+                    .toSql()
+
+                expect(result).toBe("INSERT INTO users (name, address) VALUES ('john', '123 Taco Lane Ave St')");
+            })
+        })
     });
+
+    // describe("Building Prepare Statement", () => {
+    //     const table = 'users';
+    //
+    //     describe('insert', () => {
+    //         test('insert statement', () => {
+    //             const fields = {
+    //                 name: 'john',
+    //                 address: '123 Taco Lane Ave St'
+    //             }
+    //
+    //             const result = QueryBuilder
+    //                 .table(table)
+    //                 .insert(fields)
+    //                 .toStatement();
+    //
+    //             expect(result.statement).toEqual("INSERT INTO users (:name, :address)")
+    //             expect(result.bindings).toEqual({
+    //                 ':name': fields.name,
+    //                 ':address': fields.address,
+    //             })
+    //         });
+    //
+    //     });
+    // });
 });

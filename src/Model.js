@@ -2,17 +2,27 @@ import {snakeCase} from "change-case";
 import pluralize from "pluralize"
 import {QueryBuilder} from "./QueryBuilder.js";
 
+/**
+ * @typedef {Object} ModelOptions
+ * @property {string|null} table - The table where records of the model exist.
+ * @property {string|null} primaryKey - The primary key of the model in the table
+ */
+
+
 export class Model {
     /** @type string  */
     table = null;
+    /** @type string  */
+    primaryKey;
     /** @type QueryBuilder  */
     #queryBuilder = null;
 
     /**
-     * @param {Object} [options]
+     * @param {ModelOptions} [options]
      */
     constructor(options) {
         this.table = options?.table || this._getTableName();
+        this.primaryKey = options?.primaryKey || 'id';
         this.#queryBuilder = new QueryBuilder().table(this.table);
     }
 
