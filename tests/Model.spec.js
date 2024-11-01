@@ -14,12 +14,14 @@ vi.mock("../src/QueryBuilder.js", () => {
     QueryBuilder.prototype.groupBy = vi.fn().mockReturnThis();
     QueryBuilder.prototype.having = vi.fn().mockReturnThis();
 
-    return { QueryBuilder }
+    return {QueryBuilder}
 })
 
 
 describe("ModelTest", () => {
-    class TestModel extends Model {}
+    class TestModel extends Model {
+    }
+
     const testModelPluralizedName = 'test_models';
     const testModelBaseName = 'TestModel';
 
@@ -41,6 +43,7 @@ describe("ModelTest", () => {
         test("Base class doesn't construct table name if already exists on model", () => {
 
             const table = 'my_table'
+
             class TestModel extends Model {
                 constructor() {
                     super({table});
@@ -56,6 +59,7 @@ describe("ModelTest", () => {
         describe("Create", () => {
             test("Can create a model using table attribute name", () => {
                 const table = 'my_table';
+
                 class TestModel extends Model {
                     constructor() {
                         super({table});
@@ -111,15 +115,15 @@ describe("ModelTest", () => {
         });
 
         describe('When', () => {
-           test('It executes callback when conditional is true', () => {
-               const callbackSpy = vi.fn();
+            test('It executes callback when conditional is true', () => {
+                const callbackSpy = vi.fn();
 
-               let model = new TestModel();
+                let model = new TestModel();
 
-               model.when(true, callbackSpy);
+                model.when(true, callbackSpy);
 
-               expect(callbackSpy).toHaveBeenCalledWith(model);
-           });
+                expect(callbackSpy).toHaveBeenCalledWith(model);
+            });
 
             test('It does not execute call back when conditional is false', () => {
                 const callbackSpy = vi.fn();
@@ -166,18 +170,41 @@ describe("ModelTest", () => {
             expect(QueryBuilder.prototype.toSql).toHaveBeenCalled();
         });
 
-        test("Create static", () => {
+        describe('Create', () => {
+            test("Create static", () => {
 
-            let fields = {
-                test_id: 5,
-                test_name: 'John',
-            };
+                let fields = {
+                    test_id: 5,
+                    test_name: 'John',
+                };
 
-            TestModel.create(fields);
+                TestModel.create(fields);
 
-            expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
-            expect(QueryBuilder.prototype.insert).toHaveBeenCalledWith(fields);
-        });
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(testModelPluralizedName);
+                expect(QueryBuilder.prototype.insert).toHaveBeenCalledWith(fields);
+            });
+
+            test("Create static with table override", () => {
+                const table = 'users';
+
+                class TableOverrideClass extends Model {
+                    constructor() {
+                        super({table});
+                    }
+                }
+
+                let fields = {
+                    test_id: 5,
+                    test_name: 'John',
+                };
+
+                TableOverrideClass.create(fields);
+
+                expect(QueryBuilder.prototype.table).toHaveBeenCalledWith(table);
+                expect(QueryBuilder.prototype.insert).toHaveBeenCalledWith(fields);
+            });
+        })
+
 
         describe("First", () => {
             test("First static", () => {
