@@ -147,9 +147,10 @@ describe("QueryBuilderTest", () => {
                     .table('users')
                     .update(fields)
                     .where('id', '=', 5)
+                    .limit(5)
                     .toSql()
 
-                expect(result).toBe("INSERT INTO users (name, address) VALUES ('john', '123 Taco Lane Ave St')");
+                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE id = 5 LIMIT 5");
             })
         })
     });

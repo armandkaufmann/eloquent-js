@@ -39,6 +39,10 @@ export class QueryBuilder {
             return this.#queryInsert;
         }
 
+        if (this.#queryUpdate) {
+            return this.buildFullUpdateQuery();
+        }
+
         return this.#buildFullSelectQuery();
     }
 
@@ -66,7 +70,7 @@ export class QueryBuilder {
      * @returns QueryBuilder
      */
     update(fields) {
-        this.#queryUpdate = this.#buildUpdateQuery(fields);
+        this.#queryUpdate = this.#saveUpdateQuery(fields);
 
         return this;
     }
@@ -134,6 +138,10 @@ export class QueryBuilder {
         return this;
     }
 
+    /**
+     * @param {Object} fields
+     * @returns string
+     */
     #buildInsertQuery(fields) {
         let columns = [];
         let values = [];
@@ -147,28 +155,36 @@ export class QueryBuilder {
             ") VALUES (" + Utility.valuesToString(values) + ")";
     }
 
-    #buildUpdateQuery(fields) {
+    #saveUpdateQuery(fields) {
         let pairs = [];
 
         for (const [column, value] of Object.entries(fields)) {
-            pairs.push(`${column}=${value}`)
+            pairs.push(`${column} = ${Utility.valuesToString([value])}`)
         }
 
-        return "UPDATE " + this.#table + " SET " + pairs.join(', ') + " " + this.#buildWhereQuery();
+        return "UPDATE " + this.#table + " SET " + pairs.join(', ');
+    }
+
+    /**
+     * @returns string
+     */
+    buildFullUpdateQuery() {
+        const queries = [
+            this.#queryUpdate, this.#buildWhereQuery(),
+            this.#buildOrderByQuery(), this.#buildLimitQuery(),
+        ];
+
+        return this.#joinQueryStrings(queries)
     }
 
     #buildFullSelectQuery() {
-        let result = "";
-
-        [
+        const queries = [
             this.#buildSelectQuery(), this.#buildWhereQuery(),
             this.#buildGroupByQuery(), this.#buildHavingQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
-        ].forEach((queryString, idx) => {
-            queryString !== "" ? result += (idx > 0 ? ' ' : '') + queryString : ''
-        });
+        ];
 
-        return result;
+        return this.#joinQueryStrings(queries);
     }
 
     /**
@@ -247,5 +263,15 @@ export class QueryBuilder {
         }
 
         return "LIMIT " + this.#limit;
+    }
+
+    /**
+     * @param {string[]} queries
+     * @returns string
+     */
+    #joinQueryStrings(queries) {
+        return queries.reduce((result, queryString, index) => {
+            return result += queryString !== "" ? (index > 0 ? ' ' : '') + queryString : ''
+        }, "")
     }
 }
