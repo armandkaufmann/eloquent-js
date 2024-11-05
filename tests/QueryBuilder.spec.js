@@ -35,9 +35,10 @@ describe("QueryBuilderTest", () => {
                     .groupBy('class')
                     .orderBy('id')
                     .having('class', 'LIKE', '%example%')
+                    .offset(5)
                     .toSql();
 
-                const expectedResult = "SELECT id, name FROM my_table WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2"
+                const expectedResult = "SELECT id, name FROM my_table WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -120,6 +121,17 @@ describe("QueryBuilderTest", () => {
             });
         });
 
+        describe("Offset", () => {
+            test("Offset query string", () => {
+                const result = QueryBuilder
+                    .table("users")
+                    .offset(5)
+                    .toSql();
+
+                expect(result).toBe("SELECT * FROM users OFFSET 5")
+            });
+        });
+
         describe("Insert", () => {
             test("Insert query string", () => {
                 const fields = {
@@ -134,10 +146,10 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe("INSERT INTO users (name, address) VALUES ('john', '123 Taco Lane Ave St')");
             })
-        })
+        });
 
         describe("Update", () => {
-            test("update query string", () => {
+            test("Builds full update query string", () => {
                 const fields = {
                     name: 'john',
                     address: '123 Taco Lane Ave St'
@@ -148,11 +160,12 @@ describe("QueryBuilderTest", () => {
                     .update(fields)
                     .where('id', '=', 5)
                     .limit(5)
-                    .toSql()
+                    .offset(5)
+                    .toSql();
 
-                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE id = 5 LIMIT 5");
+                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE id = 5 LIMIT 5 OFFSET 5");
             })
-        })
+        });
     });
 
     // describe("Building Prepare Statement", () => {

@@ -18,6 +18,7 @@ export class QueryBuilder {
     /** @type string  */
     #queryUpdate = "";
     #limit = null;
+    #offset = null;
 
     /**
      * @param {string} table
@@ -40,7 +41,7 @@ export class QueryBuilder {
         }
 
         if (this.#queryUpdate) {
-            return this.buildFullUpdateQuery();
+            return this.#buildFullUpdateQuery();
         }
 
         return this.#buildFullSelectQuery();
@@ -99,7 +100,7 @@ export class QueryBuilder {
 
     /**
      * @param {...string} columns
-     * @returns Model
+     * @returns QueryBuilder
      */
     groupBy(...columns) {
         columns.forEach((column) => this.#queryGroupBy.push(column))
@@ -139,6 +140,15 @@ export class QueryBuilder {
     }
 
     /**
+     * @param {number} number
+     * @returns QueryBuilder
+     */
+    offset(number) {
+        this.#offset = number;
+        return this;
+    }
+
+    /**
      * @param {Object} fields
      * @returns string
      */
@@ -168,10 +178,11 @@ export class QueryBuilder {
     /**
      * @returns string
      */
-    buildFullUpdateQuery() {
+    #buildFullUpdateQuery() {
         const queries = [
             this.#queryUpdate, this.#buildWhereQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
+            this.#buildOffsetQuery(),
         ];
 
         return this.#joinQueryStrings(queries)
@@ -182,6 +193,7 @@ export class QueryBuilder {
             this.#buildSelectQuery(), this.#buildWhereQuery(),
             this.#buildGroupByQuery(), this.#buildHavingQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
+            this.#buildOffsetQuery(),
         ];
 
         return this.#joinQueryStrings(queries);
@@ -266,12 +278,23 @@ export class QueryBuilder {
     }
 
     /**
+     * @returns string
+     */
+    #buildOffsetQuery() {
+        if (!this.#offset) {
+            return "";
+        }
+
+        return "OFFSET " + this.#offset;
+    }
+
+    /**
      * @param {string[]} queries
      * @returns string
      */
     #joinQueryStrings(queries) {
         return queries.reduce((result, queryString, index) => {
             return result += queryString !== "" ? (index > 0 ? ' ' : '') + queryString : ''
-        }, "")
+        }, "");
     }
 }
