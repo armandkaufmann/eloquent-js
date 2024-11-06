@@ -59,7 +59,7 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Or Where", () => {
-               test('does not add or if orWhere is called without an existing where', () => {
+               test('Does not add or if orWhere is called without an existing where', () => {
                    const result = QueryBuilder.table('my_table')
                        .orWhere('test_id', '=', 5)
                        .toSql();
@@ -67,7 +67,18 @@ describe("QueryBuilderTest", () => {
                    const expectedResult = "SELECT * FROM my_table WHERE test_id = 5";
 
                    expect(result).toBe(expectedResult);
-               }) ;
+               });
+
+                test('Adds or in query with where before', () => {
+                    const result = QueryBuilder.table('my_table')
+                        .where('name', '=', 'John')
+                        .orWhere('test_id', '=', 5)
+                        .toSql();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE name = 'John' OR test_id = 5";
+
+                    expect(result).toBe(expectedResult);
+                });
             });
         });
 
