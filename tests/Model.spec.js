@@ -13,6 +13,7 @@ vi.mock("../src/QueryBuilder.js", () => {
     QueryBuilder.prototype.where = vi.fn().mockReturnThis();
     QueryBuilder.prototype.groupBy = vi.fn().mockReturnThis();
     QueryBuilder.prototype.having = vi.fn().mockReturnThis();
+    QueryBuilder.table = vi.fn().mockImplementation((table) => new QueryBuilder().table(table));
 
     return {QueryBuilder}
 })

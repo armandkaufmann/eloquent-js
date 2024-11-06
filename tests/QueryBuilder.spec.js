@@ -57,6 +57,18 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe(expectedResult);
             });
+
+            describe("Or Where", () => {
+               test('does not add or if orWhere is called without an existing where', () => {
+                   const result = QueryBuilder.table('my_table')
+                       .orWhere('test_id', '=', 5)
+                       .toSql();
+
+                   const expectedResult = "SELECT * FROM my_table WHERE test_id = 5";
+
+                   expect(result).toBe(expectedResult);
+               }) ;
+            });
         });
 
         describe("Select", () => {
@@ -145,7 +157,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
 
                 expect(result).toBe("INSERT INTO users (name, address) VALUES ('john', '123 Taco Lane Ave St')");
-            })
+            });
         });
 
         describe("Update", () => {

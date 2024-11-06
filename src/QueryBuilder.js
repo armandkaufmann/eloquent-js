@@ -5,8 +5,8 @@ export class QueryBuilder {
     #table = null;
     /** @type []  */
     #querySelect = [];
-    /** @type []  */
-    #queryWhere = [];
+    /** @type string  */
+    #queryWhere = "";
     /** @type []  */
     #queryGroupBy = [];
     /** @type []  */
@@ -92,9 +92,13 @@ export class QueryBuilder {
      * @returns QueryBuilder
      */
     where(column, operator, value) {
-        //todo: push where sql into
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        this.#queryWhere.push(query);
+        if (this.#queryWhere) {
+            this.#queryWhere += ` AND ${query}`;
+        } else {
+            this.#queryWhere += `WHERE ${query}`;
+        }
+
         return this;
     }
 
@@ -214,14 +218,7 @@ export class QueryBuilder {
      * @returns string
      */
     #buildWhereQuery() {
-        if (this.#queryWhere.length === 0) {
-            return "";
-        }
-
-        let query = "WHERE ";
-        query += this.#queryWhere.join(' AND ');
-
-        return query;
+        return this.#queryWhere;
     }
 
     /**

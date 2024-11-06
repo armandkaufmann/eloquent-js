@@ -23,7 +23,7 @@ export class Model {
     constructor(options= {}) {
         this.table = options?.table || this._getTableName();
         this.primaryKey = options?.primaryKey || 'id';
-        this.#queryBuilder = new QueryBuilder().table(this.table);
+        this.#queryBuilder = QueryBuilder.table(this.table);
     }
 
     /**
