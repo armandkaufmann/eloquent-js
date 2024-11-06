@@ -18,16 +18,16 @@ export class Model {
     #queryBuilder = null;
 
     /**
-     * @param {ModelOptions} [options]
+     * @param {ModelOptions} [options={}]
      */
-    constructor(options) {
+    constructor(options= {}) {
         this.table = options?.table || this._getTableName();
         this.primaryKey = options?.primaryKey || 'id';
         this.#queryBuilder = new QueryBuilder().table(this.table);
     }
 
     /**
-     * @param {Object<string, string | number>} fields
+     * @param {Record<string, any>} fields
      * @returns string
      */
     static create(fields) {
