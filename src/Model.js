@@ -68,7 +68,7 @@ export class Model {
     }
 
     /**
-     * @param {Object<string, string | number>} fields
+     * @param {Record<string, any>} fields
      * @returns string
      */
     create(fields) {
