@@ -57,7 +57,7 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {Object} fields
+     * @param {Record<string, any>} fields
      * @returns QueryBuilder
      */
     insert(fields) {
@@ -67,7 +67,7 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {Object} fields
+     * @param {Record<string, any>} fields
      * @returns QueryBuilder
      */
     update(fields) {
@@ -149,7 +149,7 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {Object} fields
+     * @param {Record<string, any>} fields
      * @returns string
      */
     #buildInsertQuery(fields) {
