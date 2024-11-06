@@ -38,7 +38,7 @@ export class DBConn {
     /**
      * @async
      * @param {string} query
-     * @param {Object} bindings
+     * @param {Record<string, any>} bindings
      * @returns {Promise<null|Object>}
      */
     async execute(query, bindings) {
