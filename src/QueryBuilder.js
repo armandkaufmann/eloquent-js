@@ -103,6 +103,23 @@ export class QueryBuilder {
     }
 
     /**
+     * @param {string} column
+     * @param {string} operator
+     * @param {string | number } value
+     * @returns QueryBuilder
+     */
+    orWhere(column, operator, value) {
+        const query = `${column} ${operator} ${Utility.valuesToString([value])}`
+        if (this.#queryWhere) {
+            this.#queryWhere += ` OR ${query}`;
+        } else {
+            this.#queryWhere += `WHERE ${query}`;
+        }
+
+        return this;
+    }
+
+    /**
      * @param {...string} columns
      * @returns QueryBuilder
      */
