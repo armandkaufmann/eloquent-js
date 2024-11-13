@@ -2,22 +2,25 @@ import {Utility} from "./utils/Utility.js";
 import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 
 export class QueryBuilder {
+    /** @type {?string} */
     #table = null;
-    /** @type []  */
+    /** @type {Array<string>}  */
     #querySelect = [];
     /** @type string  */
     #queryWhere = "";
-    /** @type []  */
+    /** @type {Array<string>}  */
     #queryGroupBy = [];
-    /** @type []  */
+    /** @type {Array<string>}  */
     #queryHaving = [];
-    /** @type []  */
+    /** @type {Array<string>}  */
     #queryOrderBy = [];
-    /** @type string  */
+    /** @type {string}  */
     #queryInsert = "";
-    /** @type string  */
+    /** @type {string}  */
     #queryUpdate = "";
+    /** @type {?number}  */
     #limit = null;
+    /** @type {?number}  */
     #offset = null;
 
     /**
@@ -120,6 +123,31 @@ export class QueryBuilder {
     }
 
     /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    whereIn(column, values) {
+        const inArray = values
+            .reduce((prev, current, index) => {
+                if (index > 0) {
+                    return prev += `, ${Utility.valuesToString([current])}`;
+                }
+
+                return prev += Utility.valuesToString([current]);
+            }, "");
+
+        const query = `${column} IN (${inArray})`
+        if (this.#queryWhere) {
+            this.#queryWhere += ` AND ${query}`;
+        } else {
+            this.#queryWhere += `WHERE ${query}`;
+        }
+
+        return this;
+    }
+
+    /**
      * @param {...string} columns
      * @returns QueryBuilder
      */
@@ -209,6 +237,9 @@ export class QueryBuilder {
         return this.#joinQueryStrings(queries)
     }
 
+    /**
+     * @returns string
+     */
     #buildFullSelectQuery() {
         const queries = [
             this.#buildSelectQuery(), this.#buildWhereQuery(),
@@ -303,7 +334,7 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {string[]} queries
+     * @param {Array<string>} queries
      * @returns string
      */
     #joinQueryStrings(queries) {

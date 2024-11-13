@@ -85,9 +85,10 @@ describe("QueryBuilderTest", () => {
                 test("Builds where in query string", () => {
                     const result = QueryBuilder.table('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
+                        .whereIn('id', [1,5,7])
                         .toSql();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE name IN ('John', 'James', 'Bob')";
+                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') AND id IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
