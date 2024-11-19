@@ -157,6 +157,17 @@ describe("QueryBuilderTest", () => {
             });
         });
 
+        describe("First", () => {
+            test("First query string", () => {
+                const result = new QueryBuilder()
+                    .table('my_table')
+                    .first()
+                    .toSql();
+
+                expect(result).toBe("SELECT * FROM my_table LIMIT 1");
+            });
+        });
+
         describe("Offset", () => {
             test("Offset query string", () => {
                 const result = QueryBuilder

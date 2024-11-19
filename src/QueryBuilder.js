@@ -44,10 +44,10 @@ export class QueryBuilder {
         }
 
         if (this.#queryUpdate) {
-            return this.#buildFullUpdateQuery();
+            return this.#buildFullUpdateSqlQuery();
         }
 
-        return this.#buildFullSelectQuery();
+        return this.#buildFullSelectSqlQuery();
     }
 
     /**
@@ -64,7 +64,7 @@ export class QueryBuilder {
      * @returns QueryBuilder
      */
     insert(fields) {
-        this.#queryInsert = this.#buildInsertQuery(fields);
+        this.#queryInsert = this.#buildInsertSqlQuery(fields);
 
         return this;
     }
@@ -189,6 +189,14 @@ export class QueryBuilder {
     }
 
     /**
+     * @param {number} [number=1]
+     * @returns QueryBuilder
+     */
+    first(number = 1) {
+        return this.limit(number);
+    }
+
+    /**
      * @param {number} number
      * @returns QueryBuilder
      */
@@ -201,7 +209,7 @@ export class QueryBuilder {
      * @param {Record<string, any>} fields
      * @returns string
      */
-    #buildInsertQuery(fields) {
+    #buildInsertSqlQuery(fields) {
         let columns = [];
         let values = [];
 
@@ -227,7 +235,7 @@ export class QueryBuilder {
     /**
      * @returns string
      */
-    #buildFullUpdateQuery() {
+    #buildFullUpdateSqlQuery() {
         const queries = [
             this.#queryUpdate, this.#buildWhereQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
@@ -240,7 +248,7 @@ export class QueryBuilder {
     /**
      * @returns string
      */
-    #buildFullSelectQuery() {
+    #buildFullSelectSqlQuery() {
         const queries = [
             this.#buildSelectQuery(), this.#buildWhereQuery(),
             this.#buildGroupByQuery(), this.#buildHavingQuery(),
