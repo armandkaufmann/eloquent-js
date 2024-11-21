@@ -8,19 +8,36 @@ describe("QueryBuilderTest", () => {
             test("Base query string", () => {
                 const result = new QueryBuilder()
                     .table('my_table')
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 expect(result).toBe("SELECT * FROM my_table");
             });
 
-            test('throws when table is not set', () => {
-                expect(() => new QueryBuilder().toSql()).toThrow(TableNotSetError);
-            });
+            describe("Throws when table is not set", () => {
+                test("Get", () => {
+                    expect(() => new QueryBuilder().get()).toThrow(TableNotSetError);
+                });
+
+                test("First", () => {
+                    expect(() => new QueryBuilder().first()).toThrow(TableNotSetError);
+                });
+
+                test("Insert", () => {
+                    expect(() => new QueryBuilder().insert({taco:'tuesday'})).toThrow(TableNotSetError);
+                });
+
+                test("Update", () => {
+                    expect(() => new QueryBuilder().update({taco:'tuesday'})).toThrow(TableNotSetError);
+                });
+            })
+
 
             test("Select", () => {
                 const result = QueryBuilder
                     .table('my_table')
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 const expectedResult = "SELECT * FROM my_table";
 
@@ -28,7 +45,8 @@ describe("QueryBuilderTest", () => {
             });
 
             test("builds full query in correct order", () => {
-                const result = QueryBuilder.table('my_table')
+                const result = QueryBuilder.toSql()
+                    .table('my_table')
                     .where('name', '=', 'John')
                     .select('id', 'name')
                     .limit(2)
@@ -36,7 +54,7 @@ describe("QueryBuilderTest", () => {
                     .offset(5)
                     .orderBy('id')
                     .having('class', 'LIKE', '%example%')
-                    .toSql();
+                    .get();
 
                 const expectedResult = "SELECT id, name FROM my_table WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2 OFFSET 5"
 
@@ -51,7 +69,8 @@ describe("QueryBuilderTest", () => {
                     .table('my_table')
                     .where('test_id', '=', 5)
                     .where('test_name', '=', 'John')
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 const expectedResult = "SELECT * FROM my_table WHERE test_id = 5 AND test_name = 'John'";
 
@@ -59,21 +78,23 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Or Where", () => {
-               test("Does not add or if orWhere is called without an existing where", () => {
-                   const result = QueryBuilder.table('my_table')
-                       .orWhere('test_id', '=', 5)
-                       .toSql();
+                test("Does not add or if orWhere is called without an existing where", () => {
+                    const result = QueryBuilder.table('my_table')
+                        .orWhere('test_id', '=', 5)
+                        .toSql()
+                        .get();
 
-                   const expectedResult = "SELECT * FROM my_table WHERE test_id = 5";
+                    const expectedResult = "SELECT * FROM my_table WHERE test_id = 5";
 
-                   expect(result).toBe(expectedResult);
-               });
+                    expect(result).toBe(expectedResult);
+                });
 
                 test("Adds or in query with where before", () => {
                     const result = QueryBuilder.table('my_table')
                         .where('name', '=', 'John')
                         .orWhere('test_id', '=', 5)
-                        .toSql();
+                        .toSql()
+                        .get();
 
                     const expectedResult = "SELECT * FROM my_table WHERE name = 'John' OR test_id = 5";
 
@@ -85,8 +106,9 @@ describe("QueryBuilderTest", () => {
                 test("Builds where in query string", () => {
                     const result = QueryBuilder.table('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
-                        .whereIn('id', [1,5,7])
-                        .toSql();
+                        .whereIn('id', [1, 5, 7])
+                        .toSql()
+                        .get();
 
                     const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') AND id IN (1, 5, 7)";
 
@@ -100,7 +122,8 @@ describe("QueryBuilderTest", () => {
                 const result = new QueryBuilder()
                     .table('test_models')
                     .select('test_id', 'test_name')
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 const expectedResult = "SELECT test_id, test_name FROM test_models";
 
@@ -114,7 +137,8 @@ describe("QueryBuilderTest", () => {
                     .table('my_table')
                     .orderBy('test_id')
                     .orderBy('test_name', 'ASC')
-                    .toSql();
+                    .toSql()
+                    .get();
 
 
                 const expectedResult = "SELECT * FROM my_table ORDER BY test_id DESC, test_name ASC";
@@ -128,7 +152,8 @@ describe("QueryBuilderTest", () => {
                 const result = new QueryBuilder()
                     .table('my_table')
                     .groupBy('test_id', 'test_name')
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 expect(result).toBe("SELECT * FROM my_table GROUP BY test_id, test_name");
             });
@@ -140,7 +165,8 @@ describe("QueryBuilderTest", () => {
                     .table('my_table')
                     .having('test_id', '=', 5)
                     .having('test_name', '=', 'test')
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 AND test_name = 'test'");
             });
@@ -151,7 +177,8 @@ describe("QueryBuilderTest", () => {
                 const result = new QueryBuilder()
                     .table('my_table')
                     .limit(1)
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 expect(result).toBe("SELECT * FROM my_table LIMIT 1");
             });
@@ -161,8 +188,8 @@ describe("QueryBuilderTest", () => {
             test("First query string", () => {
                 const result = new QueryBuilder()
                     .table('my_table')
-                    .first()
-                    .toSql();
+                    .toSql()
+                    .first();
 
                 expect(result).toBe("SELECT * FROM my_table LIMIT 1");
             });
@@ -173,7 +200,8 @@ describe("QueryBuilderTest", () => {
                 const result = QueryBuilder
                     .table("users")
                     .offset(5)
-                    .toSql();
+                    .toSql()
+                    .get();
 
                 expect(result).toBe("SELECT * FROM users OFFSET 5")
             });
@@ -187,9 +215,9 @@ describe("QueryBuilderTest", () => {
                 }
 
                 const result = QueryBuilder
-                    .table('users')
-                    .insert(fields)
                     .toSql()
+                    .table('users')
+                    .insert(fields);
 
                 expect(result).toBe("INSERT INTO users (name, address) VALUES ('john', '123 Taco Lane Ave St')");
             });
@@ -203,12 +231,12 @@ describe("QueryBuilderTest", () => {
                 }
 
                 const result = QueryBuilder
+                    .toSql()
                     .table('users')
-                    .update(fields)
                     .where('id', '=', 5)
                     .limit(5)
                     .offset(5)
-                    .toSql();
+                    .update(fields);
 
                 expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE id = 5 LIMIT 5 OFFSET 5");
             })

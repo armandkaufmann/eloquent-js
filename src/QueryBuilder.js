@@ -4,6 +4,8 @@ import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 export class QueryBuilder {
     /** @type {?string} */
     #table = null;
+    /** @type {boolean} */
+    #toSql = false;
     /** @type {Array<string>}  */
     #querySelect = [];
     /** @type string  */
@@ -32,25 +34,6 @@ export class QueryBuilder {
     }
 
     /**
-     * @returns string
-     */
-    toSql() {
-        if (!this.#table) {
-            throw new TableNotSetError("Query Builder");
-        }
-
-        if (this.#queryInsert) {
-            return this.#queryInsert;
-        }
-
-        if (this.#queryUpdate) {
-            return this.#buildFullUpdateSqlQuery();
-        }
-
-        return this.#buildFullSelectSqlQuery();
-    }
-
-    /**
      * @param {string} table
      * @returns QueryBuilder
      */
@@ -59,22 +42,99 @@ export class QueryBuilder {
         return this;
     }
 
+    // /**
+    //  * @returns string
+    //  */
+    // toSql() {
+    //     if (!this.#table) {
+    //         throw new TableNotSetError("Query Builder");
+    //     }
+    //
+    //     if (this.#queryInsert) {
+    //         return this.#queryInsert;
+    //     }
+    //
+    //     if (this.#queryUpdate) {
+    //         return this.#buildFullUpdateSqlQuery();
+    //     }
+    //
+    //     return this.#buildFullSelectSqlQuery();
+    // }
+
     /**
-     * @param {Record<string, any>} fields
      * @returns QueryBuilder
      */
-    insert(fields) {
-        this.#queryInsert = this.#buildInsertSqlQuery(fields);
+    toSql() {
+        this.#toSql = true;
 
         return this;
     }
 
     /**
-     * @param {Record<string, any>} fields
      * @returns QueryBuilder
      */
+    static toSql() {
+        return new QueryBuilder().toSql()
+    }
+
+    /**
+     * @throws TableNotSetError
+     * @returns {string|Model[]|Record<string, any>[]|null}
+     * @description Execute and return the result of the current select query. If the ```QueryBuilder``` has a reference to a model
+     * then it will return the result cast into the referencing ```Model```. If ```toSql()``` is called beforehand, this will return the full query string.
+     * Otherwise, this will
+     */
+    get() {
+        this.#validateTableSet();
+
+        if (this.#toSql) {
+            return this.#buildFullSelectSqlQuery();
+        }
+
+        return null;
+    }
+
+    /**
+     * @returns {string|Model|Record<string, any>|null}
+     * @description Executes the query and retrieves the first result
+     */
+    first() {
+        this.#validateTableSet();
+
+        this.limit(1);
+
+        if (this.#toSql) {
+            return this.#buildFullSelectSqlQuery();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param {Record<string, any>} fields
+     * @returns {string|Model|Record<string, any>|null}
+     * @description Executes the query and returns the newly created record
+     */
+    insert(fields) {
+        this.#validateTableSet();
+
+        if (this.#toSql) {
+            return this.#buildInsertSqlQuery(fields);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param {Record<string, any>} fields
+     * @returns {string|Model|Record<string, any>|null}
+     */
     update(fields) {
-        this.#queryUpdate = this.#saveUpdateQuery(fields);
+        this.#validateTableSet();
+
+        if (this.#toSql) {
+            return this.#buildFullUpdateSqlQuery(fields);
+        }
 
         return this;
     }
@@ -189,14 +249,6 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {number} [number=1]
-     * @returns QueryBuilder
-     */
-    first(number = 1) {
-        return this.limit(number);
-    }
-
-    /**
      * @param {number} number
      * @returns QueryBuilder
      */
@@ -222,7 +274,7 @@ export class QueryBuilder {
             ") VALUES (" + Utility.valuesToString(values) + ")";
     }
 
-    #saveUpdateQuery(fields) {
+    #buildPartialSqlQuery(fields) {
         let pairs = [];
 
         for (const [column, value] of Object.entries(fields)) {
@@ -235,9 +287,11 @@ export class QueryBuilder {
     /**
      * @returns string
      */
-    #buildFullUpdateSqlQuery() {
+    #buildFullUpdateSqlQuery(fields) {
+        const queryUpdate = this.#buildPartialSqlQuery(fields);
+
         const queries = [
-            this.#queryUpdate, this.#buildWhereQuery(),
+            queryUpdate, this.#buildWhereQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
@@ -349,5 +403,14 @@ export class QueryBuilder {
         return queries.reduce((result, queryString, index) => {
             return result += queryString !== "" ? (index > 0 ? ' ' : '') + queryString : ''
         }, "");
+    }
+
+    /**
+     * @throws TableNotSetError
+     */
+    #validateTableSet() {
+        if (!this.#table) {
+            throw new TableNotSetError("Query Builder");
+        }
     }
 }
