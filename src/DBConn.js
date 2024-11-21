@@ -28,10 +28,29 @@ export class DBConn {
     }
 
     /**
+     * @async
+     * @param {Object} [options={}]
+     * @returns DBConn
+     */
+    async connect(options = {}){
+        if (this.db) {
+            return this;
+        }
+
+        const filename = options.filename || '/tmp/database.sqlite';
+        this.db = await open({
+            filename,
+            driver: sqlite3.Database
+        });
+
+        return this;
+    }
+
+    /**
      * @returns void
      */
-    close() {
-        this.db.close();
+    async close() {
+        await this.db.close();
         this.db = null;
     }
 
