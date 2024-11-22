@@ -16,10 +16,6 @@ export class QueryBuilder {
     #queryHaving = [];
     /** @type {Array<string>}  */
     #queryOrderBy = [];
-    /** @type {string}  */
-    #queryInsert = "";
-    /** @type {string}  */
-    #queryUpdate = "";
     /** @type {?number}  */
     #limit = null;
     /** @type {?number}  */
@@ -41,25 +37,6 @@ export class QueryBuilder {
         this.#table = table;
         return this;
     }
-
-    // /**
-    //  * @returns string
-    //  */
-    // toSql() {
-    //     if (!this.#table) {
-    //         throw new TableNotSetError("Query Builder");
-    //     }
-    //
-    //     if (this.#queryInsert) {
-    //         return this.#queryInsert;
-    //     }
-    //
-    //     if (this.#queryUpdate) {
-    //         return this.#buildFullUpdateSqlQuery();
-    //     }
-    //
-    //     return this.#buildFullSelectSqlQuery();
-    // }
 
     /**
      * @returns QueryBuilder
@@ -91,6 +68,7 @@ export class QueryBuilder {
             return this.#buildFullSelectSqlQuery();
         }
 
+        //TODO: use DBConn to execute statement
         return null;
     }
 
@@ -107,6 +85,7 @@ export class QueryBuilder {
             return this.#buildFullSelectSqlQuery();
         }
 
+        //TODO: use DBConn to execute statement
         return null;
     }
 
@@ -122,6 +101,7 @@ export class QueryBuilder {
             return this.#buildInsertSqlQuery(fields);
         }
 
+        //TODO: use DBConn to execute statement
         return null;
     }
 
@@ -136,6 +116,7 @@ export class QueryBuilder {
             return this.#buildFullUpdateSqlQuery(fields);
         }
 
+        //TODO: use DBConn to execute statement
         return this;
     }
 
