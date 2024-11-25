@@ -4,8 +4,8 @@ import {QueryBuilder} from "./QueryBuilder.js";
 
 /**
  * @typedef {Object} ModelOptions
- * @property {string|null} table - The table where records of the model exist.
- * @property {string|null} primaryKey - The primary key of the model in the table
+ * @property {?string} table - The table where records of the model exist.
+ * @property {?string} primaryKey - The primary key of the model in the table
  */
 
 

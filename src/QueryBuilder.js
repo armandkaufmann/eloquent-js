@@ -4,6 +4,8 @@ import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 export class QueryBuilder {
     /** @type {?string} */
     #table = null;
+    /** @type {?Model} */
+    #model = null;
     /** @type {boolean} */
     #toSql = false;
     /** @type {Array<string>}  */
@@ -30,6 +32,21 @@ export class QueryBuilder {
     }
 
     /**
+     * @returns QueryBuilder
+     */
+    static toSql() {
+        return new QueryBuilder().toSql()
+    }
+
+    /**
+     * @param {Model} model
+     * @returns QueryBuilder
+     */
+    static castResultTo(model) {
+        return new QueryBuilder().castResultTo(model)
+    }
+
+    /**
      * @param {string} table
      * @returns QueryBuilder
      */
@@ -48,10 +65,13 @@ export class QueryBuilder {
     }
 
     /**
+     * @param {Model} model
      * @returns QueryBuilder
      */
-    static toSql() {
-        return new QueryBuilder().toSql()
+    castResultTo(model) {
+        this.#model = model;
+
+        return this;
     }
 
     /**
