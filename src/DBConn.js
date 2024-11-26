@@ -2,7 +2,7 @@ import sqlite3 from 'sqlite3'
 import {open} from 'sqlite'
 
 export class DBConn {
-    /** @type {Database|null} */
+    /** @type {?Database} */
     db = null;
 
     /**
@@ -58,9 +58,9 @@ export class DBConn {
      * @async
      * @param {string} query
      * @param {Record<string, any>} bindings
-     * @returns {Promise<null|Object>}
+     * @returns {Promise<null|Object[]>}
      */
-    async execute(query, bindings) {
+    async all(query, bindings) {
         if (!this.db) {
             return Promise.resolve(null);
         }
@@ -68,4 +68,15 @@ export class DBConn {
         const statement = await this.db.prepare(query);
         return await statement.all(bindings);
     }
+
+    /**
+     * @async
+     * @param {string} query
+     * @param {string[]} bindings
+     * @returns {Promise<null|Object>}
+     */
+    async get(query, bindings){
+        return this.db.get(query, bindings);
+    }
+
 }

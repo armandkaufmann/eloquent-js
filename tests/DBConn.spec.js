@@ -3,21 +3,24 @@ import {DBConn} from "../src/DBConn.js";
 import {open, dbMock} from 'sqlite';
 import sqlite3 from "sqlite3";
 
+vi.mock('sqlite', () => {
+    const sqliteMock = {
+        prepare: vi.fn().mockReturnThis(),
+        get: vi.fn().mockResolvedValue({}),
+        all: vi.fn().mockResolvedValue({}),
+    }
+
+    const open = vi.fn().mockResolvedValue(sqliteMock);
+
+    return {open, dbMock: sqliteMock}
+});
 
 describe('DBConn Test', () => {
+    afterEach(() => {
+        vi.clearAllMocks();
+    });
+
     describe('connect', () => {
-        beforeEach(() => {
-            vi.mock('sqlite', () => {
-                const open = vi.fn();
-
-                return {open}
-            });
-        });
-
-        afterEach(() => {
-            vi.clearAllMocks();
-        });
-
         test.skip('it opens a connection to the database', async () => {
             const db = await DBConn.connect();
 
@@ -28,30 +31,13 @@ describe('DBConn Test', () => {
         });
     });
 
-    describe('execute', () => {
-        beforeEach(() => {
-            vi.mock('sqlite', () => {
-                const sqliteMock = {
-                    prepare: vi.fn().mockReturnThis(),
-                    all: vi.fn(),
-                }
-
-                const open = vi.fn().mockResolvedValue(sqliteMock);
-
-                return {open, dbMock: sqliteMock}
-            });
-        });
-
-        afterEach(() => {
-            vi.clearAllMocks();
-        })
-
-        test('it prepares and binds statements', async () => {
+    describe("All", () => {
+        test("it prepares and binds statements", async () => {
             const db = await DBConn.connect();
             const query = 'SELECT * FROM users WHERE name=1';
             const bindings = {1 : 'John'};
 
-            await db.execute(query, bindings);
+            await db.all(query, bindings);
 
             expect(dbMock.prepare).toHaveBeenCalledOnce();
             expect(dbMock.prepare).toHaveBeenCalledWith(query);
@@ -60,19 +46,32 @@ describe('DBConn Test', () => {
             expect(dbMock.all).toHaveBeenCalledWith(bindings);
         });
 
-        test('it does not prepare and bind if there is no db', async () => {
-            open = vi.fn().mockResolvedValue(null)
+        test("it does not prepare and bind if there is no db", async () => {
+            open.mockImplementationOnce(async() => null);
 
             const db = await DBConn.connect();
             const query = 'SELECT * FROM users WHERE name=1';
-            const bindings = {1 : 'John'};
+            const bindings = {1 : "John"};
 
-            await db.execute(query, bindings);
+            await db.all(query, bindings);
 
             expect(dbMock.prepare).not.toHaveBeenCalled();
 
             expect(dbMock.all).not.toHaveBeenCalled();
         });
+    });
 
+    describe("Get", () => {
+        test("Gets a single row", async () => {
+            const db = await DBConn.connect();
+            const query = 'SELECT * FROM users WHERE name=?';
+            const bindings = ["John"];
+
+            const result = await db.get(query, bindings);
+
+            expect(result).toEqual({});
+
+            expect(dbMock.get).toHaveBeenCalledWith(query, bindings);
+        })
     });
 })
