@@ -171,11 +171,7 @@ export class QueryBuilder {
      */
     where(column, operator, value) {
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        if (this.#queryWhere) {
-            this.#queryWhere += ` AND ${query}`;
-        } else {
-            this.#queryWhere += `WHERE ${query}`;
-        }
+        this.#queryWhere += this.#buildWherePartialQueryString(query);
 
         return this;
     }
@@ -188,11 +184,7 @@ export class QueryBuilder {
      */
     orWhere(column, operator, value) {
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        if (this.#queryWhere) {
-            this.#queryWhere += ` OR ${query}`;
-        } else {
-            this.#queryWhere += `WHERE ${query}`;
-        }
+        this.#queryWhere += this.#buildWherePartialQueryString(query, 'OR');
 
         return this;
     }
@@ -213,13 +205,22 @@ export class QueryBuilder {
             }, "");
 
         const query = `${column} IN (${inArray})`
-        if (this.#queryWhere) {
-            this.#queryWhere += ` AND ${query}`;
-        } else {
-            this.#queryWhere += `WHERE ${query}`;
-        }
+        this.#queryWhere += this.#buildWherePartialQueryString(query);
 
         return this;
+    }
+
+    /**
+     * @param {string} query
+     * @param {string|null|'AND'|'OR'} [condition='AND']
+     * @returns string
+     */
+    #buildWherePartialQueryString(query, condition = 'AND') {
+        if (this.#queryWhere) {
+            return ` ${condition} ${query}`;
+        } else {
+            return `WHERE ${query}`;
+        }
     }
 
     /**
