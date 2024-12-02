@@ -141,6 +141,20 @@ export class QueryBuilder {
     }
 
     /**
+     * @returns {boolean} - returns true if the record was successfully deleted, false if not.
+     */
+    delete() {
+        this.#validateTableSet();
+
+        if (this.#toSql) {
+            return this.#buildFullDeleteSqlQuery();
+        }
+
+        //TODO: use DBConn to execute statement
+        return true;
+    }
+
+    /**
      * @param {...string} columns
      * @returns QueryBuilder
      */
@@ -275,7 +289,22 @@ export class QueryBuilder {
             ") VALUES (" + Utility.valuesToString(values) + ")";
     }
 
-    #buildPartialSqlQuery(fields) {
+    /**
+     * @returns string
+     */
+    #buildFullUpdateSqlQuery(fields) {
+        const queryUpdate = this.#buildPartialUpdateSqlQuery(fields);
+
+        const queries = [
+            queryUpdate, this.#buildWhereQuery(),
+            this.#buildOrderByQuery(), this.#buildLimitQuery(),
+            this.#buildOffsetQuery(),
+        ];
+
+        return this.#joinQueryStrings(queries)
+    }
+
+    #buildPartialUpdateSqlQuery(fields) {
         let pairs = [];
 
         for (const [column, value] of Object.entries(fields)) {
@@ -288,16 +317,20 @@ export class QueryBuilder {
     /**
      * @returns string
      */
-    #buildFullUpdateSqlQuery(fields) {
-        const queryUpdate = this.#buildPartialSqlQuery(fields);
+    #buildFullDeleteSqlQuery() {
+        const queryDelete = this.#buildPartialDeleteSqlQuery();
 
         const queries = [
-            queryUpdate, this.#buildWhereQuery(),
+            queryDelete, this.#buildWhereQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
 
         return this.#joinQueryStrings(queries)
+    }
+
+    #buildPartialDeleteSqlQuery() {
+        return "DELETE FROM " + this.#table;
     }
 
     /**

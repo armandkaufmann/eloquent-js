@@ -241,6 +241,21 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE id = 5 LIMIT 5 OFFSET 5");
             })
         });
+
+        describe("Delete", () => {
+            test("Builds full delete query string", () => {
+                const result = QueryBuilder
+                    .toSql()
+                    .table('users')
+                    .orderBy('name', "ASC")
+                    .where('name', '=', 'john')
+                    .limit(1)
+                    .offset(1)
+                    .delete();
+
+                expect(result).toBe("DELETE FROM users WHERE name = 'john' ORDER BY name ASC LIMIT 1 OFFSET 1");
+            })
+        })
     });
 
     // describe("Building Prepare Statement", () => {
