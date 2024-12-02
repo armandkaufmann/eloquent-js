@@ -1,5 +1,5 @@
 import {describe, beforeEach, afterEach, expect, test, vi} from 'vitest';
-import {DBConn} from "../src/DBConn.js";
+import {DB} from "../src/DB.js";
 import {open, dbMock} from 'sqlite';
 import sqlite3 from "sqlite3";
 
@@ -22,7 +22,7 @@ describe('DBConn Test', () => {
 
     describe('connect', () => {
         test.skip('it opens a connection to the database', async () => {
-            const db = await DBConn.connect();
+            const db = await DB.connect();
 
             expect(open).toHaveBeenCalledWith({
                 filename: '/tmp/database.db',
@@ -33,7 +33,7 @@ describe('DBConn Test', () => {
 
     describe("All", () => {
         test("it prepares and binds statements", async () => {
-            const db = await DBConn.connect();
+            const db = await DB.connect();
             const query = 'SELECT * FROM users WHERE name=1';
             const bindings = {1 : 'John'};
 
@@ -49,7 +49,7 @@ describe('DBConn Test', () => {
         test("it does not prepare and bind if there is no db", async () => {
             open.mockImplementationOnce(async() => null);
 
-            const db = await DBConn.connect();
+            const db = await DB.connect();
             const query = 'SELECT * FROM users WHERE name=1';
             const bindings = {1 : "John"};
 
@@ -63,7 +63,7 @@ describe('DBConn Test', () => {
 
     describe("Get", () => {
         test("Gets a single row", async () => {
-            const db = await DBConn.connect();
+            const db = await DB.connect();
             const query = 'SELECT * FROM users WHERE name=?';
             const bindings = ["John"];
 

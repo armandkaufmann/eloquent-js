@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3'
 import {open} from 'sqlite'
 
-export class DBConn {
+export class DB {
     /** @type {?Database} */
     db = null;
 
@@ -15,7 +15,7 @@ export class DBConn {
     /**
      * @async
      * @param {Object} [options={}]
-     * @returns DBConn
+     * @returns DB
      */
     static async connect(options = {}){
         const filename = options.filename || '/tmp/database.sqlite';
@@ -24,13 +24,13 @@ export class DBConn {
             driver: sqlite3.Database
         });
 
-        return new DBConn(db);
+        return new DB(db);
     }
 
     /**
      * @async
      * @param {Object} [options={}]
-     * @returns DBConn
+     * @returns DB
      */
     async connect(options = {}){
         if (this.db) {
