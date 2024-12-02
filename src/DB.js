@@ -49,7 +49,7 @@ export class DB {
     /**
      * @returns void
      */
-    async close() {
+    async disconnect() {
         await this.db.close();
         this.db = null;
     }
