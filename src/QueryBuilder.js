@@ -183,11 +183,12 @@ export class QueryBuilder {
 
     /**
      * @param {function} callback
+     * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
-    #handleWhereCallback(callback){
+    #handleWhereCallback(callback, condition = "AND"){
         if (this.#queryWhere) {
-            this.#queryWhere += " AND ("
+            this.#queryWhere += ` ${condition} (`
         } else {
             this.#queryWhere += "WHERE (";
         }
@@ -199,12 +200,17 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {string} column
+     * @param {string|function} column
      * @param {string} operator
-     * @param {string | number } value
+     * @param {string|number } value
      * @returns QueryBuilder
      */
     orWhere(column, operator, value) {
+        if (typeof column === "function") {
+            this.#handleWhereCallback(column, "OR");
+            return this;
+        }
+
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.#queryWhere += this.#buildWherePartialQueryString(query, 'OR');
 
