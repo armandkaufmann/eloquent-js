@@ -164,16 +164,38 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {string} column
+     * @param {string|function} column
      * @param {string} operator
-     * @param {string | number } value
+     * @param {string | number} value
      * @returns QueryBuilder
      */
     where(column, operator, value) {
+        if (typeof column === "function") {
+            this.#handleWhereCallback(column);
+            return this;
+        }
+
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.#queryWhere += this.#buildWherePartialQueryString(query);
 
         return this;
+    }
+
+    /**
+     * @param {function} callback
+     * @returns void
+     */
+    #handleWhereCallback(callback){
+        if (this.#queryWhere) {
+            this.#queryWhere += " AND ("
+        } else {
+            this.#queryWhere += "WHERE (";
+        }
+
+        callback(this);
+
+        this.#queryWhere += ")";
+        //TODO: flip the flag to false
     }
 
     /**
@@ -216,11 +238,15 @@ export class QueryBuilder {
      * @returns string
      */
     #buildWherePartialQueryString(query, condition = 'AND') {
-        if (this.#queryWhere) {
+        if (this.#queryWhere && (this.#queryWhere.slice(-1) !== '(')) {
             return ` ${condition} ${query}`;
-        } else {
-            return `WHERE ${query}`;
         }
+
+        if (this.#queryWhere && (this.#queryWhere.slice(-1) === '(')) {
+            return `${query}`;
+        }
+
+        return `WHERE ${query}`;
     }
 
     /**

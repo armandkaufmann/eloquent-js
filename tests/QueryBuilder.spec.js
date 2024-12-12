@@ -115,6 +115,43 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
             });
+
+            describe("Where callback", () => {
+                test("It groups where statement with callback", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .where(($query) => {
+                            $query
+                                .where('name', '=', 'John')
+                                .orWhere('id', '>', 1);
+                        })
+                        .where('age', '>', 90)
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE (name = 'John' OR id > 1) AND age > 90";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("It can correctly add grouped where with an existing where", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .where('age', '>', 90)
+                        .where(($query) => {
+                            $query
+                                .where('name', '=', 'John')
+                                .orWhere('id', '>', 1);
+                        })
+                        .orWhere('position', '=', 'accountant')
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE age > 90 AND (name = 'John' OR id > 1) OR position = 'accountant'";
+
+                    expect(result).toBe(expectedResult);
+                });
+            })
         });
 
         describe("Select", () => {

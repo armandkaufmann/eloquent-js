@@ -18,7 +18,6 @@ vi.mock("../src/QueryBuilder.js", () => {
     return {QueryBuilder}
 })
 
-
 describe("ModelTest", () => {
     class TestModel extends Model {
     }
