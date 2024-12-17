@@ -141,7 +141,7 @@ export class QueryBuilder {
     }
 
     /**
-     * @returns {boolean} - returns true if the record was successfully deleted, false if not.
+     * @returns {boolean|string} - returns true if the record was successfully deleted, false if not.
      */
     delete() {
         this.#validateTableSet();
@@ -164,15 +164,20 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {string|function} column
+     * @param {string|{(query: QueryBuilder)}} column
      * @param {string} operator
-     * @param {string | number} value
+     * @param {string|number|null} [value=null]
      * @returns QueryBuilder
      */
-    where(column, operator, value) {
+    where(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleWhereCallback(column);
             return this;
+        }
+
+        if (!value) {
+            value = operator;
+            operator = '=';
         }
 
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
@@ -182,7 +187,30 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {function} callback
+     * @param {string|{(query: QueryBuilder)}} column
+     * @param {string} operator
+     * @param {string|number|null} [value=null]
+     * @returns QueryBuilder
+     */
+    orWhere(column, operator, value = null) {
+        if (typeof column === "function") {
+            this.#handleWhereCallback(column, "OR");
+            return this;
+        }
+
+        if (!value) {
+            value = operator;
+            operator = '=';
+        }
+
+        const query = `${column} ${operator} ${Utility.valuesToString([value])}`
+        this.#queryWhere += this.#buildWherePartialQueryString(query, 'OR');
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: QueryBuilder)}} callback
      * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
@@ -196,25 +224,6 @@ export class QueryBuilder {
         callback(this);
 
         this.#queryWhere += ")";
-        //TODO: flip the flag to false
-    }
-
-    /**
-     * @param {string|function} column
-     * @param {string} operator
-     * @param {string|number } value
-     * @returns QueryBuilder
-     */
-    orWhere(column, operator, value) {
-        if (typeof column === "function") {
-            this.#handleWhereCallback(column, "OR");
-            return this;
-        }
-
-        const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        this.#queryWhere += this.#buildWherePartialQueryString(query, 'OR');
-
-        return this;
     }
 
     /**

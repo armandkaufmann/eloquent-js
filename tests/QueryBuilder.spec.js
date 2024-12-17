@@ -77,6 +77,19 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe(expectedResult);
             });
 
+            test("Operator defaults to equals when omitted", () => {
+                const result = new QueryBuilder()
+                    .table('my_table')
+                    .where('test_id', 5)
+                    .where('test_name','John')
+                    .toSql()
+                    .get();
+
+                const expectedResult = "SELECT * FROM my_table WHERE test_id = 5 AND test_name = 'John'";
+
+                expect(result).toBe(expectedResult);
+            });
+
             describe("Or Where", () => {
                 test("Does not add or if orWhere is called without an existing where", () => {
                     const result = QueryBuilder.table('my_table')
@@ -93,6 +106,18 @@ describe("QueryBuilderTest", () => {
                     const result = QueryBuilder.table('my_table')
                         .where('name', '=', 'John')
                         .orWhere('test_id', '=', 5)
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE name = 'John' OR test_id = 5";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Operator defaults to equals when omitted", () => {
+                    const result = QueryBuilder.table('my_table')
+                        .where('name', '=', 'John')
+                        .orWhere('test_id',5)
                         .toSql()
                         .get();
 
@@ -153,7 +178,6 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe(expectedResult);
                     });
                 });
-
 
                 describe("Or Where", () => {
                     test("It groups or where statement with callback in typical use case", () => {
