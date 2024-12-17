@@ -249,7 +249,7 @@ export class QueryBuilder {
 
     /**
      * @param {string} query
-     * @param {string|null|'AND'|'OR'} [condition='AND']
+     * @param {string|'AND'|'OR'} [condition='AND']
      * @returns string
      */
     #buildWherePartialQueryString(query, condition = 'AND') {
