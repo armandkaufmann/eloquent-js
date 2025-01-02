@@ -230,6 +230,21 @@ describe("QueryBuilderTest", () => {
             });
         });
 
+        describe("Join", () => {
+           test('builds query to join a table', () => {
+               const result = new QueryBuilder()
+                   .table('users')
+                   .select('users.id', 'users.name', 'posts.title')
+                   .join('posts', 'users.id', '=', 'posts.user_id')
+                   .toSql()
+                   .get();
+
+               const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts on users.id = posts.user_id";
+
+               expect(result).toBe(expectedResult);
+           });
+        });
+
         describe("Order by", () => {
             test("Order by query string", () => {
                 const result = new QueryBuilder()

@@ -11,6 +11,8 @@ export class QueryBuilder {
     /** @type {Array<string>}  */
     #querySelect = [];
     /** @type string  */
+    #queryJoin = "";
+    /** @type string  */
     #queryWhere = "";
     /** @type {Array<string>}  */
     #queryGroupBy = [];
@@ -160,6 +162,18 @@ export class QueryBuilder {
      */
     select(...columns) {
         columns.forEach((column) => this.#querySelect.push(column))
+        return this;
+    }
+
+    /**
+     * @param {string} table
+     * @param {string} localKey
+     * @param {string} operator
+     * @param {string} foreignKey
+     * @returns QueryBuilder
+     */
+    join(table, localKey, operator, foreignKey) {
+        this.#queryJoin = `INNER JOIN ${table} on ${localKey} ${operator} ${foreignKey}`;
         return this;
     }
 
@@ -380,7 +394,7 @@ export class QueryBuilder {
      */
     #buildFullSelectSqlQuery() {
         const queries = [
-            this.#buildSelectQuery(), this.#buildWhereQuery(),
+            this.#buildSelectQuery(), this.#buildJoinQuery(), this.#buildWhereQuery(),
             this.#buildGroupByQuery(), this.#buildHavingQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
@@ -398,6 +412,13 @@ export class QueryBuilder {
         query += ' FROM ' + this.#table;
 
         return query;
+    }
+
+    /**
+     * @returns string
+     */
+    #buildJoinQuery() {
+        return this.#queryJoin;
     }
 
     /**
