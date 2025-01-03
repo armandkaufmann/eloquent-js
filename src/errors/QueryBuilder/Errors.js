@@ -10,3 +10,14 @@ export class TableNotSetError extends Error {
         this.name = "TableNotSetError";
     }
 }
+
+export class InvalidComparisonOperatorError extends Error {
+    constructor(operator) {
+        let message = `\nAttempting to build a query with an invalid comparison operator: ${operator}.`
+        message += `\nPlease ensure that a valid operator is used with the QueryBuilder:`;
+        message += `\n\t==, =, !=, <>, >, <, >=, <=, !<, !>`;
+
+        super(message);
+        this.name = "InvalidComparisonOperatorError";
+    }
+}

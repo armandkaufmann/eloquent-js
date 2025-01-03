@@ -1,6 +1,6 @@
 import {describe, expect, test} from 'vitest';
 import {QueryBuilder} from "../src/QueryBuilder.js";
-import {TableNotSetError} from "../src/errors/QueryBuilder/Errors.js";
+import {InvalidComparisonOperatorError, TableNotSetError} from "../src/errors/QueryBuilder/Errors.js";
 
 describe("QueryBuilderTest", () => {
     describe("Building Query Strings", () => {
@@ -24,11 +24,11 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("Insert", () => {
-                    expect(() => new QueryBuilder().insert({taco:'tuesday'})).toThrow(TableNotSetError);
+                    expect(() => new QueryBuilder().insert({taco: 'tuesday'})).toThrow(TableNotSetError);
                 });
 
                 test("Update", () => {
-                    expect(() => new QueryBuilder().update({taco:'tuesday'})).toThrow(TableNotSetError);
+                    expect(() => new QueryBuilder().update({taco: 'tuesday'})).toThrow(TableNotSetError);
                 });
             })
 
@@ -81,7 +81,7 @@ describe("QueryBuilderTest", () => {
                 const result = new QueryBuilder()
                     .table('my_table')
                     .where('test_id', 5)
-                    .where('test_name','John')
+                    .where('test_name', 'John')
                     .toSql()
                     .get();
 
@@ -117,7 +117,7 @@ describe("QueryBuilderTest", () => {
                 test("Operator defaults to equals when omitted", () => {
                     const result = QueryBuilder.table('my_table')
                         .where('name', '=', 'John')
-                        .orWhere('test_id',5)
+                        .orWhere('test_id', 5)
                         .toSql()
                         .get();
 
@@ -231,18 +231,18 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Join", () => {
-           test('builds query to join a table', () => {
-               const result = new QueryBuilder()
-                   .table('users')
-                   .select('users.id', 'users.name', 'posts.title')
-                   .join('posts', 'users.id', '=', 'posts.user_id')
-                   .toSql()
-                   .get();
+            test('builds query to join a table', () => {
+                const result = new QueryBuilder()
+                    .table('users')
+                    .select('users.id', 'users.name', 'posts.title')
+                    .join('posts', 'users.id', '=', 'posts.user_id')
+                    .toSql()
+                    .get();
 
-               const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts on users.id = posts.user_id";
+                const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts on users.id = posts.user_id";
 
-               expect(result).toBe(expectedResult);
-           });
+                expect(result).toBe(expectedResult);
+            });
         });
 
         describe("Order by", () => {
@@ -372,28 +372,39 @@ describe("QueryBuilderTest", () => {
         })
     });
 
-    // describe("Building Prepare Statement", () => {
-    //     const table = 'users';
-    //
-    //     describe('insert', () => {
-    //         test('insert statement', () => {
-    //             const fields = {
-    //                 name: 'john',
-    //                 address: '123 Taco Lane Ave St'
-    //             }
-    //
-    //             const result = QueryBuilder
-    //                 .table(table)
-    //                 .insert(fields)
-    //                 .toStatement();
-    //
-    //             expect(result.statement).toEqual("INSERT INTO users (:name, :address)")
-    //             expect(result.bindings).toEqual({
-    //                 ':name': fields.name,
-    //                 ':address': fields.address,
-    //             })
-    //         });
-    //
-    //     });
-    // });
+    describe("Validation", () => {
+        describe("Comparison Operators", () => {
+            const operators = [
+                [null, false],
+                ["o", false],
+                ["taco", false],
+                ["!", false],
+                ["===", false],
+                ["==", true],
+                ["=", true],
+                ["!=", true],
+                ["<>", true],
+                [">", true],
+                ["<", true],
+                [">=", true],
+                ["<=", true],
+                ["!<", true],
+                ["!>", true],
+            ];
+
+            test.each(operators)('validating that %s is %s', (operator, isValid) => {
+                if (!isValid) {
+                    expect(() => QueryBuilder.table("users").join("posts", 'id', operator, 'id')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => QueryBuilder.table("users").where("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => QueryBuilder.table("users").orWhere("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => QueryBuilder.table("users").having("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                } else {
+                    expect(() => QueryBuilder.table("users").join("posts", 'id', operator, 'id')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => QueryBuilder.table("users").where("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => QueryBuilder.table("users").orWhere("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => QueryBuilder.table("users").having("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                }
+            });
+        });
+    });
 });

@@ -1,5 +1,5 @@
 import {Utility} from "./utils/Utility.js";
-import {TableNotSetError} from "./errors/QueryBuilder/Errors.js";
+import {InvalidComparisonOperatorError, TableNotSetError} from "./errors/QueryBuilder/Errors.js";
 
 export class QueryBuilder {
     /** @type {?string} */
@@ -171,17 +171,21 @@ export class QueryBuilder {
      * @param {string} operator
      * @param {string} foreignKey
      * @returns QueryBuilder
+     * @throws InvalidComparisonOperatorError
      */
     join(table, localKey, operator, foreignKey) {
+        this.#validateComparisonOperator(operator);
+
         this.#queryJoin = `INNER JOIN ${table} on ${localKey} ${operator} ${foreignKey}`;
         return this;
     }
 
     /**
      * @param {string|{(query: QueryBuilder)}} column
-     * @param {string} operator
+     * @param {string|null} operator
      * @param {string|number|null} [value=null]
      * @returns QueryBuilder
+     * @throws InvalidComparisonOperatorError
      */
     where(column, operator, value = null) {
         if (typeof column === "function") {
@@ -194,6 +198,8 @@ export class QueryBuilder {
             operator = '=';
         }
 
+        this.#validateComparisonOperator(operator);
+
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.#queryWhere += this.#buildWherePartialQueryString(query);
 
@@ -205,6 +211,7 @@ export class QueryBuilder {
      * @param {string} operator
      * @param {string|number|null} [value=null]
      * @returns QueryBuilder
+     * @throws InvalidComparisonOperatorError
      */
     orWhere(column, operator, value = null) {
         if (typeof column === "function") {
@@ -216,6 +223,8 @@ export class QueryBuilder {
             value = operator;
             operator = '=';
         }
+
+        this.#validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.#queryWhere += this.#buildWherePartialQueryString(query, 'OR');
@@ -292,8 +301,11 @@ export class QueryBuilder {
      * @param {string} operator
      * @param {string | number } value
      * @returns QueryBuilder
+     * @throws InvalidComparisonOperatorError
      */
     having(column, operator, value) {
+        this.#validateComparisonOperator(operator);
+
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.#queryHaving.push(query);
         return this;
@@ -508,6 +520,18 @@ export class QueryBuilder {
     #validateTableSet() {
         if (!this.#table) {
             throw new TableNotSetError("Query Builder");
+        }
+    }
+
+    /**
+     * @param {string} operator
+     * @throws InvalidComparisonOperatorError
+     */
+    #validateComparisonOperator(operator) {
+        const validOperators = ["==", "=", "!=", "<>", ">", "<", ">=", "<=", "!<", "!>", 'like'];
+
+        if (validOperators.filter((valid) => valid === operator?.toLowerCase()).length === 0) {
+            throw new InvalidComparisonOperatorError(operator);
         }
     }
 }
