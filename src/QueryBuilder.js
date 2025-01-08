@@ -10,8 +10,8 @@ export class QueryBuilder {
     #toSql = false;
     /** @type {Array<string>}  */
     #querySelect = [];
-    /** @type string  */
-    #queryJoin = "";
+    /** @type []  */
+    #queryJoin = [];
     /** @type string  */
     #queryWhere = "";
     /** @type {Array<string>}  */
@@ -176,7 +176,22 @@ export class QueryBuilder {
     join(table, localKey, operator, foreignKey) {
         this.#validateComparisonOperator(operator);
 
-        this.#queryJoin = `INNER JOIN ${table} on ${localKey} ${operator} ${foreignKey}`;
+        this.#queryJoin.push(`INNER JOIN ${table} on ${localKey} ${operator} ${foreignKey}`);
+        return this;
+    }
+
+    /**
+     * @param {string} table
+     * @param {string} localKey
+     * @param {string} operator
+     * @param {string} foreignKey
+     * @returns QueryBuilder
+     * @throws InvalidComparisonOperatorError
+     */
+    leftJoin(table, localKey, operator, foreignKey) {
+        this.#validateComparisonOperator(operator);
+
+        this.#queryJoin.push(`LEFT JOIN ${table} on ${localKey} ${operator} ${foreignKey}`);
         return this;
     }
 
@@ -430,7 +445,7 @@ export class QueryBuilder {
      * @returns string
      */
     #buildJoinQuery() {
-        return this.#queryJoin;
+        return this.#queryJoin.join(" ");
     }
 
     /**

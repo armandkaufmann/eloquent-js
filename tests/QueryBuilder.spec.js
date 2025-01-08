@@ -243,6 +243,35 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe(expectedResult);
             });
+
+            test('builds query with multiple joins', () => {
+                const result = new QueryBuilder()
+                    .table('users')
+                    .select('users.id', 'users.name', 'posts.title')
+                    .join('posts', 'users.id', '=', 'posts.user_id')
+                    .join('comments', 'users.id', '=', 'comments.user_id')
+                    .toSql()
+                    .get();
+
+                const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts on users.id = posts.user_id INNER JOIN comments on users.id = comments.user_id";
+
+                expect(result).toBe(expectedResult);
+            });
+
+            describe('Left Join', () => {
+                test('builds query to left join a table', () => {
+                    const result = new QueryBuilder()
+                        .table('users')
+                        .select('users.id', 'users.name', 'posts.title')
+                        .leftJoin('posts', 'users.id', '=', 'posts.user_id')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT users.id, users.name, posts.title FROM users LEFT JOIN posts on users.id = posts.user_id";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
         });
 
         describe("Order by", () => {
