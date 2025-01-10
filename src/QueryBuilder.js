@@ -222,6 +222,28 @@ export class QueryBuilder {
     }
 
     /**
+     * @param {string} column
+     * @returns QueryBuilder
+     */
+    whereNull(column) {
+        const query = `${column} IS NULL`
+        this.#queryWhere += this.#buildWherePartialQueryString(query);
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @returns QueryBuilder
+     */
+    whereNotNull(column) {
+        const query = `${column} IS NOT NULL`
+        this.#queryWhere += this.#buildWherePartialQueryString(query);
+
+        return this;
+    }
+
+    /**
      * @param {string|{(query: QueryBuilder)}} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
