@@ -292,6 +292,52 @@ export class QueryBuilder {
      * @returns QueryBuilder
      */
     whereIn(column, values) {
+        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, false);
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    orWhereIn(column, values) {
+        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, false, 'OR');
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    whereNotIn(column, values) {
+        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, true);
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    orWhereNotIn(column, values) {
+        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, true, 'OR');
+
+        return this;
+    }
+
+    /**
+     * @param {Array<string|number>} values
+     * @param {string} column
+     * @param {boolean} notIn
+     * @param {string|'AND'|'OR'} [condition='AND']
+     * @returns string
+     */
+    #buildPartialWhereInQueryString(values, column, notIn, condition = 'AND') {
         const inArray = values
             .reduce((prev, current, index) => {
                 if (index > 0) {
@@ -301,10 +347,8 @@ export class QueryBuilder {
                 return prev += Utility.valuesToString([current]);
             }, "");
 
-        const query = `${column} IN (${inArray})`
-        this.#queryWhere += this.#buildWherePartialQueryString(query);
-
-        return this;
+        const query = notIn ? `${column} NOT IN (${inArray})` : `${column} IN (${inArray})`;
+        return this.#buildWherePartialQueryString(query, condition);
     }
 
     /**

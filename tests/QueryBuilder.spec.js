@@ -153,7 +153,7 @@ describe("QueryBuilderTest", () => {
                 });
             });
 
-            describe("Where in", () => {
+            describe("Where in/not in", () => {
                 test("Builds where in query string", () => {
                     const result = QueryBuilder.table('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
@@ -162,6 +162,42 @@ describe("QueryBuilderTest", () => {
                         .get();
 
                     const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') AND id IN (1, 5, 7)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Builds or where in query string", () => {
+                    const result = QueryBuilder.table('users')
+                        .whereIn('name', ['John', 'James', 'Bob'])
+                        .orWhereIn('id', [1, 5, 7])
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') OR id IN (1, 5, 7)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Builds where not in query string", () => {
+                    const result = QueryBuilder.table('users')
+                        .whereIn('name', ['John', 'James', 'Bob'])
+                        .whereNotIn('id', [1, 5, 7])
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') AND id NOT IN (1, 5, 7)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Builds or where not in query string", () => {
+                    const result = QueryBuilder.table('users')
+                        .whereIn('name', ['John', 'James', 'Bob'])
+                        .orWhereNotIn('id', [1, 5, 7])
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') OR id NOT IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
