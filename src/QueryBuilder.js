@@ -262,9 +262,31 @@ export class QueryBuilder {
      * @param {string} column
      * @returns QueryBuilder
      */
+    orWhereNull(column) {
+        const query = `${column} IS NULL`
+        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR");
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @returns QueryBuilder
+     */
     whereNotNull(column) {
         const query = `${column} IS NOT NULL`
         this.#queryWhere += this.#buildWherePartialQueryString(query);
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @returns QueryBuilder
+     */
+    orWhereNotNull(column) {
+        const query = `${column} IS NOT NULL`
+        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR");
 
         return this;
     }

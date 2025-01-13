@@ -114,7 +114,35 @@ describe("QueryBuilderTest", () => {
 
                     expect(result).toBe(expectedResult);
                 });
-            })
+            });
+
+            describe("Or Where null/Or not null", () => {
+                test("orWhereNull: Builds where null query string", () => {
+                    const result = new QueryBuilder()
+                        .table('my_table')
+                        .where('test_name', '=', 'John')
+                        .orWhereNull('test_id')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR test_id IS NULL";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("orWhereNotNull: Builds where null query string", () => {
+                    const result = new QueryBuilder()
+                        .table('my_table')
+                        .where('test_name', '=', 'John')
+                        .orWhereNotNull('test_id')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR test_id IS NOT NULL";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
 
             describe("Or Where", () => {
                 test("Does not add or if orWhere is called without an existing where", () => {
