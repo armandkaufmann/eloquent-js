@@ -197,7 +197,7 @@ export class QueryBuilder {
 
     /**
      * @param {string|{(query: QueryBuilder)}} column
-     * @param {string|null} operator
+     * @param {string} operator
      * @param {string|number|null} [value=null]
      * @returns QueryBuilder
      * @throws InvalidComparisonOperatorError
@@ -216,28 +216,6 @@ export class QueryBuilder {
         this.#validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        this.#queryWhere += this.#buildWherePartialQueryString(query);
-
-        return this;
-    }
-
-    /**
-     * @param {string} column
-     * @returns QueryBuilder
-     */
-    whereNull(column) {
-        const query = `${column} IS NULL`
-        this.#queryWhere += this.#buildWherePartialQueryString(query);
-
-        return this;
-    }
-
-    /**
-     * @param {string} column
-     * @returns QueryBuilder
-     */
-    whereNotNull(column) {
-        const query = `${column} IS NOT NULL`
         this.#queryWhere += this.#buildWherePartialQueryString(query);
 
         return this;
@@ -265,6 +243,28 @@ export class QueryBuilder {
 
         const query = `${column} ${operator} ${Utility.valuesToString([value])}`
         this.#queryWhere += this.#buildWherePartialQueryString(query, 'OR');
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @returns QueryBuilder
+     */
+    whereNull(column) {
+        const query = `${column} IS NULL`
+        this.#queryWhere += this.#buildWherePartialQueryString(query);
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @returns QueryBuilder
+     */
+    whereNotNull(column) {
+        const query = `${column} IS NOT NULL`
+        this.#queryWhere += this.#buildWherePartialQueryString(query);
 
         return this;
     }
@@ -326,6 +326,58 @@ export class QueryBuilder {
      */
     orWhereNotIn(column, values) {
         this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, true, 'OR');
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    whereBetween(column, values) {
+        const query = `(${column} BETWEEN ${values[0]} and ${values[1]})`;
+
+        this.#queryWhere += this.#buildWherePartialQueryString(query)
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    orWhereBetween(column, values) {
+        const query = `(${column} BETWEEN ${values[0]} and ${values[1]})`;
+
+        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR")
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    whereNotBetween(column, values) {
+        const query = `(${column} NOT BETWEEN ${values[0]} and ${values[1]})`;
+
+        this.#queryWhere += this.#buildWherePartialQueryString(query)
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string|number>} values
+     * @returns QueryBuilder
+     */
+    orWhereNotBetween(column, values) {
+        const query = `(${column} NOT BETWEEN ${values[0]} and ${values[1]})`;
+
+        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR")
 
         return this;
     }

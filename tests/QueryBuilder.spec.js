@@ -276,6 +276,85 @@ describe("QueryBuilderTest", () => {
                     });
                 })
             });
+
+            describe("Where between/not between", () => {
+                test("It groups or where statement with callback in typical use case", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .whereBetween('age', [18, 25])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND (age BETWEEN 18 and 25)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("It groups or where statement with callback in typical use case", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .whereNotBetween('age', [18, 25])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE (age NOT BETWEEN 18 and 25)";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
+
+            describe("Where or between/or not between", () => {
+                test("orWhereBetween: It groups or where statement with callback in typical use case", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .orWhereBetween('age', [18, 25])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR (age BETWEEN 18 and 25)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("orWhereBetween: It does not add the OR if there is no previous where query", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .orWhereBetween('age', [18, 25])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE (age BETWEEN 18 and 25)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("orWhereNotBetween: It groups or where statement with callback in typical use case", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .orWhereNotBetween('age', [18, 25])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR (age NOT BETWEEN 18 and 25)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("orWhereNotBetween: It does not add the OR if there is no previous where query", () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .orWhereNotBetween('age', [18, 25])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE (age NOT BETWEEN 18 and 25)";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
         });
 
         describe("Select", () => {
