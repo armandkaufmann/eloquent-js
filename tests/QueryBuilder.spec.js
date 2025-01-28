@@ -384,13 +384,13 @@ describe("QueryBuilderTest", () => {
                 });
             });
 
-            describe('WhereBetweenColumns & WhereNotBetweenColumns', () => {
-                test('whereBetweenColumns: Builds query string', () => {
+            describe("WhereBetweenColumns & WhereNotBetweenColumns", () => {
+                test("whereBetweenColumns: Builds query string", () => {
                     const result = QueryBuilder
-                        .table('users')
+                        .table("users")
                         .toSql()
-                        .where('id', '>', 1)
-                        .whereBetweenColumns('age', ['max_age', 'min_age'])
+                        .where("id", '>', 1)
+                        .whereBetweenColumns("age", ["max_age", "min_age"])
                         .get();
 
                     const expectedResult = "SELECT * FROM users WHERE id > 1 AND (age BETWEEN max_age and min_age)";
@@ -398,17 +398,69 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test('whereNotBetweenColumns: Builds query string', () => {
+                test("whereNotBetweenColumns: Builds query string", () => {
                     const result = QueryBuilder
-                        .table('users')
+                        .table("users")
                         .toSql()
-                        .where('id', '>', 1)
-                        .whereNotBetweenColumns('age', ['max_age', 'min_age'])
+                        .where("id", '>', 1)
+                        .whereNotBetweenColumns("age", ["max_age", "min_age"])
                         .get();
 
                     const expectedResult = "SELECT * FROM users WHERE id > 1 AND (age NOT BETWEEN max_age and min_age)";
 
                     expect(result).toBe(expectedResult);
+                });
+
+                describe("OrWhereBetweenColumns & OrWhereNotBetweenColumns", () => {
+                    test("orWhereBetweenColumns: Builds query string", () => {
+                        const result = QueryBuilder
+                            .table("users")
+                            .toSql()
+                            .where("id", '>', 1)
+                            .orWhereBetweenColumns("age", ["max_age", "min_age"])
+                            .get();
+
+                        const expectedResult = "SELECT * FROM users WHERE id > 1 OR (age BETWEEN max_age and min_age)";
+
+                        expect(result).toBe(expectedResult);
+                    });
+
+                    test("orWhereBetweenColumns: Does not add or if there is no previous where", () => {
+                        const result = QueryBuilder
+                            .table("users")
+                            .toSql()
+                            .orWhereBetweenColumns("age", ["max_age", "min_age"])
+                            .get();
+
+                        const expectedResult = "SELECT * FROM users WHERE (age BETWEEN max_age and min_age)";
+
+                        expect(result).toBe(expectedResult);
+                    });
+
+                    test("orWhereNotBetweenColumns: Builds query string", () => {
+                        const result = QueryBuilder
+                            .table("users")
+                            .toSql()
+                            .where("id", '>', 1)
+                            .orWhereNotBetweenColumns("age", ["max_age", "min_age"])
+                            .get();
+
+                        const expectedResult = "SELECT * FROM users WHERE id > 1 OR (age NOT BETWEEN max_age and min_age)";
+
+                        expect(result).toBe(expectedResult);
+                    });
+
+                    test("orWhereNotBetweenColumns: Does not add or if there is no previous where", () => {
+                        const result = QueryBuilder
+                            .table("users")
+                            .toSql()
+                            .orWhereNotBetweenColumns("age", ["max_age", "min_age"])
+                            .get();
+
+                        const expectedResult = "SELECT * FROM users WHERE (age NOT BETWEEN max_age and min_age)";
+
+                        expect(result).toBe(expectedResult);
+                    });
                 });
             })
         });
