@@ -383,6 +383,34 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
             });
+
+            describe('WhereBetweenColumns & WhereNotBetweenColumns', () => {
+                test('whereBetweenColumns: Builds query string', () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .whereBetweenColumns('age', ['max_age', 'min_age'])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND (age BETWEEN max_age and min_age)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test('whereNotBetweenColumns: Builds query string', () => {
+                    const result = QueryBuilder
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .whereNotBetweenColumns('age', ['max_age', 'min_age'])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND (age NOT BETWEEN max_age and min_age)";
+
+                    expect(result).toBe(expectedResult);
+                });
+            })
         });
 
         describe("Select", () => {

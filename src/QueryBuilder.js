@@ -405,6 +405,32 @@ export class QueryBuilder {
     }
 
     /**
+     * @param {string} column
+     * @param {Array<string>} columns
+     * @returns QueryBuilder
+     */
+    whereBetweenColumns(column, columns) {
+        const query = `(${column} BETWEEN ${columns[0]} and ${columns[1]})`;
+
+        this.#queryWhere += this.#buildWherePartialQueryString(query)
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {Array<string>} columns
+     * @returns QueryBuilder
+     */
+    whereNotBetweenColumns(column, columns) {
+        const query = `(${column} NOT BETWEEN ${columns[0]} and ${columns[1]})`;
+
+        this.#queryWhere += this.#buildWherePartialQueryString(query)
+
+        return this;
+    }
+
+    /**
      * @param {Array<string|number>} values
      * @param {string} column
      * @param {boolean} notIn
