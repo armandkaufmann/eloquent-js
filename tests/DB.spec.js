@@ -1,4 +1,4 @@
-import {describe, beforeEach, afterEach, expect, test, vi} from 'vitest';
+import {describe, afterEach, expect, test, vi} from 'vitest';
 import {DB, TEMP_DB} from "../src/DB.js";
 import {open, dbMock} from 'sqlite';
 import sqlite3 from "sqlite3";
@@ -15,7 +15,7 @@ vi.mock('sqlite', () => {
     return {open, dbMock: sqliteMock}
 });
 
-describe('DBConn Test', () => {
+describe('DB Test', () => {
     afterEach(() => {
         vi.clearAllMocks();
     });
