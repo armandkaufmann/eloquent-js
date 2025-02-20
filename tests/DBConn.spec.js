@@ -1,5 +1,5 @@
 import {describe, beforeEach, afterEach, expect, test, vi} from 'vitest';
-import {DB} from "../src/DB.js";
+import {DB, TEMP_DB} from "../src/DB.js";
 import {open, dbMock} from 'sqlite';
 import sqlite3 from "sqlite3";
 
@@ -21,11 +21,11 @@ describe('DBConn Test', () => {
     });
 
     describe('connect', () => {
-        test.skip('it opens a connection to the database', async () => {
+        test('it opens a connection to the database', async () => {
             const db = await DB.connect();
 
             expect(open).toHaveBeenCalledWith({
-                filename: '/tmp/database.db',
+                filename: TEMP_DB,
                 driver: sqlite3.Database
             });
         });

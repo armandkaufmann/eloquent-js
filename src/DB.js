@@ -1,6 +1,8 @@
 import sqlite3 from 'sqlite3'
 import {open} from 'sqlite'
 
+export const TEMP_DB = '/tmp/database.sqlite';
+
 export class DB {
     /** @type {?Database} */
     db = null;
@@ -18,7 +20,7 @@ export class DB {
      * @returns DB
      */
     static async connect(options = {}){
-        const filename = options.filename || '/tmp/database.sqlite';
+        const filename = options.filename || TEMP_DB;
         const db = await open({
             filename,
             driver: sqlite3.Database
