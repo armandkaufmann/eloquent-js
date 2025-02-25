@@ -44,7 +44,7 @@ export class DB {
 
     /**
      * @async
-     * @param {{async()}} callback
+     * @param {{async(): Object|Array<Object>|null}} callback
      * @returns {null|Array<Object>|Object}
      */
     async #execute(callback) {
@@ -83,18 +83,12 @@ export class DB {
      * @returns {null|Object}
      */
     async get(query, bindings) {
-        await this.#connect();
-
-        if (!this.#db) {
-            return null;
+        const callback = async () => {
+            const statement = await this.#db.prepare(query);
+            return await statement.get(bindings);
         }
 
-        const statement = await this.#db.prepare(query);
-        const result = await statement.get(bindings);
-
-        await this.#disconnect();
-
-        return result;
+        return this.#execute(callback);
     }
 
 }
