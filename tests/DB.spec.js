@@ -8,6 +8,8 @@ vi.mock('sqlite', () => {
         prepare: vi.fn().mockReturnThis(),
         get: vi.fn().mockResolvedValue({}),
         all: vi.fn().mockResolvedValue({}),
+        run: vi.fn().mockResolvedValue({}),
+        close: vi.fn().mockResolvedValue(),
     }
 
     const open = vi.fn().mockResolvedValue(sqliteMock);
@@ -20,9 +22,10 @@ describe('DB Test', () => {
         vi.clearAllMocks();
     });
 
+    //don't need this test
     describe('connect', () => {
-        test('it opens a connection to the database', async () => {
-            const db = await DB.connect();
+        test.skip('it opens a connection to the database', async () => {
+            const db = new DB();
 
             expect(open).toHaveBeenCalledWith({
                 filename: TEMP_DB,
@@ -32,8 +35,23 @@ describe('DB Test', () => {
     });
 
     describe("All", () => {
-        test("it prepares and binds statements", async () => {
-            const db = await DB.connect();
+        test("it connects and disconnects when running a query", async () => {
+            const db = new DB();
+            const query = 'SELECT * FROM users WHERE name=1';
+            const bindings = {1 : 'John'};
+
+            await db.all(query, bindings);
+
+            expect(open).toHaveBeenCalledWith({
+                filename: TEMP_DB,
+                driver: sqlite3.Database
+            });
+
+            expect(dbMock.close).toHaveBeenCalledOnce();
+        });
+
+        test("It prepares and runs the query", async () => {
+            const db = new DB();
             const query = 'SELECT * FROM users WHERE name=1';
             const bindings = {1 : 'John'};
 
@@ -49,15 +67,17 @@ describe('DB Test', () => {
         test("it does not prepare and bind if there is no db", async () => {
             open.mockImplementationOnce(async() => null);
 
-            const db = await DB.connect();
+            const db = new DB();
             const query = 'SELECT * FROM users WHERE name=1';
             const bindings = {1 : "John"};
 
-            await db.all(query, bindings);
+            const result = await db.all(query, bindings);
 
             expect(dbMock.prepare).not.toHaveBeenCalled();
 
             expect(dbMock.all).not.toHaveBeenCalled();
+
+            expect(result).toEqual(null);
         });
     });
 
@@ -73,5 +93,31 @@ describe('DB Test', () => {
 
             expect(dbMock.get).toHaveBeenCalledWith(query, bindings);
         })
+    });
+
+    describe("Insert", () => {
+       test('It inserts a new record into a table', async () => {
+           const db = await DB.connect();
+           const query = "INSERT INTO users (name) VALUES (?)";
+           const bindings = ["John"];
+
+           const result = await db.insert(query, bindings);
+
+           expect(result).toEqual({});
+
+           expect(dbMock.run).toHaveBeenCalledWith(query, bindings);
+       });
+
+        test('It returns null when inserting with no active connection database', async () => {
+            const db = new DB();
+            const query = "INSERT INTO users (name) VALUES (?)";
+            const bindings = ["John"];
+
+            const result = await db.insert(query, bindings);
+
+            expect(result).toEqual(null);
+
+            expect(dbMock.run).not.toHaveBeenCalled();
+        });
     });
 })

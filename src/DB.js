@@ -5,80 +5,102 @@ export const TEMP_DB = '/tmp/database.sqlite';
 
 export class DB {
     /** @type {?Database} */
-    db = null;
+    #db = null;
+    /** @type {?Object} */
+    options = null;
 
     /**
-     * @param {Database} [db=null]
+     * @param {Object} [options=null]
      */
-    constructor(db = null) {
-        this.db = db;
+    constructor(options = null) {
+        this.options = options;
     }
 
     /**
      * @async
-     * @param {Object} [options={}]
-     * @returns DB
+     * @returns void
      */
-    static async connect(options = {}){
-        const filename = options.filename || TEMP_DB;
-        const db = await open({
-            filename,
-            driver: sqlite3.Database
-        });
-
-        return new DB(db);
-    }
-
-    /**
-     * @async
-     * @param {Object} [options={}]
-     * @returns DB
-     */
-    async connect(options = {}){
-        if (this.db) {
+    async #connect() {
+        if (this.#db) {
             return this;
         }
 
-        const filename = options.filename || '/tmp/database.sqlite';
-        this.db = await open({
+        const filename = this.options?.filename || TEMP_DB;
+
+        this.#db = await open({
             filename,
             driver: sqlite3.Database
         });
-
-        return this;
     }
 
     /**
+     * @async
      * @returns void
      */
-    async disconnect() {
-        await this.db.close();
-        this.db = null;
+    async #disconnect() {
+        await this.#db.close();
+        this.#db = null;
+    }
+
+    /**
+     * @async
+     * @param {{async()}} callback
+     * @returns {null|Array<Object>|Object}
+     */
+    async #execute(callback) {
+        await this.#connect();
+
+        if (!this.#db) {
+            return null;
+        }
+
+        const result = await callback();
+
+        await this.#disconnect();
+
+        return result;
     }
 
     /**
      * @async
      * @param {string} query
-     * @param {Record<string, any>} bindings
-     * @returns {Promise<null|Object[]>}
+     * @param {Array<any, any>} bindings
+     * @returns {null|Array<Object>}
      */
     async all(query, bindings) {
-        if (!this.db) {
-            return Promise.resolve(null);
+        await this.#connect();
+
+        if (!this.#db) {
+            return null;
         }
 
-        const statement = await this.db.prepare(query);
-        return await statement.all(bindings);
+        const statement = await this.#db.prepare(query);
+        const result = await statement.all(bindings);
+
+        await this.#disconnect();
+
+        return result;
     }
 
     /**
      * @async
      * @param {string} query
      * @param {string[]} bindings
-     * @returns {Promise<null|Object>}
+     * @returns {null|Object}
      */
-    async get(query, bindings){
-        return this.db.get(query, bindings);
+    async get(query, bindings) {
+        await this.#connect();
+
+        if (!this.#db) {
+            return null;
+        }
+
+        const statement = await this.#db.prepare(query);
+        const result = await statement.get(bindings);
+
+        await this.#disconnect();
+
+        return result;
     }
 
 }
