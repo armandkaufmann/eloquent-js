@@ -24,7 +24,7 @@ describe('DB Test', () => {
     let db = null;
 
     beforeEach(() => {
-       db = new DB();
+        db = new DB();
     });
 
     afterEach(() => {
@@ -33,7 +33,7 @@ describe('DB Test', () => {
 
     describe("All", () => {
         const query = 'SELECT * FROM users WHERE name=1';
-        const bindings = {1 : 'John'};
+        const bindings = {1: 'John'};
 
         test("it connects and disconnects when running the query", async () => {
             await db.all(query, bindings);
@@ -58,11 +58,9 @@ describe('DB Test', () => {
         });
 
         test("it does not prepare and bind if there is no db", async () => {
-            open.mockImplementationOnce(async() => null);
+            open.mockImplementationOnce(async () => null);
 
-            await expect((async () => {
-                await db.all();
-            })()).rejects.toThrowError(DatabaseNotFoundError);
+            await expect(async () => await db.all()).rejects.toThrowError(DatabaseNotFoundError);
 
             expect(dbMock.prepare).not.toHaveBeenCalled();
             expect(dbMock.all).not.toHaveBeenCalled();
@@ -71,7 +69,7 @@ describe('DB Test', () => {
 
     describe("Get", () => {
         const query = 'SELECT * FROM users WHERE name=1';
-        const bindings = {1 : 'John'};
+        const bindings = {1: 'John'};
 
         test("it connects and disconnects when running the query", async () => {
             await db.get(query, bindings);
@@ -96,11 +94,9 @@ describe('DB Test', () => {
         });
 
         test("it does not prepare and bind if there is no db", async () => {
-            open.mockImplementationOnce(async() => null);
+            open.mockImplementationOnce(async () => null);
 
-            await expect((async () => {
-                await db.get();
-            })()).rejects.toThrowError(DatabaseNotFoundError);
+            await expect(async () => await db.get()).rejects.toThrowError(DatabaseNotFoundError);
 
             expect(dbMock.prepare).not.toHaveBeenCalled();
             expect(dbMock.get).not.toHaveBeenCalled();
