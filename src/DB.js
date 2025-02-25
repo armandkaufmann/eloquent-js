@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3'
 import {open} from 'sqlite'
+import {DatabaseNotFoundError} from "./errors/DB/Errors.js";
 
 export const TEMP_DB = '/tmp/database.sqlite';
 
@@ -51,7 +52,7 @@ export class DB {
         await this.#connect();
 
         if (!this.#db) {
-            return null;
+            throw new DatabaseNotFoundError('DB', this.options?.filename || TEMP_DB);
         }
 
         const result = await callback();

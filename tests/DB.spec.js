@@ -2,6 +2,9 @@ import {describe, afterEach, beforeEach, expect, test, vi} from 'vitest';
 import {DB, TEMP_DB} from "../src/DB.js";
 import {open, dbMock} from 'sqlite';
 import sqlite3 from "sqlite3";
+import {QueryBuilder} from "../src/QueryBuilder.js";
+import {TableNotSetError} from "../src/errors/QueryBuilder/Errors.js";
+import {DatabaseNotFoundError} from "../src/errors/DB/Errors.js";
 
 vi.mock('sqlite', () => {
     const sqliteMock = {
@@ -57,12 +60,12 @@ describe('DB Test', () => {
         test("it does not prepare and bind if there is no db", async () => {
             open.mockImplementationOnce(async() => null);
 
-            const result = await db.all(query, bindings);
+            await expect((async () => {
+                await db.all();
+            })()).rejects.toThrowError(DatabaseNotFoundError);
 
             expect(dbMock.prepare).not.toHaveBeenCalled();
             expect(dbMock.all).not.toHaveBeenCalled();
-
-            expect(result).toEqual(null);
         });
     });
 
@@ -95,12 +98,12 @@ describe('DB Test', () => {
         test("it does not prepare and bind if there is no db", async () => {
             open.mockImplementationOnce(async() => null);
 
-            const result = await db.get(query, bindings);
+            await expect((async () => {
+                await db.get();
+            })()).rejects.toThrowError(DatabaseNotFoundError);
 
             expect(dbMock.prepare).not.toHaveBeenCalled();
             expect(dbMock.get).not.toHaveBeenCalled();
-
-            expect(result).toEqual(null);
         });
     });
 })
