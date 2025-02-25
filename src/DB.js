@@ -68,18 +68,12 @@ export class DB {
      * @returns {null|Array<Object>}
      */
     async all(query, bindings) {
-        await this.#connect();
-
-        if (!this.#db) {
-            return null;
+        const callback = async () => {
+            const statement = await this.#db.prepare(query);
+            return await statement.all(bindings);
         }
 
-        const statement = await this.#db.prepare(query);
-        const result = await statement.all(bindings);
-
-        await this.#disconnect();
-
-        return result;
+        return this.#execute(callback);
     }
 
     /**

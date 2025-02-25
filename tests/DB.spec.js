@@ -6,9 +6,9 @@ import sqlite3 from "sqlite3";
 vi.mock('sqlite', () => {
     const sqliteMock = {
         prepare: vi.fn().mockReturnThis(),
-        get: vi.fn().mockResolvedValue({}),
-        all: vi.fn().mockResolvedValue({}),
-        run: vi.fn().mockResolvedValue({}),
+        get: vi.fn().mockResolvedValue({'name': 'test'}),
+        all: vi.fn().mockResolvedValue([{'name': 'test'}]),
+        run: vi.fn().mockResolvedValue({'name': 'test'}),
         close: vi.fn().mockResolvedValue(),
     }
 
@@ -55,13 +55,14 @@ describe('DB Test', () => {
             const query = 'SELECT * FROM users WHERE name=1';
             const bindings = {1 : 'John'};
 
-            await db.all(query, bindings);
+            const result = await db.all(query, bindings);
 
             expect(dbMock.prepare).toHaveBeenCalledOnce();
             expect(dbMock.prepare).toHaveBeenCalledWith(query);
-
             expect(dbMock.all).toHaveBeenCalledOnce();
             expect(dbMock.all).toHaveBeenCalledWith(bindings);
+
+            expect(result).toEqual([{'name': 'test'}]);
         });
 
         test("it does not prepare and bind if there is no db", async () => {
@@ -74,7 +75,6 @@ describe('DB Test', () => {
             const result = await db.all(query, bindings);
 
             expect(dbMock.prepare).not.toHaveBeenCalled();
-
             expect(dbMock.all).not.toHaveBeenCalled();
 
             expect(result).toEqual(null);
