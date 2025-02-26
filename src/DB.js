@@ -65,13 +65,17 @@ export class DB {
     /**
      * @async
      * @param {string} query
-     * @param {Array<any, any>} bindings
-     * @returns {null|Array<Object>}
+     * @param {Array<String>} [bindings=[]]
+     * @returns {Array<Object>|Array}
      */
-    async all(query, bindings) {
+    async all(query, bindings = []) {
         const callback = async () => {
             const statement = await this.#db.prepare(query);
-            return await statement.all(bindings);
+            const result = await statement.all(bindings);
+
+            await statement.finalize();
+
+            return result;
         }
 
         return this.#execute(callback);
@@ -80,13 +84,43 @@ export class DB {
     /**
      * @async
      * @param {string} query
-     * @param {string[]} bindings
-     * @returns {null|Object}
+     * @param {Array<String>} [bindings=[]]
+     * @returns {Undefined|Object}
      */
-    async get(query, bindings) {
+    async get(query, bindings = []) {
         const callback = async () => {
             const statement = await this.#db.prepare(query);
-            return await statement.get(bindings);
+            const result = statement.get(bindings);
+
+            await statement.finalize();
+
+            return result;
+        }
+
+        return this.#execute(callback);
+    }
+
+    /**
+     * @async
+     * @param {string} query
+     */
+    async createTable(query) {
+        const callback = async () => {
+            return await this.#db.exec(query);
+        }
+
+        return this.#execute(callback);
+    }
+
+    /**
+     * @async
+     * @param {string} query
+     * @param {Array<string>} [bindings=[]]
+     * @returns {null|Object}
+     */
+    async insert(query, bindings = []) {
+        const callback = async () => {
+            return await this.#db.run(query, bindings);
         }
 
         return this.#execute(callback);
