@@ -24,13 +24,14 @@ export const tableCases = {
 }
 
 /**
- * A number, or a string containing a number.
+ * Database configuration settings
  * @typedef {Object} database
- * @property {string} file
+ * @property {string| ":memory:"} file
+ * @property {boolean} relative - If the database file is relative to the project path. Set to true if the database file is within your project, set to false if not. Defaults to True.
  */
 
 /**
- * A number, or a string containing a number.
+ * Table configuration settings
  * @typedef {Object} table
  * @property {TableCaseKey} case
  */
@@ -45,7 +46,8 @@ export const tableCases = {
 /** @type config */
 export const defaultConfig = {
     database: {
-        file: ':memory:'
+        file: ':memory:',
+        relative: true
     },
     table: {
         case: 'snake'
