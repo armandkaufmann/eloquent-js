@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import {defaultConfig} from "./Default.js";
 
-export const CONFIG_FILENAME = "eloquent.config";
+export const CONFIG_FILENAME = "eloquentconfig.json";
 
 export class Config {
     #options = null;
@@ -22,8 +22,8 @@ export class Config {
         }
 
         try {
-            const configContent = readFileSync(configPath, "utf-8");
-            return {...defaultConfig, ...JSON.parse(configContent)};
+            const configFile = readFileSync(configPath, "utf-8");
+            return {...defaultConfig, ...JSON.parse(configFile)};
         } catch (error) {
             console.error(`Eloquent JS: unable to parse ${CONFIG_FILENAME} file, please ensure file is a valid object.\n ${error.message}`);
             return defaultConfig;
