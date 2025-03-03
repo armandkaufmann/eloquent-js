@@ -39,7 +39,7 @@ export class Config {
 
     /**
      * @param {String} key
-     * @returns {Object|string|null}
+     * @returns {String|Array|Object|Number|null}
      */
     get(key) {
         try {
@@ -47,6 +47,35 @@ export class Config {
         } catch (e) {
             return null;
         }
+    }
+
+    /**
+     * @param {String} key
+     * @param {String|Array|Object|Number} value
+     * @returns {void}
+     */
+    set(key, value){
+        const tokens = key.split('.');
+
+        if (tokens.length === 1) {
+            this.#options[key] = value;
+            return;
+        }
+
+        let result = {};
+
+        for (let index = tokens.length - 1; index >= 0; index--) {
+            const current = tokens[index];
+            if (index === tokens.length - 1) {
+                result = {[current]: value};
+                continue;
+            }
+
+            const temp = result;
+            result = {[current]: temp};
+        }
+
+        this.#options = result;
     }
 }
 

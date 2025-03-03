@@ -65,4 +65,40 @@ describe("Config Test", () => {
             expect(config.get(key)).toEqual(expectedResult)
         });
     });
+
+    describe('Set', () => {
+        let config;
+
+        beforeEach(() => {
+            config = new Config();
+        });
+
+       test('it sets a key value pair on the module config', () => {
+           const key = "beef";
+           const value = "tacos";
+
+           config.set(key, value);
+
+           expect(config.get(key)).toEqual(value);
+       });
+
+       test('it can handle setting deep keys', () => {
+           const keys = ["beef", "onion", "garlic", "tomatoes"];
+           const value = "tacos";
+           const expectedObject = {
+               beef: {
+                   onion: {
+                       garlic: {
+                           tomatoes: "tacos"
+                       }
+                   }
+               }
+           }
+
+           config.set(keys.join("."), value);
+
+           expect(config.get(keys.join("."))).toEqual(value);
+           expect(config.get(keys[0])).toEqual(expectedObject[keys[0]]);
+       });
+    });
 });
