@@ -70,6 +70,7 @@ describe("Config Test", () => {
         let config;
 
         beforeEach(() => {
+            fs.existsSync.mockReturnValue(false);
             config = new Config();
         });
 
