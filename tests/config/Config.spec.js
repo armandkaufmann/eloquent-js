@@ -82,6 +82,16 @@ describe("Config Test", () => {
             expect(config.get(key)).toEqual(value);
         });
 
+        test('it sets a key value pair and does not overwrite the current config', () => {
+            const key = "beef";
+            const value = "tacos";
+
+            config.set(key, value);
+
+            expect(config.get(key)).toEqual(value);
+            expect(config.get('table.case')).toEqual(defaultConfig.table.case);
+        });
+
         test('it can handle setting deep keys', () => {
             const keys = ["beef", "onion", "garlic", "tomatoes"];
             const value = "tacos";

@@ -54,7 +54,7 @@ export class Config {
      * @param {String|Array|Object|Number} value
      * @returns {void}
      */
-    set(key, value){
+    set(key, value) {
         const tokens = key.split('.');
 
         if (tokens.length === 1) {
@@ -75,7 +75,7 @@ export class Config {
             result = {[current]: temp};
         }
 
-        this.#options = result;
+        this.#options = {...this.#options, ...result};
     }
 }
 
