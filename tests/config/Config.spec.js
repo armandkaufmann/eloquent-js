@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, test, vi, expect } from "vitest";
-import { defaultConfig } from "../../src/config/Default.js";
+import {afterEach, beforeEach, describe, test, vi, expect} from "vitest";
+import {defaultConfig} from "../../src/config/Default.js";
 import {Config, CONFIG_FILENAME} from "../../src/config/Config.js";
 import * as fs from "fs";
 
@@ -32,7 +32,7 @@ describe("Config Test", () => {
 
     test("it loads the config if it exists", () => {
         fs.existsSync.mockReturnValue(true);
-        fs.readFileSync.mockReturnValue(JSON.stringify({ someKey: "someValue" }));
+        fs.readFileSync.mockReturnValue(JSON.stringify({someKey: "someValue"}));
 
         const config = new Config();
         expect(fs.existsSync).toHaveBeenCalledOnce();
@@ -40,15 +40,15 @@ describe("Config Test", () => {
         expect(fs.readFileSync).toHaveBeenCalledWith(filepath, "utf-8");
 
         const result = config.all();
-        expect(result).toEqual({ ...defaultConfig, someKey: "someValue" });
+        expect(result).toEqual({...defaultConfig, someKey: "someValue"});
     });
 
     describe('Get', () => {
         let config;
 
         beforeEach(() => {
-           fs.existsSync.mockReturnValue(false);
-           config = new Config();
+            fs.existsSync.mockReturnValue(false);
+            config = new Config();
         });
 
         const keyResults = [
@@ -73,32 +73,35 @@ describe("Config Test", () => {
             config = new Config();
         });
 
-       test('it sets a key value pair on the module config', () => {
-           const key = "beef";
-           const value = "tacos";
+        test('it sets a key value pair on the module config', () => {
+            const key = "beef";
+            const value = "tacos";
 
-           config.set(key, value);
+            config.set(key, value);
 
-           expect(config.get(key)).toEqual(value);
-       });
+            expect(config.get(key)).toEqual(value);
+        });
 
-       test('it can handle setting deep keys', () => {
-           const keys = ["beef", "onion", "garlic", "tomatoes"];
-           const value = "tacos";
-           const expectedObject = {
-               beef: {
-                   onion: {
-                       garlic: {
-                           tomatoes: "tacos"
-                       }
-                   }
-               }
-           }
+        test('it can handle setting deep keys', () => {
+            const keys = ["beef", "onion", "garlic", "tomatoes"];
+            const value = "tacos";
+            const expectedObject = {
+                beef: {
+                    onion: {
+                        garlic: {
+                            tomatoes: "tacos"
+                        }
+                    }
+                }
+            }
 
-           config.set(keys.join("."), value);
+            config.set(keys.join("."), value);
 
-           expect(config.get(keys.join("."))).toEqual(value);
-           expect(config.get(keys[0])).toEqual(expectedObject[keys[0]]);
-       });
+            expect(config.get(keys.join("."))).toEqual(value);
+            expect(config.get(keys[0])).toEqual(expectedObject[keys[0]]);
+            expect(config.get([keys[0], keys[1]].join("."))).toEqual(expectedObject[keys[0]][keys[1]]);
+            expect(config.get([keys[0], keys[1], keys[2]].join("."))).toEqual(expectedObject[keys[0]][keys[1]][keys[2]]);
+            expect(config.get([keys[0], keys[1], keys[2], keys[3]].join("."))).toEqual(expectedObject[keys[0]][keys[1]][keys[2]][keys[3]]);
+        });
     });
 });
