@@ -1,8 +1,9 @@
 import {describe, afterEach, beforeEach, expect, test, vi} from 'vitest';
-import {DB, TEMP_DB} from "../src/DB.js";
+import {DB} from "../src/DB.js";
 import {open, dbMock, statementMock} from 'sqlite';
 import sqlite3 from "sqlite3";
 import {DatabaseNotFoundError} from "../src/errors/DB/Errors.js";
+import {defaultConfig} from "../src/config/Default.js";
 
 vi.mock('sqlite', () => {
     const statementMock = {
@@ -41,7 +42,7 @@ describe('DB Test', () => {
             await db.all(query, bindings);
 
             expect(open).toHaveBeenCalledWith({
-                filename: TEMP_DB,
+                filename: defaultConfig.database.file,
                 driver: sqlite3.Database
             });
 
@@ -77,7 +78,7 @@ describe('DB Test', () => {
             await db.get(query, bindings);
 
             expect(open).toHaveBeenCalledWith({
-                filename: TEMP_DB,
+                filename: defaultConfig.database.file,
                 driver: sqlite3.Database
             });
 
@@ -113,7 +114,7 @@ describe('DB Test', () => {
             await db.insert(query, bindings);
 
             expect(open).toHaveBeenCalledWith({
-                filename: TEMP_DB,
+                filename: defaultConfig.database.file,
                 driver: sqlite3.Database
             });
 
