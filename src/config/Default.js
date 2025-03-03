@@ -23,6 +23,8 @@ export const tableCases = {
     camel: "camelCase",
 }
 
+export const MEMORY = ":memory:";
+
 /**
  * Database configuration settings
  * @typedef {Object} database
@@ -46,7 +48,7 @@ export const tableCases = {
 /** @type config */
 export const defaultConfig = {
     database: {
-        file: ':memory:',
+        file: MEMORY,
         relative: true
     },
     table: {

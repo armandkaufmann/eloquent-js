@@ -51,6 +51,11 @@ describe("Config Test", () => {
             config = new Config();
         });
 
+        afterEach(() => {
+            vi.clearAllMocks();
+            vi.resetModules();
+        });
+
         const keyResults = [
             ["retrieve a single value from the config", "database.file", defaultConfig.database.file],
             ["returns null when key is not found in config", "taco", null],
@@ -72,6 +77,11 @@ describe("Config Test", () => {
         beforeEach(() => {
             fs.existsSync.mockReturnValue(false);
             config = new Config();
+        });
+
+        afterEach(() => {
+            vi.clearAllMocks();
+            vi.resetModules();
         });
 
         test('it sets a key value pair on the module config', () => {
@@ -115,4 +125,27 @@ describe("Config Test", () => {
             expect(config.get([keys[0], keys[1], keys[2], keys[3]].join("."))).toEqual(expectedObject[keys[0]][keys[1]][keys[2]][keys[3]]);
         });
     });
+
+    describe('Clear', () => {
+        beforeEach(() => {
+            vi.clearAllMocks();
+            vi.resetModules();
+        });
+
+        test('it clears configuration values that have been set, and reloads', () => {
+            fs.existsSync.mockReturnValue(false);
+            const config = new Config();
+
+            const key = 'beef';
+            const value = 'tacos';
+
+            config.set(key, value);
+
+            expect(config.get(key)).toEqual(value);
+
+            config.clear();
+
+            expect(config.get(key)).toEqual(null);
+        });
+    })
 });

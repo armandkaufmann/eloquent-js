@@ -18,7 +18,7 @@ export class Config {
         const configPath = resolve(process.cwd(), CONFIG_FILENAME);
 
         if (!existsSync(configPath)) {
-            return defaultConfig;
+            return {...defaultConfig};
         }
 
         try {
@@ -26,7 +26,7 @@ export class Config {
             return {...defaultConfig, ...JSON.parse(configFile)};
         } catch (error) {
             console.error(`Eloquent JS: unable to parse ${CONFIG_FILENAME} file, please ensure file is a valid JSON file.\n ${error.message}`);
-            return defaultConfig;
+            return {...defaultConfig};
         }
     }
 
@@ -52,7 +52,7 @@ export class Config {
     /**
      * @param {String} key
      * @param {String|Array|Object|Number} value
-     * @returns {void}
+     * @returns void
      */
     set(key, value) {
         const tokens = key.split('.');
@@ -76,6 +76,14 @@ export class Config {
         }
 
         this.#options = {...this.#options, ...result};
+    }
+
+    /**
+     * Clears the current configuration and reloads fresh values from the default config and any specified configuration file.
+     * @returns void
+     */
+    clear() {
+        this.#options = this.#loadConfig();
     }
 }
 

@@ -1,21 +1,13 @@
 import sqlite3 from 'sqlite3'
 import {open} from 'sqlite'
 import {DatabaseNotFoundError} from "./errors/DB/Errors.js";
-
-export const TEMP_DB = '/tmp/database.sqlite';
+import {config} from "./config/Config.js";
+import {resolve} from "path";
+import {MEMORY} from "./config/Default.js";
 
 export class DB {
     /** @type {?Database} */
     #db = null;
-    /** @type {?Object} */
-    options = null;
-
-    /**
-     * @param {Object} [options=null]
-     */
-    constructor(options = null) {
-        this.options = options;
-    }
 
     /**
      * @async
@@ -26,12 +18,24 @@ export class DB {
             return this;
         }
 
-        const filename = this.options?.filename || TEMP_DB;
-
         this.#db = await open({
-            filename,
+            filename: this.#getFilePath(),
             driver: sqlite3.Database
         });
+    }
+
+    /**
+     * @returns string
+     */
+    #getFilePath() {
+        const filePath = config.get('database.file');
+        const isRelative = config.get('database.relative');
+
+        if (filePath === MEMORY) {
+            return filePath;
+        }
+
+        return isRelative ? resolve(process.cwd(), filePath) : resolve(filePath);
     }
 
     /**
@@ -52,7 +56,7 @@ export class DB {
         await this.#connect();
 
         if (!this.#db) {
-            throw new DatabaseNotFoundError('DB', this.options?.filename || TEMP_DB);
+            throw new DatabaseNotFoundError('DB', this.#getFilePath());
         }
 
         const result = await callback();
