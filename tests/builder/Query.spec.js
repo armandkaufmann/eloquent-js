@@ -1,6 +1,14 @@
-import {describe, expect, test} from 'vitest';
+import {describe, expect, test, vi} from 'vitest';
 import {Query} from "../../src/builder/Query.js";
 import {InvalidComparisonOperatorError, TableNotSetError} from "../../src/errors/QueryBuilder/Errors.js";
+import {DB} from "../../src/DB.js";
+
+vi.mock("../../src/DB.js",() => {
+    const DB = vi.fn();
+    DB.prototype.insert = vi.fn()
+
+    return {DB}
+});
 
 describe("QueryBuilderTest", () => {
     describe("Building Query Strings", () => {
@@ -685,4 +693,30 @@ describe("QueryBuilderTest", () => {
             });
         });
     });
+
+    describe("Execute Queries", () => {
+        describe("Insert", () => {
+            test("It binds and executes query", () => {
+                //DB.insert returns { stmt: Statement { stmt: undefined }, lastID: 17, changes: 1 } real return from DB
+                const insertReturn = { lastID: 17, changes: 1 };
+                DB.prototype.insert.mockReturnValue(insertReturn);
+
+                const table = "users";
+                const expectedQuery = "INSERT INTO users (name, age, sex) VALUES (?, ?, ?)";
+                const expectedBindings = ['John', 20, 'M'];
+
+                const query = Query
+                    .table(table)
+                    .insert({
+                        'name': 'John',
+                        'age': 20,
+                        'sex': 'M',
+                    });
+
+                expect(query).toEqual(true);
+                expect(DB.prototype.insert).toHaveBeenCalledOnce();
+                expect(DB.prototype.insert).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+            });
+        });
+    })
 });

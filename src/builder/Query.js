@@ -1,5 +1,6 @@
 import {Utility} from "../utils/Utility.js";
 import {InvalidComparisonOperatorError, TableNotSetError} from "../errors/QueryBuilder/Errors.js";
+import {DB} from "../DB.js";
 
 export class Query {
     /** @type {?string} */
@@ -24,6 +25,7 @@ export class Query {
     #limit = null;
     /** @type {?number}  */
     #offset = null;
+    #database = new DB();
 
     /**
      * @param {string} table
@@ -113,7 +115,7 @@ export class Query {
 
     /**
      * @param {Record<string, any>} fields
-     * @returns {string|Model|Record<string, any>|null}
+     * @returns {Boolean}
      * @description Executes the query and returns the newly created record
      */
     insert(fields) {
@@ -123,8 +125,14 @@ export class Query {
             return this.#buildInsertSqlQuery(fields);
         }
 
-        //TODO: use DBConn to execute statement
-        return null;
+        try {
+            const statement = this.#buildPreparedInsertSqlQuery(fields);
+            this.#database.insert(statement.query, statement.bindings);
+        }catch (e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -562,6 +570,28 @@ export class Query {
 
         return "INSERT INTO " + this.#table + " (" + columns.join(', ') +
             ") VALUES (" + Utility.valuesToString(values) + ")";
+    }
+
+    /**
+     * @param {Record<string, any>} fields
+     * @returns {Object}
+     */
+    #buildPreparedInsertSqlQuery(fields) {
+        let columns = [];
+        let values = [];
+
+        for (const [column, value] of Object.entries(fields)) {
+            columns.push(column);
+            values.push(value);
+        }
+
+        const query = "INSERT INTO " + this.#table + " (" + columns.join(', ') +
+            ") VALUES (" + Array(values.length).fill('?').join(', ') + ")";
+
+        return {
+            query,
+            bindings: values
+        }
     }
 
     /**
