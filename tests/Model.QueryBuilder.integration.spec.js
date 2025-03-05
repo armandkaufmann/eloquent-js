@@ -1,12 +1,12 @@
 import {describe, expect, test, vi} from 'vitest';
 import {Model} from "../src/Model.js";
-import {QueryBuilder} from "../src/QueryBuilder.js";
+import {Query} from "../src/builder/Query.js";
 
 describe('Model Query Builder integration Test', () => {
    describe('Initialization', () => {
 
        test('can initialize query builder with model class name', () => {
-           const queryBuilderTableSpy = vi.spyOn(QueryBuilder.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
            class TestModel extends Model {}
 
            new TestModel();
@@ -15,7 +15,7 @@ describe('Model Query Builder integration Test', () => {
        });
 
        test('can initialize with table override', () => {
-           const queryBuilderTableSpy = vi.spyOn(QueryBuilder.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
 
            const table = 'users';
 
@@ -31,7 +31,7 @@ describe('Model Query Builder integration Test', () => {
        });
 
        test('static create on model loads config', () => {
-           const queryBuilderTableSpy = vi.spyOn(QueryBuilder.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
 
            const table = 'users';
 

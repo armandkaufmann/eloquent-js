@@ -1,7 +1,7 @@
-import {Utility} from "./utils/Utility.js";
-import {InvalidComparisonOperatorError, TableNotSetError} from "./errors/QueryBuilder/Errors.js";
+import {Utility} from "../utils/Utility.js";
+import {InvalidComparisonOperatorError, TableNotSetError} from "../errors/QueryBuilder/Errors.js";
 
-export class QueryBuilder {
+export class Query {
     /** @type {?string} */
     #table = null;
     /** @type {?Model} */
@@ -27,30 +27,30 @@ export class QueryBuilder {
 
     /**
      * @param {string} table
-     * @returns QueryBuilder
+     * @returns Query
      */
     static table(table) {
-        return new QueryBuilder().table(table)
+        return new Query().table(table)
     }
 
     /**
-     * @returns QueryBuilder
+     * @returns Query
      */
     static toSql() {
-        return new QueryBuilder().toSql()
+        return new Query().toSql()
     }
 
     /**
      * @param {Model} model
-     * @returns QueryBuilder
+     * @returns Query
      */
     static castResultTo(model) {
-        return new QueryBuilder().castResultTo(model)
+        return new Query().castResultTo(model)
     }
 
     /**
      * @param {string} table
-     * @returns QueryBuilder
+     * @returns Query
      */
     table(table) {
         this.#table = table;
@@ -58,7 +58,7 @@ export class QueryBuilder {
     }
 
     /**
-     * @returns QueryBuilder
+     * @returns Query
      */
     toSql() {
         this.#toSql = true;
@@ -68,7 +68,7 @@ export class QueryBuilder {
 
     /**
      * @param {Model} model
-     * @returns QueryBuilder
+     * @returns Query
      */
     castResultTo(model) {
         this.#model = model;
@@ -158,7 +158,7 @@ export class QueryBuilder {
 
     /**
      * @param {...string} columns
-     * @returns QueryBuilder
+     * @returns Query
      */
     select(...columns) {
         columns.forEach((column) => this.#querySelect.push(column))
@@ -170,7 +170,7 @@ export class QueryBuilder {
      * @param {string} localKey
      * @param {string} operator
      * @param {string} foreignKey
-     * @returns QueryBuilder
+     * @returns Query
      * @throws InvalidComparisonOperatorError
      */
     join(table, localKey, operator, foreignKey) {
@@ -185,7 +185,7 @@ export class QueryBuilder {
      * @param {string} localKey
      * @param {string} operator
      * @param {string} foreignKey
-     * @returns QueryBuilder
+     * @returns Query
      * @throws InvalidComparisonOperatorError
      */
     leftJoin(table, localKey, operator, foreignKey) {
@@ -196,10 +196,10 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {string|{(query: QueryBuilder)}} column
+     * @param {string|{(query: Query)}} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
-     * @returns QueryBuilder
+     * @returns Query
      * @throws InvalidComparisonOperatorError
      */
     where(column, operator, value = null) {
@@ -222,10 +222,10 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {string|{(query: QueryBuilder)}} column
+     * @param {string|{(query: Query)}} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
-     * @returns QueryBuilder
+     * @returns Query
      * @throws InvalidComparisonOperatorError
      */
     orWhere(column, operator, value = null) {
@@ -249,7 +249,7 @@ export class QueryBuilder {
 
     /**
      * @param {string} column
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereNull(column) {
         const query = `${column} IS NULL`
@@ -260,7 +260,7 @@ export class QueryBuilder {
 
     /**
      * @param {string} column
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereNull(column) {
         const query = `${column} IS NULL`
@@ -271,7 +271,7 @@ export class QueryBuilder {
 
     /**
      * @param {string} column
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereNotNull(column) {
         const query = `${column} IS NOT NULL`
@@ -282,7 +282,7 @@ export class QueryBuilder {
 
     /**
      * @param {string} column
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereNotNull(column) {
         const query = `${column} IS NOT NULL`
@@ -292,7 +292,7 @@ export class QueryBuilder {
     }
 
     /**
-     * @param {{(query: QueryBuilder)}} callback
+     * @param {{(query: Query)}} callback
      * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
@@ -311,7 +311,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereIn(column, values) {
         this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, false);
@@ -322,7 +322,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereIn(column, values) {
         this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, false, 'OR');
@@ -333,7 +333,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereNotIn(column, values) {
         this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, true);
@@ -344,7 +344,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereNotIn(column, values) {
         this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, true, 'OR');
@@ -355,7 +355,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereBetween(column, values) {
         const query = `(${column} BETWEEN ${values[0]} and ${values[1]})`;
@@ -368,7 +368,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereBetween(column, values) {
         const query = `(${column} BETWEEN ${values[0]} and ${values[1]})`;
@@ -381,7 +381,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereNotBetween(column, values) {
         const query = `(${column} NOT BETWEEN ${values[0]} and ${values[1]})`;
@@ -394,7 +394,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string|number>} values
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereNotBetween(column, values) {
         const query = `(${column} NOT BETWEEN ${values[0]} and ${values[1]})`;
@@ -407,7 +407,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string>} columns
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereBetweenColumns(column, columns) {
         const query = `(${column} BETWEEN ${columns[0]} and ${columns[1]})`;
@@ -420,7 +420,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string>} columns
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereBetweenColumns(column, columns) {
         const query = `(${column} BETWEEN ${columns[0]} and ${columns[1]})`;
@@ -433,7 +433,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string>} columns
-     * @returns QueryBuilder
+     * @returns Query
      */
     whereNotBetweenColumns(column, columns) {
         const query = `(${column} NOT BETWEEN ${columns[0]} and ${columns[1]})`;
@@ -446,7 +446,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {Array<string>} columns
-     * @returns QueryBuilder
+     * @returns Query
      */
     orWhereNotBetweenColumns(column, columns) {
         const query = `(${column} NOT BETWEEN ${columns[0]} and ${columns[1]})`;
@@ -496,7 +496,7 @@ export class QueryBuilder {
 
     /**
      * @param {...string} columns
-     * @returns QueryBuilder
+     * @returns Query
      */
     groupBy(...columns) {
         columns.forEach((column) => this.#queryGroupBy.push(column))
@@ -507,7 +507,7 @@ export class QueryBuilder {
      * @param {string} column
      * @param {string} operator
      * @param {string | number } value
-     * @returns QueryBuilder
+     * @returns Query
      * @throws InvalidComparisonOperatorError
      */
     having(column, operator, value) {
@@ -521,7 +521,7 @@ export class QueryBuilder {
     /**
      * @param {string} column
      * @param {"ASC" | "DESC"} [order=DESC]
-     * @returns QueryBuilder
+     * @returns Query
      */
     orderBy(column, order = "DESC") {
         const query = `${column} ${order}`;
@@ -531,7 +531,7 @@ export class QueryBuilder {
 
     /**
      * @param {number} number
-     * @returns QueryBuilder
+     * @returns Query
      */
     limit(number) {
         this.#limit = number;
@@ -540,7 +540,7 @@ export class QueryBuilder {
 
     /**
      * @param {number} number
-     * @returns QueryBuilder
+     * @returns Query
      */
     offset(number) {
         this.#offset = number;

@@ -1,12 +1,12 @@
 import {describe, expect, test} from 'vitest';
-import {QueryBuilder} from "../src/QueryBuilder.js";
+import {Query} from "../src/builder/Query.js";
 import {InvalidComparisonOperatorError, TableNotSetError} from "../src/errors/QueryBuilder/Errors.js";
 
 describe("QueryBuilderTest", () => {
     describe("Building Query Strings", () => {
         describe("To Sql", () => {
             test("Base query string", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .toSql()
                     .get();
@@ -16,24 +16,24 @@ describe("QueryBuilderTest", () => {
 
             describe("Throws when table is not set", () => {
                 test("Get", () => {
-                    expect(() => new QueryBuilder().get()).toThrow(TableNotSetError);
+                    expect(() => new Query().get()).toThrow(TableNotSetError);
                 });
 
                 test("First", () => {
-                    expect(() => new QueryBuilder().first()).toThrow(TableNotSetError);
+                    expect(() => new Query().first()).toThrow(TableNotSetError);
                 });
 
                 test("Insert", () => {
-                    expect(() => new QueryBuilder().insert({taco: 'tuesday'})).toThrow(TableNotSetError);
+                    expect(() => new Query().insert({taco: 'tuesday'})).toThrow(TableNotSetError);
                 });
 
                 test("Update", () => {
-                    expect(() => new QueryBuilder().update({taco: 'tuesday'})).toThrow(TableNotSetError);
+                    expect(() => new Query().update({taco: 'tuesday'})).toThrow(TableNotSetError);
                 });
             })
 
             test("Select", () => {
-                const result = QueryBuilder
+                const result = Query
                     .table('my_table')
                     .toSql()
                     .get();
@@ -44,7 +44,7 @@ describe("QueryBuilderTest", () => {
             });
 
             test("builds full query in correct order", () => {
-                const result = QueryBuilder.toSql()
+                const result = Query.toSql()
                     .table('my_table')
                     .where('name', '=', 'John')
                     .select('id', 'name')
@@ -63,7 +63,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Where", () => {
             test("Query String", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .where('test_id', '=', 5)
                     .where('test_name', '=', 'John')
@@ -76,7 +76,7 @@ describe("QueryBuilderTest", () => {
             });
 
             test("Operator defaults to equals when omitted", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .where('test_id', 5)
                     .where('test_name', 'John')
@@ -90,7 +90,7 @@ describe("QueryBuilderTest", () => {
 
             describe("Where null/not null", () => {
                 test("Builds where null query string", () => {
-                    const result = new QueryBuilder()
+                    const result = new Query()
                         .table('my_table')
                         .where('test_name', '=', 'John')
                         .whereNull('test_id')
@@ -103,7 +103,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("Builds where null query string", () => {
-                    const result = new QueryBuilder()
+                    const result = new Query()
                         .table('my_table')
                         .where('test_name', '=', 'John')
                         .whereNotNull('test_id')
@@ -118,7 +118,7 @@ describe("QueryBuilderTest", () => {
 
             describe("Or Where null/Or not null", () => {
                 test("orWhereNull: Builds where null query string", () => {
-                    const result = new QueryBuilder()
+                    const result = new Query()
                         .table('my_table')
                         .where('test_name', '=', 'John')
                         .orWhereNull('test_id')
@@ -131,7 +131,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("orWhereNotNull: Builds where null query string", () => {
-                    const result = new QueryBuilder()
+                    const result = new Query()
                         .table('my_table')
                         .where('test_name', '=', 'John')
                         .orWhereNotNull('test_id')
@@ -146,7 +146,7 @@ describe("QueryBuilderTest", () => {
 
             describe("Or Where", () => {
                 test("Does not add or if orWhere is called without an existing where", () => {
-                    const result = QueryBuilder.table('my_table')
+                    const result = Query.table('my_table')
                         .orWhere('test_id', '=', 5)
                         .toSql()
                         .get();
@@ -157,7 +157,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("Adds or in query with where before", () => {
-                    const result = QueryBuilder.table('my_table')
+                    const result = Query.table('my_table')
                         .where('name', '=', 'John')
                         .orWhere('test_id', '=', 5)
                         .toSql()
@@ -169,7 +169,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("Operator defaults to equals when omitted", () => {
-                    const result = QueryBuilder.table('my_table')
+                    const result = Query.table('my_table')
                         .where('name', '=', 'John')
                         .orWhere('test_id', 5)
                         .toSql()
@@ -183,7 +183,7 @@ describe("QueryBuilderTest", () => {
 
             describe("Where in/not in", () => {
                 test("Builds where in query string", () => {
-                    const result = QueryBuilder.table('users')
+                    const result = Query.table('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .whereIn('id', [1, 5, 7])
                         .toSql()
@@ -195,7 +195,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("Builds or where in query string", () => {
-                    const result = QueryBuilder.table('users')
+                    const result = Query.table('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .orWhereIn('id', [1, 5, 7])
                         .toSql()
@@ -207,7 +207,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("Builds where not in query string", () => {
-                    const result = QueryBuilder.table('users')
+                    const result = Query.table('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .whereNotIn('id', [1, 5, 7])
                         .toSql()
@@ -219,7 +219,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("Builds or where not in query string", () => {
-                    const result = QueryBuilder.table('users')
+                    const result = Query.table('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .orWhereNotIn('id', [1, 5, 7])
                         .toSql()
@@ -234,7 +234,7 @@ describe("QueryBuilderTest", () => {
             describe("Where callback", () => {
                 describe("Where", () => {
                     test("It groups where statement with callback", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table('users')
                             .toSql()
                             .where(($query) => {
@@ -251,7 +251,7 @@ describe("QueryBuilderTest", () => {
                     });
 
                     test("It can correctly add grouped where with an existing where", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table('users')
                             .toSql()
                             .where('age', '>', 90)
@@ -271,7 +271,7 @@ describe("QueryBuilderTest", () => {
 
                 describe("Or Where", () => {
                     test("It groups or where statement with callback in typical use case", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table('users')
                             .toSql()
                             .where('age', '>', 90)
@@ -288,7 +288,7 @@ describe("QueryBuilderTest", () => {
                     });
 
                     test("It groups or where statement with callback when only single where statement", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table('users')
                             .toSql()
                             .orWhere(($query) => {
@@ -307,7 +307,7 @@ describe("QueryBuilderTest", () => {
 
             describe("Where between/not between", () => {
                 test("It groups or where statement with callback in typical use case", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -320,7 +320,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("It groups or where statement with callback in typical use case", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table('users')
                         .toSql()
                         .whereNotBetween('age', [18, 25])
@@ -334,7 +334,7 @@ describe("QueryBuilderTest", () => {
 
             describe("Where or between/or not between", () => {
                 test("orWhereBetween: It groups or where statement with callback in typical use case", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -347,7 +347,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("orWhereBetween: It does not add the OR if there is no previous where query", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table('users')
                         .toSql()
                         .orWhereBetween('age', [18, 25])
@@ -359,7 +359,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("orWhereNotBetween: It groups or where statement with callback in typical use case", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -372,7 +372,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("orWhereNotBetween: It does not add the OR if there is no previous where query", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table('users')
                         .toSql()
                         .orWhereNotBetween('age', [18, 25])
@@ -386,7 +386,7 @@ describe("QueryBuilderTest", () => {
 
             describe("WhereBetweenColumns & WhereNotBetweenColumns", () => {
                 test("whereBetweenColumns: Builds query string", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table("users")
                         .toSql()
                         .where("id", '>', 1)
@@ -399,7 +399,7 @@ describe("QueryBuilderTest", () => {
                 });
 
                 test("whereNotBetweenColumns: Builds query string", () => {
-                    const result = QueryBuilder
+                    const result = Query
                         .table("users")
                         .toSql()
                         .where("id", '>', 1)
@@ -413,7 +413,7 @@ describe("QueryBuilderTest", () => {
 
                 describe("OrWhereBetweenColumns & OrWhereNotBetweenColumns", () => {
                     test("orWhereBetweenColumns: Builds query string", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table("users")
                             .toSql()
                             .where("id", '>', 1)
@@ -426,7 +426,7 @@ describe("QueryBuilderTest", () => {
                     });
 
                     test("orWhereBetweenColumns: Does not add or if there is no previous where", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table("users")
                             .toSql()
                             .orWhereBetweenColumns("age", ["max_age", "min_age"])
@@ -438,7 +438,7 @@ describe("QueryBuilderTest", () => {
                     });
 
                     test("orWhereNotBetweenColumns: Builds query string", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table("users")
                             .toSql()
                             .where("id", '>', 1)
@@ -451,7 +451,7 @@ describe("QueryBuilderTest", () => {
                     });
 
                     test("orWhereNotBetweenColumns: Does not add or if there is no previous where", () => {
-                        const result = QueryBuilder
+                        const result = Query
                             .table("users")
                             .toSql()
                             .orWhereNotBetweenColumns("age", ["max_age", "min_age"])
@@ -467,7 +467,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Select", () => {
             test("Select query string", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('test_models')
                     .select('test_id', 'test_name')
                     .toSql()
@@ -481,7 +481,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Join", () => {
             test('builds query to join a table', () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('users')
                     .select('users.id', 'users.name', 'posts.title')
                     .join('posts', 'users.id', '=', 'posts.user_id')
@@ -494,7 +494,7 @@ describe("QueryBuilderTest", () => {
             });
 
             test('builds query with multiple joins', () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('users')
                     .select('users.id', 'users.name', 'posts.title')
                     .join('posts', 'users.id', '=', 'posts.user_id')
@@ -509,7 +509,7 @@ describe("QueryBuilderTest", () => {
 
             describe('Left Join', () => {
                 test('builds query to left join a table', () => {
-                    const result = new QueryBuilder()
+                    const result = new Query()
                         .table('users')
                         .select('users.id', 'users.name', 'posts.title')
                         .leftJoin('posts', 'users.id', '=', 'posts.user_id')
@@ -525,7 +525,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Order by", () => {
             test("Order by query string", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .orderBy('test_id')
                     .orderBy('test_name', 'ASC')
@@ -541,7 +541,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Group by", () => {
             test("Group by query string", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .groupBy('test_id', 'test_name')
                     .toSql()
@@ -553,7 +553,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Having", () => {
             test("Having query string", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .having('test_id', '=', 5)
                     .having('test_name', '=', 'test')
@@ -566,7 +566,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Limit", () => {
             test("Limit query string", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .limit(1)
                     .toSql()
@@ -578,7 +578,7 @@ describe("QueryBuilderTest", () => {
 
         describe("First", () => {
             test("First query string", () => {
-                const result = new QueryBuilder()
+                const result = new Query()
                     .table('my_table')
                     .toSql()
                     .first();
@@ -589,7 +589,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Offset", () => {
             test("Offset query string", () => {
-                const result = QueryBuilder
+                const result = Query
                     .table("users")
                     .offset(5)
                     .toSql()
@@ -606,7 +606,7 @@ describe("QueryBuilderTest", () => {
                     address: '123 Taco Lane Ave St'
                 }
 
-                const result = QueryBuilder
+                const result = Query
                     .toSql()
                     .table('users')
                     .insert(fields);
@@ -622,7 +622,7 @@ describe("QueryBuilderTest", () => {
                     address: '123 Taco Lane Ave St'
                 }
 
-                const result = QueryBuilder
+                const result = Query
                     .toSql()
                     .table('users')
                     .where('id', '=', 5)
@@ -636,7 +636,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Delete", () => {
             test("Builds full delete query string", () => {
-                const result = QueryBuilder
+                const result = Query
                     .toSql()
                     .table('users')
                     .orderBy('name', "ASC")
@@ -672,15 +672,15 @@ describe("QueryBuilderTest", () => {
 
             test.each(operators)('validating that %s is %s', (operator, isValid) => {
                 if (!isValid) {
-                    expect(() => QueryBuilder.table("users").join("posts", 'id', operator, 'id')).toThrow(InvalidComparisonOperatorError)
-                    expect(() => QueryBuilder.table("users").where("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
-                    expect(() => QueryBuilder.table("users").orWhere("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
-                    expect(() => QueryBuilder.table("users").having("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").join("posts", 'id', operator, 'id')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").where("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").orWhere("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").having("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                 } else {
-                    expect(() => QueryBuilder.table("users").join("posts", 'id', operator, 'id')).not.toThrow(InvalidComparisonOperatorError)
-                    expect(() => QueryBuilder.table("users").where("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
-                    expect(() => QueryBuilder.table("users").orWhere("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
-                    expect(() => QueryBuilder.table("users").having("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").join("posts", 'id', operator, 'id')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").where("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").orWhere("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").having("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                 }
             });
         });

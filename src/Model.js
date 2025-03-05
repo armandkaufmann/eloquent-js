@@ -1,6 +1,6 @@
 import {snakeCase} from "change-case";
 import pluralize from "pluralize"
-import {QueryBuilder} from "./QueryBuilder.js";
+import {Query} from "./builder/Query.js";
 
 /**
  * @typedef {Object} ModelOptions
@@ -14,7 +14,7 @@ export class Model {
     table = null;
     /** @type string  */
     primaryKey;
-    /** @type QueryBuilder  */
+    /** @type Query  */
     #queryBuilder = null;
 
     /**
@@ -23,7 +23,7 @@ export class Model {
     constructor(options= {}) {
         this.table = options?.table || this._getTableName();
         this.primaryKey = options?.primaryKey || 'id';
-        this.#queryBuilder = QueryBuilder.table(this.table);
+        this.#queryBuilder = Query.table(this.table);
     }
 
     /**
