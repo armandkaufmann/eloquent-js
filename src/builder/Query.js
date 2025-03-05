@@ -114,11 +114,12 @@ export class Query {
     }
 
     /**
+     * @async
      * @param {Record<string, any>} fields
      * @returns {Boolean}
      * @description Executes the query and returns the newly created record
      */
-    insert(fields) {
+    async insert(fields) {
         this.#validateTableSet();
 
         if (this.#toSql) {
@@ -127,7 +128,7 @@ export class Query {
 
         try {
             const statement = this.#buildPreparedInsertSqlQuery(fields);
-            this.#database.insert(statement.query, statement.bindings);
+            await this.#database.insert(statement.query, statement.bindings);
         }catch (e) {
             return false;
         }

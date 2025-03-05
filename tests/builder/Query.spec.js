@@ -1,9 +1,10 @@
-import {describe, expect, test, vi} from 'vitest';
+import {describe, expect, beforeEach, test, vi} from 'vitest';
 import {Query} from "../../src/builder/Query.js";
 import {InvalidComparisonOperatorError, TableNotSetError} from "../../src/errors/QueryBuilder/Errors.js";
 import {DB} from "../../src/DB.js";
+import {DatabaseNotFoundError} from "../../src/errors/DB/Errors.js";
 
-vi.mock("../../src/DB.js",() => {
+vi.mock("../../src/DB.js", () => {
     const DB = vi.fn();
     DB.prototype.insert = vi.fn()
 
@@ -23,20 +24,26 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Throws when table is not set", () => {
+                let query = null;
+
+                beforeEach(() => {
+                    query = new Query();
+                });
+
                 test("Get", () => {
-                    expect(() => new Query().get()).toThrow(TableNotSetError);
+                    expect(() => query.get()).toThrow(TableNotSetError);
                 });
 
                 test("First", () => {
                     expect(() => new Query().first()).toThrow(TableNotSetError);
                 });
 
-                test("Insert", () => {
-                    expect(() => new Query().insert({taco: 'tuesday'})).toThrow(TableNotSetError);
+                test("Insert", async () => {
+                    await expect(async () => await query.insert({taco: 'tuesday'})).rejects.toThrowError(TableNotSetError);
                 });
 
                 test("Update", () => {
-                    expect(() => new Query().update({taco: 'tuesday'})).toThrow(TableNotSetError);
+                    expect(() => query.update({taco: 'tuesday'})).toThrow(TableNotSetError);
                 });
             })
 
@@ -608,16 +615,13 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Insert", () => {
-            test("Insert query string", () => {
+            test("Insert query string", async () => {
                 const fields = {
                     name: 'john',
                     address: '123 Taco Lane Ave St'
                 }
 
-                const result = Query
-                    .toSql()
-                    .table('users')
-                    .insert(fields);
+                const result = await Query.toSql().table('users').insert(fields);
 
                 expect(result).toBe("INSERT INTO users (name, address) VALUES ('john', '123 Taco Lane Ave St')");
             });
@@ -696,16 +700,16 @@ describe("QueryBuilderTest", () => {
 
     describe("Execute Queries", () => {
         describe("Insert", () => {
-            test("It binds and executes query", () => {
-                //DB.insert returns { stmt: Statement { stmt: undefined }, lastID: 17, changes: 1 } real return from DB
-                const insertReturn = { lastID: 17, changes: 1 };
-                DB.prototype.insert.mockReturnValue(insertReturn);
+            test("It binds and executes query", async () => {
+                //DB.insert returns { stmt: Statement { stmt: undefined }, lastID: 17, changes: 1 }
+                const insertReturn = {lastID: 17, changes: 1};
+                DB.prototype.insert.mockResolvedValue(insertReturn);
 
                 const table = "users";
                 const expectedQuery = "INSERT INTO users (name, age, sex) VALUES (?, ?, ?)";
                 const expectedBindings = ['John', 20, 'M'];
 
-                const query = Query
+                const query = await Query
                     .table(table)
                     .insert({
                         'name': 'John',
