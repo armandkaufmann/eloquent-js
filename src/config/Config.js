@@ -1,6 +1,7 @@
 import {resolve} from "path";
 import {existsSync, readFileSync} from "fs";
 import {defaultConfig} from "./Default.js";
+import _ from "lodash";
 
 export const CONFIG_FILENAME = "eloquentconfig.json";
 
@@ -62,6 +63,11 @@ export class Config {
             return;
         }
 
+        const configOptions = this.#buildOptionsObject(tokens, value);
+        this.#options = _.merge(this.#options, configOptions);
+    }
+
+    #buildOptionsObject(tokens, value) {
         let result = {};
 
         for (let index = tokens.length - 1; index >= 0; index--) {
@@ -75,7 +81,7 @@ export class Config {
             result = {[current]: temp};
         }
 
-        this.#options = {...this.#options, ...result};
+        return result;
     }
 
     /**

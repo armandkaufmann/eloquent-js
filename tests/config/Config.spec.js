@@ -94,13 +94,14 @@ describe("Config Test", () => {
         });
 
         test('it sets a key value pair and does not overwrite the current config', () => {
-            const key = "beef";
+            const key = "database.file";
             const value = "tacos";
 
             config.set(key, value);
 
             expect(config.get(key)).toEqual(value);
             expect(config.get('table.case')).toEqual(defaultConfig.table.case);
+            expect(config.get('database.relative')).toEqual(defaultConfig.database.relative);
         });
 
         test('it can handle setting deep keys', () => {
