@@ -1,6 +1,6 @@
 import {describe, expect, test} from 'vitest';
-import {Query} from "../src/builder/Query.js";
-import {InvalidComparisonOperatorError, TableNotSetError} from "../src/errors/QueryBuilder/Errors.js";
+import {Query} from "../../src/builder/Query.js";
+import {InvalidComparisonOperatorError, TableNotSetError} from "../../src/errors/QueryBuilder/Errors.js";
 
 describe("QueryBuilderTest", () => {
     describe("Building Query Strings", () => {
