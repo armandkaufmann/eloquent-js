@@ -3,11 +3,7 @@ export class Utility {
         let result = "";
 
         values.forEach((value, idx) => {
-            if (typeof value === 'string') {
-                result += "'" + value + "'";
-            } else {
-                result += value;
-            }
+            result += Utility.valueToString(value);
 
             if (idx < values.length - 1) {
                 result += ", ";
@@ -15,5 +11,13 @@ export class Utility {
         });
 
         return result;
+    }
+
+    static valueToString(value) {
+        if (typeof value === 'string') {
+            return "'" + value + "'";
+        } else {
+            return value;
+        }
     }
 }

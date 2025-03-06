@@ -577,6 +577,30 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 AND test_name = 'test'");
             });
+
+            describe("Having Raw", () => {
+                test("Having raw query string", () => {
+                    const result = new Query()
+                        .table('orders')
+                        .having('name', '=', 'test')
+                        .havingRaw('SUM(price) > ?', [2500])
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND SUM(price) > 2500");
+                });
+
+                test("Having raw query string with multiple values", () => {
+                    const result = new Query()
+                        .table('orders')
+                        .having('name', '=', 'test')
+                        .havingRaw('SUM(price) > ? AND SUM(price) < ? AND description = ?', [2500, 5000, "test"])
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND SUM(price) > 2500 AND SUM(price) < 5000 AND description = 'test'");
+                });
+            });
         });
 
         describe("Limit", () => {
