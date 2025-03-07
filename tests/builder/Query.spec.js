@@ -577,6 +577,78 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 AND test_name = 'test'");
             });
+
+            describe("Having Raw", () => {
+                test("Having raw query string", () => {
+                    const result = new Query()
+                        .table('orders')
+                        .having('name', '=', 'test')
+                        .havingRaw('SUM(price) > ?', [2500])
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND SUM(price) > 2500");
+                });
+
+                test("Having raw query string with multiple values", () => {
+                    const result = new Query()
+                        .table('orders')
+                        .having('name', '=', 'test')
+                        .havingRaw('SUM(price) > ? AND SUM(price) < ? AND description = ?', [2500, 5000, "test"])
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND SUM(price) > 2500 AND SUM(price) < 5000 AND description = 'test'");
+                });
+            });
+
+            describe("orHaving/orHavingRaw", () => {
+                describe("OrHaving", () => {
+                    test("Or Having with a previous statement statement", () => {
+                        const result = new Query()
+                            .table('my_table')
+                            .having('test_id', '=', 5)
+                            .orHaving('test_name', '=', 'test')
+                            .toSql()
+                            .get();
+
+                        expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 OR test_name = 'test'");
+                    });
+
+                    test("Doesn't apply Or when no previous having statement", () => {
+                        const result = new Query()
+                            .table('my_table')
+                            .orHaving('test_name', '=', 'test')
+                            .toSql()
+                            .get();
+
+                        expect(result).toBe("SELECT * FROM my_table HAVING test_name = 'test'");
+                    });
+                });
+
+                describe("OrHavingRaw", () => {
+                    test("Or Having Raw with a previous statement", () => {
+                        const result = new Query()
+                            .table('my_table')
+                            .having('test_id', '=', 5)
+                            .orHavingRaw('SUM(price) > ?', [2500])
+                            .toSql()
+                            .get();
+
+                        expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 OR SUM(price) > 2500");
+                    });
+
+                    test("Doesn't apply Or when no previous having raw statement", () => {
+                        const result = new Query()
+                            .table('my_table')
+                            .orHavingRaw('SUM(price) > ?', [2500])
+                            .toSql()
+                            .get();
+
+                        expect(result).toBe("SELECT * FROM my_table HAVING SUM(price) > 2500");
+                    });
+                });
+            });
         });
 
         describe("Limit", () => {
