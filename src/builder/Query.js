@@ -529,6 +529,22 @@ export class Query {
     }
 
     /**
+     * @param {string} column
+     * @param {string} operator
+     * @param {string | number } value
+     * @returns Query
+     * @throws InvalidComparisonOperatorError
+     */
+    orHaving(column, operator, value) {
+        this.#validateComparisonOperator(operator);
+
+        const query = `${column} ${operator} ${Utility.valueToString(value)}`
+        this.#queryHaving += this.#buildHavingPartialQueryString(query, 'OR');
+
+        return this;
+    }
+
+    /**
      * @param {string} expression
      * @param {Array<String|Number>} values
      * @returns Query
@@ -536,6 +552,18 @@ export class Query {
     havingRaw(expression, values) {
         const query = this.#mergeBindings(expression, values);
         this.#queryHaving += this.#buildHavingPartialQueryString(query);
+
+        return this;
+    }
+
+    /**
+     * @param {string} expression
+     * @param {Array<String|Number>} values
+     * @returns Query
+     */
+    orHavingRaw(expression, values) {
+        const query = this.#mergeBindings(expression, values);
+        this.#queryHaving += this.#buildHavingPartialQueryString(query, 'OR');
 
         return this;
     }
