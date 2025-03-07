@@ -523,7 +523,7 @@ export class Query {
         this.#validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valueToString(value)}`
-        this.#queryHaving += this.#buildHavingPartialQueryString(query);
+        this.#queryHaving += this.#buildPartialHavingQueryString(query);
 
         return this;
     }
@@ -539,7 +539,7 @@ export class Query {
         this.#validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valueToString(value)}`
-        this.#queryHaving += this.#buildHavingPartialQueryString(query, 'OR');
+        this.#queryHaving += this.#buildPartialHavingQueryString(query, 'OR');
 
         return this;
     }
@@ -551,7 +551,7 @@ export class Query {
      */
     havingRaw(expression, values) {
         const query = this.#mergeBindings(expression, values);
-        this.#queryHaving += this.#buildHavingPartialQueryString(query);
+        this.#queryHaving += this.#buildPartialHavingQueryString(query);
 
         return this;
     }
@@ -563,7 +563,7 @@ export class Query {
      */
     orHavingRaw(expression, values) {
         const query = this.#mergeBindings(expression, values);
-        this.#queryHaving += this.#buildHavingPartialQueryString(query, 'OR');
+        this.#queryHaving += this.#buildPartialHavingQueryString(query, 'OR');
 
         return this;
     }
@@ -595,7 +595,7 @@ export class Query {
      * @param {string|'AND'|'OR'} [condition='AND']
      * @returns string
      */
-    #buildHavingPartialQueryString(query, condition = 'AND') {
+    #buildPartialHavingQueryString(query, condition = 'AND') {
         if (this.#queryHaving) {
             return ` ${condition} ${query}`;
         }
