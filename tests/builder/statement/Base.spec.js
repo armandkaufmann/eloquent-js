@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest';
-import Base from "../../../src/builder/statement/Base.js";
+import {Base, STATEMENTS} from "../../../src/builder/statement/Base.js";
 
 describe("Statement: Base Test", () => {
     describe("ToString", () => {
@@ -8,7 +8,7 @@ describe("Statement: Base Test", () => {
            const bindings = ['John', 20];
            const expectedString = "WHERE name = 'John' and age > 20";
 
-           const result = new Base(bindings, query).toString()
+           const result = new Base(bindings, query, STATEMENTS.where).toString()
 
             expect(result).toEqual(expectedString);
         });
@@ -18,7 +18,7 @@ describe("Statement: Base Test", () => {
             const bindings = ['John', 20];
             const expectedString = "AND WHERE name = 'John' and age > 20";
 
-            const result = new Base(bindings, query).toString(true)
+            const result = new Base(bindings, query, STATEMENTS.where).toString(true)
 
             expect(result).toEqual(expectedString);
         });
@@ -29,10 +29,22 @@ describe("Statement: Base Test", () => {
             const query =  "WHERE name = ? and age > ?";
             const bindings = ['John', 20];
             const expectedObject = {
-                query, bindings, condition: 'AND'
+                query, bindings
             };
 
-            const result = new Base(bindings, query).serialize()
+            const result = new Base(bindings, query, STATEMENTS.where).serialize()
+
+            expect(result).toEqual(expectedObject);
+        });
+
+        test("It returns an object with condition in query", () => {
+            const query =  "WHERE name = ? and age > ?";
+            const bindings = ['John', 20];
+            const expectedObject = {
+                query: "AND " + query, bindings
+            };
+
+            const result = new Base(bindings, query, STATEMENTS.where).serialize(true)
 
             expect(result).toEqual(expectedObject);
         });

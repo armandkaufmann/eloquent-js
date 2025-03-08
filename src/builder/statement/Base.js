@@ -4,22 +4,28 @@ import {Utility} from "../../utils/Utility.js";
  * @typedef {Object} PrepareObject
  * @property {string} query
  * @property {Array<String|Number>} bindings
- * @property {'AND'|'OR'} condition
  */
 
-export default class Base {
+export const STATEMENTS = {
+    where: 'WHERE'
+}
+
+export class Base {
     _bindings;
     _query;
+    _statement;
     _condition;
 
     /**
      * @param {Array<String|Number>} bindings
      * @param {String} query
+     * @param {String} statement
      * @param {'AND'|'OR'} [condition='AND']
      */
-    constructor(bindings, query, condition = 'AND') {
+    constructor(bindings, query, statement, condition = 'AND') {
         this._bindings = bindings;
         this._query = query;
+        this._statement = statement;
         this._condition = condition;
     }
 
@@ -32,14 +38,21 @@ export default class Base {
     }
 
     /**
+     * @param {Boolean} [withCondition=false]
      * @returns PrepareObject
      */
-    serialize() {
+    serialize(withCondition = false) {
         return {
-            query: this._query,
+            query: (withCondition ? this._condition + ' ' : '') + this._query,
             bindings: this._bindings,
-            condition: this._condition,
         }
+    }
+
+    /**
+     * @returns String
+     */
+    getStatement() {
+        return this._statement;
     }
 
     /**
