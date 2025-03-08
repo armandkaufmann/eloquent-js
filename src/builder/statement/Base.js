@@ -24,10 +24,11 @@ export default class Base {
     }
 
     /**
+     * @param {Boolean} [withCondition=false]
      * @returns String
      */
-    toString() {
-        return this.#mergeBindings(this._query, this._bindings);
+    toString(withCondition = false) {
+        return (withCondition ? this._condition + ' ' : '') + this.#mergeBindings(this._query, this._bindings);
     }
 
     /**

@@ -1,4 +1,4 @@
-import {describe, expect, beforeEach, test} from 'vitest';
+import {describe, expect, test} from 'vitest';
 import Base from "../../../src/builder/statement/Base.js";
 
 describe("Statement: Base Test", () => {
@@ -9,6 +9,16 @@ describe("Statement: Base Test", () => {
            const expectedString = "WHERE name = 'John' and age > 20";
 
            const result = new Base(bindings, query).toString()
+
+            expect(result).toEqual(expectedString);
+        });
+
+        test("It builds string with condition", () => {
+            const query =  "WHERE name = ? and age > ?";
+            const bindings = ['John', 20];
+            const expectedString = "AND WHERE name = 'John' and age > 20";
+
+            const result = new Base(bindings, query).toString(true)
 
             expect(result).toEqual(expectedString);
         });
