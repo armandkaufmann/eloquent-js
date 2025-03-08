@@ -572,7 +572,7 @@ export class Query {
      * @param {string} query
      * @param {Array<String|Number>} bindings
      * @param {String|'?'} [replacer='?']
-     * @returns Query
+     * @returns String
      */
     #mergeBindings(query, bindings, replacer = '?') {
         let result = ``;
