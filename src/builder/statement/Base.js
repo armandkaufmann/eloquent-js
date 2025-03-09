@@ -1,11 +1,9 @@
 import {Utility} from "../../utils/Utility.js";
+import "./Base.Types.js"
 
 /**
- * @typedef {Object} PrepareObject
- * @property {string} query
- * @property {Array<String|Number>} bindings
+ * @enum {Statement}
  */
-
 export const STATEMENTS = {
     where: 'WHERE'
 }
@@ -19,7 +17,7 @@ export class Base {
     /**
      * @param {Array<String|Number>} bindings
      * @param {String} query
-     * @param {String} statement
+     * @param {Statement} statement
      * @param {'AND'|'OR'} [condition='AND']
      */
     constructor(bindings, query, statement, condition = 'AND') {
@@ -46,13 +44,6 @@ export class Base {
             query: (withCondition ? this._condition + ' ' : '') + this._query,
             bindings: this._bindings,
         }
-    }
-
-    /**
-     * @returns String
-     */
-    getStatement() {
-        return this._statement;
     }
 
     /**

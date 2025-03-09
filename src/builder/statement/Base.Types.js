@@ -1,0 +1,11 @@
+/**
+ * @typedef {Object} PrepareObject
+ * @property {string} query
+ * @property {Array<String|Number>} bindings
+ */
+
+/**
+ * @typedef Statement
+ * @property {"WHERE"} where
+ */
+

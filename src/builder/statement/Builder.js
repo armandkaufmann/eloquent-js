@@ -1,6 +1,15 @@
 export default class Builder {
     /** @type {Array<Base>} */
     #statements = [];
+    /** @type {Statement} */
+    #type;
+
+    /**
+     * @param {Statement} type
+     */
+    constructor(type) {
+        this.#type = type;
+    }
 
     /**
      * @param {Base} statement
@@ -16,36 +25,39 @@ export default class Builder {
      * @return String
      */
     toString() {
-        return this.#statements
-            .map((statement, index) =>  this.#finalizeString(statement.toString(index !== 0), index, statement.getStatement()))
+        let result = this.#statements
+            .map((statement, index) => statement.toString(index !== 0))
             .join(" ");
+
+        if (result) {
+            result = `${this.#type} ${result}`;
+        }
+
+        return result;
     }
 
     /**
      * @return PrepareObject
      */
     prepare() {
-        return this.#statements
+        /** @type {PrepareObject} */
+        let result = this.#statements
             .reduce((result, statement, index) => {
                 const prepare = statement.serialize(index !== 0);
 
-                result.query += this.#finalizeString(prepare.query, index, statement.getStatement());
+                result.query += `${index > 0 ? ' ' : ''}${prepare.query}`;
                 result.bindings.push(...prepare.bindings);
 
                 return result;
             }, {
                 query: "",
                 bindings: []
-            })
-    }
+            });
 
-    /**
-     * @param {String} query
-     * @param {String} statement
-     * @param {Number} index
-     * @return String
-     */
-    #finalizeString(query, index, statement) {
-        return `${index === 0 ? `${statement} ` : ''}${query}`
+        if (result.query) {
+            result.query = `${this.#type} ${result.query}`;
+        }
+
+        return result;
     }
 }
