@@ -11,7 +11,6 @@ export const STATEMENTS = {
 export class Base {
     _bindings;
     _query;
-    _statement;
     _separator;
 
     /**
@@ -23,7 +22,6 @@ export class Base {
     constructor(bindings, query, statement, separator) {
         this._bindings = bindings;
         this._query = query;
-        this._statement = statement;
         this._separator = separator;
     }
 
