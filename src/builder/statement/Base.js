@@ -5,6 +5,7 @@ import "./Base.Types.js"
  * @enum {Statement}
  */
 export const STATEMENTS = {
+    select: 'SELECT',
     where: 'WHERE'
 }
 

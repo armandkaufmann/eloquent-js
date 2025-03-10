@@ -22,6 +22,17 @@ export default class Builder {
     }
 
     /**
+     * @param {Base} statement
+     * @return Builder
+     */
+    pushOrUpdate(statement) {
+        this.#statements = [statement];
+
+        return this;
+    }
+
+
+    /**
      * @return String
      */
     toString() {

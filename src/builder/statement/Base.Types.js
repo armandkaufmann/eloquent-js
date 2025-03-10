@@ -6,6 +6,7 @@
 
 /**
  * @typedef Statement
+ * @property {"SELECT"} select
  * @property {"WHERE"} where
  */
 

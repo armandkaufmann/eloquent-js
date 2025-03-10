@@ -3,58 +3,90 @@ import Where from "../../../src/builder/statement/where/Where.js";
 import Builder from "../../../src/builder/statement/Builder.js";
 import {STATEMENTS} from "../../../src/builder/statement/Base.js";
 import OrWhere from "../../../src/builder/statement/where/OrWhere.js";
+import Select from "../../../src/builder/statement/select/Select.js";
 
-describe('Statement: Where Statement Builder', () => {
-    describe('toString', () => {
-        test('It builds complete statement string', () => {
-            const first = new Where('name', '=', 'John');
-            const second = new OrWhere('age', '>', 20);
-            const third = new Where('sex', '=', 'M');
+describe('Statement: Statement Builder', () => {
+    describe("Select", () => {
+        describe("toString", () => {
+            test('it builds complete statement string', () => {
+                const selectStatement = new Select(['name', 'age', 'sex']);
+                const expectedResult = "SELECT name, age, sex";
 
-            const expectedResult = "WHERE name = 'John' OR age > 20 AND sex = 'M'"
+                const builder = new Builder(STATEMENTS.select);
+                builder.push(selectStatement);
 
-            const builder = new Builder(STATEMENTS.where);
-            builder.push(first).push(second).push(third);
+                const result = builder.toString();
 
-            const result = builder.toString();
+                expect(result).toEqual(expectedResult);
+            });
 
-            expect(result).toEqual(expectedResult);
-        });
+            test("pushOrUpdate: does not append select statement if it exists", () => {
+                const firstSelectStatement = new Select(['name', 'age', 'sex']);
+                const secondSelectStatement = new Select(['location', 'role', 'preference']);
+                const expectedResult = "SELECT location, role, preference";
 
-        test('It returns an empty string if there are no statements', () => {
-            const builder = new Builder(STATEMENTS.where);
+                const builder = new Builder(STATEMENTS.select);
+                builder.pushOrUpdate(firstSelectStatement).pushOrUpdate(secondSelectStatement);
 
-            const result = builder.toString();
+                const result = builder.toString();
 
-            expect(result).toEqual('');
+                expect(result).toEqual(expectedResult);
+            });
         });
     });
 
-    describe('prepare', () => {
-        test('it builds the prepare object with correct values', () => {
-            const first = new Where('name', '=', 'John');
-            const second = new OrWhere('age', '>', 20);
-            const third = new Where('sex', '=', 'M');
+    describe("Where", () => {
+        describe('toString', () => {
+            test('It builds complete statement string', () => {
+                const first = new Where('name', '=', 'John');
+                const second = new OrWhere('age', '>', 20);
+                const third = new Where('sex', '=', 'M');
 
-            const expectedQuery = "WHERE name = ? OR age > ? AND sex = ?"
-            const expectedBindings = ['John', 20, 'M']
+                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex = 'M'"
 
-            const builder = new Builder(STATEMENTS.where);
-            builder.push(first).push(second).push(third);
+                const builder = new Builder(STATEMENTS.where);
+                builder.push(first).push(second).push(third);
 
-            const result = builder.prepare();
+                const result = builder.toString();
 
-            expect(result.query).toEqual(expectedQuery);
-            expect(result.bindings).toEqual(expectedBindings);
+                expect(result).toEqual(expectedResult);
+            });
+
+            test('It returns an empty string if there are no statements', () => {
+                const builder = new Builder(STATEMENTS.where);
+
+                const result = builder.toString();
+
+                expect(result).toEqual('');
+            });
         });
 
-        test('it builds an empty prepare object when no statements provided', () => {
-            const builder = new Builder(STATEMENTS.where);
+        describe('prepare', () => {
+            test('it builds the prepare object with correct values', () => {
+                const first = new Where('name', '=', 'John');
+                const second = new OrWhere('age', '>', 20);
+                const third = new Where('sex', '=', 'M');
 
-            const result = builder.prepare();
+                const expectedQuery = "WHERE name = ? OR age > ? AND sex = ?"
+                const expectedBindings = ['John', 20, 'M']
 
-            expect(result.query).toEqual('');
-            expect(result.bindings).toEqual([]);
+                const builder = new Builder(STATEMENTS.where);
+                builder.push(first).push(second).push(third);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedQuery);
+                expect(result.bindings).toEqual(expectedBindings);
+            });
+
+            test('it builds an empty prepare object when no statements provided', () => {
+                const builder = new Builder(STATEMENTS.where);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual('');
+                expect(result.bindings).toEqual([]);
+            });
         });
     });
 });
