@@ -1,4 +1,4 @@
-import "./Base.Types.js";
+import "./Base.types.js";
 
 export default class Group {
     /** @type {Array<Base>} */

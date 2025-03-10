@@ -1,5 +1,5 @@
 import {Utility} from "../../utils/Utility.js";
-import "./Base.Types.js"
+import "./Base.types.js"
 
 /**
  * @enum {Statement}
