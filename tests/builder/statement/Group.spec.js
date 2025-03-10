@@ -1,7 +1,5 @@
 import {describe, expect, test} from 'vitest';
 import Where from "../../../src/builder/statement/where/Where.js";
-import Builder from "../../../src/builder/statement/Builder.js";
-import {STATEMENTS} from "../../../src/builder/statement/Base.js";
 import Group from "../../../src/builder/statement/Group.js";
 
 describe('Statement: Group', () => {
