@@ -1,4 +1,3 @@
-import {STATEMENTS} from "./Base.js";
 import "./Base.Types.js";
 
 export default class Group {
