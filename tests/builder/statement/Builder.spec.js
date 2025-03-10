@@ -5,6 +5,7 @@ import {STATEMENTS} from "../../../src/builder/statement/Base.js";
 import OrWhere from "../../../src/builder/statement/where/OrWhere.js";
 import Select from "../../../src/builder/statement/select/Select.js";
 import WhereNull from "../../../src/builder/statement/where/WhereNull.js";
+import OrWhereNull from "../../../src/builder/statement/where/OrWhereNull.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -42,11 +43,12 @@ describe('Statement: Statement Builder', () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
+                const fourth = new OrWhereNull('taco');
 
-                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex IS NULL"
+                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex IS NULL OR taco IS NULL"
 
                 const builder = new Builder(STATEMENTS.where);
-                builder.push(first).push(second).push(third);
+                builder.push(first).push(second).push(third).push(fourth);
 
                 const result = builder.toString();
 
@@ -67,12 +69,13 @@ describe('Statement: Statement Builder', () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
+                const fourth = new OrWhereNull('taco');
 
-                const expectedQuery = "WHERE name = ? OR age > ? AND sex IS NULL"
+                const expectedQuery = "WHERE name = ? OR age > ? AND sex IS NULL OR taco IS NULL"
                 const expectedBindings = ['John', 20]
 
                 const builder = new Builder(STATEMENTS.where);
-                builder.push(first).push(second).push(third);
+                builder.push(first).push(second).push(third).push(fourth);
 
                 const result = builder.prepare();
 
