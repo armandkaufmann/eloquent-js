@@ -6,6 +6,7 @@ import OrWhere from "../../../src/builder/statement/where/OrWhere.js";
 import Select from "../../../src/builder/statement/select/Select.js";
 import WhereNull from "../../../src/builder/statement/where/WhereNull.js";
 import OrWhereNull from "../../../src/builder/statement/where/OrWhereNull.js";
+import WhereNotNull from "../../../src/builder/statement/where/WhereNotNull.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -44,11 +45,12 @@ describe('Statement: Statement Builder', () => {
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
                 const fourth = new OrWhereNull('taco');
+                const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex IS NULL OR taco IS NULL"
+                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex IS NULL OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
-                builder.push(first).push(second).push(third).push(fourth);
+                builder.push(first).push(second).push(third).push(fourth).push(fifth);
 
                 const result = builder.toString();
 
@@ -70,12 +72,13 @@ describe('Statement: Statement Builder', () => {
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
                 const fourth = new OrWhereNull('taco');
+                const fifth = new WhereNotNull('mouse');
 
-                const expectedQuery = "WHERE name = ? OR age > ? AND sex IS NULL OR taco IS NULL"
+                const expectedQuery = "WHERE name = ? OR age > ? AND sex IS NULL OR taco IS NULL AND mouse IS NOT NULL"
                 const expectedBindings = ['John', 20]
 
                 const builder = new Builder(STATEMENTS.where);
-                builder.push(first).push(second).push(third).push(fourth);
+                builder.push(first).push(second).push(third).push(fourth).push(fifth);
 
                 const result = builder.prepare();
 
