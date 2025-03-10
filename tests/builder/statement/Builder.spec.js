@@ -4,6 +4,7 @@ import Builder from "../../../src/builder/statement/Builder.js";
 import {STATEMENTS} from "../../../src/builder/statement/Base.js";
 import OrWhere from "../../../src/builder/statement/where/OrWhere.js";
 import Select from "../../../src/builder/statement/select/Select.js";
+import WhereNull from "../../../src/builder/statement/where/WhereNull.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -40,9 +41,9 @@ describe('Statement: Statement Builder', () => {
             test('It builds complete statement string', () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
-                const third = new Where('sex', '=', 'M');
+                const third = new WhereNull('sex');
 
-                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex = 'M'"
+                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex IS NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 builder.push(first).push(second).push(third);
@@ -65,10 +66,10 @@ describe('Statement: Statement Builder', () => {
             test('it builds the prepare object with correct values', () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
-                const third = new Where('sex', '=', 'M');
+                const third = new WhereNull('sex');
 
-                const expectedQuery = "WHERE name = ? OR age > ? AND sex = ?"
-                const expectedBindings = ['John', 20, 'M']
+                const expectedQuery = "WHERE name = ? OR age > ? AND sex IS NULL"
+                const expectedBindings = ['John', 20]
 
                 const builder = new Builder(STATEMENTS.where);
                 builder.push(first).push(second).push(third);
