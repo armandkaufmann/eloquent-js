@@ -1,12 +1,13 @@
 import {describe, expect, test} from 'vitest';
 import Where from "../../../src/builder/statement/where/Where.js";
 import Group from "../../../src/builder/statement/Group.js";
+import OrWhere from "../../../src/builder/statement/where/OrWhere.js";
 
 describe('Statement: Group', () => {
     describe('toString', () => {
         test('It builds complete statement string', () => {
             const first = new Where('name', '=', 'John');
-            const second = new Where('age', '>', 20, 'OR');
+            const second = new OrWhere('age', '>', 20);
             const third = new Where('sex', '=', 'M');
 
             const expectedResult = "(name = 'John' OR age > 20 AND sex = 'M')"

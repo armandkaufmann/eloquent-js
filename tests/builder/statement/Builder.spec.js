@@ -2,12 +2,13 @@ import {describe, expect, test} from 'vitest';
 import Where from "../../../src/builder/statement/where/Where.js";
 import Builder from "../../../src/builder/statement/Builder.js";
 import {STATEMENTS} from "../../../src/builder/statement/Base.js";
+import OrWhere from "../../../src/builder/statement/where/OrWhere.js";
 
 describe('Statement: Where Statement Builder', () => {
     describe('toString', () => {
         test('It builds complete statement string', () => {
             const first = new Where('name', '=', 'John');
-            const second = new Where('age', '>', 20, 'OR');
+            const second = new OrWhere('age', '>', 20);
             const third = new Where('sex', '=', 'M');
 
             const expectedResult = "WHERE name = 'John' OR age > 20 AND sex = 'M'"
@@ -32,7 +33,7 @@ describe('Statement: Where Statement Builder', () => {
     describe('prepare', () => {
         test('it builds the prepare object with correct values', () => {
             const first = new Where('name', '=', 'John');
-            const second = new Where('age', '>', 20, 'OR');
+            const second = new OrWhere('age', '>', 20);
             const third = new Where('sex', '=', 'M');
 
             const expectedQuery = "WHERE name = ? OR age > ? AND sex = ?"

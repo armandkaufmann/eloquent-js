@@ -1,10 +1,17 @@
 import {Base, STATEMENTS} from "../Base.js";
 
 export default class Where extends Base {
-    constructor(column, operator, value, condition = 'AND') {
+
+    /**
+     * @param {String} column
+     * @param {String} operator
+     * @param {String|number} value
+     * @param {String} [separator='AND']
+     */
+    constructor(column, operator, value, separator = 'AND') {
         const query = `${column} ${operator} ?`;
         const bindings = [value];
 
-        super(bindings, query, STATEMENTS.where, condition);
+        super(bindings, query, STATEMENTS.where, separator);
     }
 }
