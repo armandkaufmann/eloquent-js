@@ -6,7 +6,8 @@ import "./Base.types.js"
  */
 export const STATEMENTS = {
     select: 'SELECT',
-    where: 'WHERE'
+    where: 'WHERE',
+    none: 'NONE'
 }
 
 export class Base {

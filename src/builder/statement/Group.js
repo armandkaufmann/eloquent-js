@@ -1,28 +1,18 @@
 import "./Base.types.js";
+import Builder from "./Builder.js";
+import {STATEMENTS} from "./Base.js";
 
-export default class Group {
-    /** @type {Array<Base>} */
-    #statements = [];
-
-    /**
-     * @param {Base} statement
-     * @return Builder
-     */
-    push(statement) {
-        this.#statements.push(statement);
-
-        return this;
+export default class Group extends Builder {
+    constructor() {
+        super(STATEMENTS.none);
     }
-
     toString() {
-        let result = this.#statements
-            .map((statement, index) => statement.toString(index !== 0))
-            .join(" ");
+        let query = super.toString(false);
 
-        if (result) {
-            result = `(${result})`;
+        if (query) {
+            query = `(${query})`;
         }
 
-        return result;
+        return query;
     }
 }

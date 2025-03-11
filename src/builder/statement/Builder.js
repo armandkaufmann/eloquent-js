@@ -1,14 +1,19 @@
+import {STATEMENTS} from "./Base.js";
+
 export default class Builder {
     /** @type {Array<Base>} */
     #statements = [];
     /** @type {Statement} */
     #type;
+    /** @type {Boolean} */
+    #withStatement;
 
     /**
      * @param {Statement} type
      */
     constructor(type) {
         this.#type = type;
+        this.#parseType();
     }
 
     /**
@@ -40,7 +45,7 @@ export default class Builder {
             .map((statement, index) => statement.toString(index !== 0))
             .join(" ");
 
-        if (result) {
+        if (result && this.#withStatement) {
             result = `${this.#type} ${result}`;
         }
 
@@ -65,10 +70,20 @@ export default class Builder {
                 bindings: []
             });
 
-        if (result.query) {
+        if (result.query && this.#withStatement) {
             result.query = `${this.#type} ${result.query}`;
         }
 
         return result;
+    }
+
+    #parseType() {
+        switch (this.#type) {
+            case STATEMENTS.none:
+                this.#withStatement = false;
+                break;
+            default:
+                this.#withStatement = true;
+        }
     }
 }
