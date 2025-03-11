@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import OrWhereNull from "../../../../src/builder/statement/where/OrWhereNull.js";
 
-describe('Statement: OrWhere', () => {
+describe('Statement: OrWhereNull', () => {
     describe('toString', () => {
        test("It builds where partial statement", () => {
            const column = 'users';
