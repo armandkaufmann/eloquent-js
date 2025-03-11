@@ -7,6 +7,6 @@ export default class OrWhereIn extends WhereIn {
      * @param {Array<String|Number>} values
      */
     constructor(column, values) {
-        super(column, values, 'OR');
+        super(column, values, 'IN', 'OR');
     }
 }

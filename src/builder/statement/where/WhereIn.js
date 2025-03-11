@@ -5,9 +5,10 @@ export default class WhereIn extends Base {
     /**
      * @param {String} column
      * @param {Array<String|Number>} values
+     * @param {String} [condition='IN']
      * @param {String} [separator='AND']
      */
-    constructor(column, values, separator = 'AND') {
+    constructor(column, values, condition = 'IN', separator = 'AND') {
         let query = "";
         let bindings = [];
 
@@ -21,7 +22,7 @@ export default class WhereIn extends Base {
             }
         });
 
-        query = `${column} IN (${query})`;
+        query = `${column} ${condition} (${query})`;
 
         super(bindings, query, STATEMENTS.where, separator);
     }

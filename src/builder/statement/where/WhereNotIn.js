@@ -1,6 +1,6 @@
-import {Base, STATEMENTS} from "../Base.js";
+import WhereIn from "./WhereIn.js";
 
-export default class WhereNotIn extends Base {
+export default class WhereNotIn extends WhereIn {
 
     /**
      * @param {String} column
@@ -8,21 +8,6 @@ export default class WhereNotIn extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, values, separator = 'AND') {
-        let query = "";
-        let bindings = [];
-
-        values.forEach((value, index) => {
-            bindings.push(value);
-
-            if (index === 0) {
-                query += '?';
-            } else {
-                query += ', ?';
-            }
-        });
-
-        query = `${column} NOT IN (${query})`;
-
-        super(bindings, query, STATEMENTS.where, separator);
+        super(column, values, 'NOT IN', separator);
     }
 }
