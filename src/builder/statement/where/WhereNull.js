@@ -4,10 +4,11 @@ export default class WhereNull extends Base {
 
     /**
      * @param {String} column
+     * @param {String} [condition='IS NULL']
      * @param {String} [separator='AND']
      */
-    constructor(column, separator = 'AND') {
-        const query = `${column} IS NULL`;
+    constructor(column, condition = 'IS NULL', separator = 'AND') {
+        const query = `${column} ${condition}`;
 
         super([], query, STATEMENTS.where, separator);
     }

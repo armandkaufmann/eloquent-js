@@ -6,6 +6,6 @@ export default class OrWhereNull extends WhereNull {
      * @param {string} column
      */
     constructor(column) {
-        super(column, 'OR');
+        super(column, 'IS NULL', 'OR');
     }
 }

@@ -1,14 +1,13 @@
-import {Base, STATEMENTS} from "../Base.js";
+import {STATEMENTS} from "../Base.js";
+import WhereNull from "./WhereNull.js";
 
-export default class WhereNotNull extends Base {
+export default class WhereNotNull extends WhereNull {
 
     /**
      * @param {String} column
      * @param {String} [separator='AND']
      */
     constructor(column, separator = 'AND') {
-        const query = `${column} IS NOT NULL`;
-
-        super([], query, STATEMENTS.where, separator);
+        super(column, 'IS NOT NULL', separator);
     }
 }
