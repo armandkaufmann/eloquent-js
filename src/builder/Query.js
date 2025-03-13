@@ -1,6 +1,26 @@
 import {Utility} from "../utils/Utility.js";
 import {InvalidComparisonOperatorError, TableNotSetError} from "../errors/QueryBuilder/Errors.js";
 import {DB} from "../DB.js";
+import Builder from "./statement/Builder.js";
+import {STATEMENTS} from "./statement/Base.js";
+import Where from "./statement/where/Where.js";
+import OrWhere from "./statement/where/OrWhere.js";
+import WhereNull from "./statement/where/WhereNull.js";
+import OrWhereNull from "./statement/where/OrWhereNull.js";
+import WhereNotNull from "./statement/where/WhereNotNull.js";
+import OrWhereNotNull from "./statement/where/OrWhereNotNull.js";
+import WhereIn from "./statement/where/WhereIn.js";
+import OrWhereIn from "./statement/where/OrWhereIn.js";
+import WhereNotIn from "./statement/where/WhereNotIn.js";
+import OrWhereNotIn from "./statement/where/OrWhereNotIn.js";
+import WhereBetween from "./statement/where/WhereBetween.js";
+import OrWhereBetween from "./statement/where/OrWhereBetween.js";
+import WhereNotBetween from "./statement/where/WhereNotBetween.js";
+import OrWhereNotBetween from "./statement/where/OrWhereNotBetween.js";
+import WhereBetweenColumns from "./statement/where/WhereBetweenColumns.js";
+import OrWhereBetweenColumns from "./statement/where/OrWhereBetweenColumns.js";
+import WhereNotBetweenColumns from "./statement/where/WhereNotBetweenColumns.js";
+import OrWhereNotBetweenColumns from "./statement/where/OrWhereNotBetweenColumns.js";
 
 export class Query {
     /** @type {?string} */
@@ -13,8 +33,8 @@ export class Query {
     #querySelect = [];
     /** @type []  */
     #queryJoin = [];
-    /** @type string  */
-    #queryWhere = "";
+    /** @type Builder  */
+    #queryWhere = new Builder(STATEMENTS.where);
     /** @type {Array<string>}  */
     #queryGroupBy = [];
     /** @type string  */
@@ -212,10 +232,11 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     where(column, operator, value = null) {
-        if (typeof column === "function") {
-            this.#handleWhereCallback(column);
-            return this;
-        }
+        //TODO: uncomment this
+        // if (typeof column === "function") {
+        //     this.#handleWhereCallback(column);
+        //     return this;
+        // }
 
         if (!value) {
             value = operator;
@@ -224,8 +245,7 @@ export class Query {
 
         this.#validateComparisonOperator(operator);
 
-        const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        this.#queryWhere += this.#buildWherePartialQueryString(query);
+        this.#queryWhere.push(new Where(column, operator, value));
 
         return this;
     }
@@ -238,10 +258,11 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     orWhere(column, operator, value = null) {
-        if (typeof column === "function") {
-            this.#handleWhereCallback(column, "OR");
-            return this;
-        }
+        //TODO: uncomment this
+        // if (typeof column === "function") {
+        //     this.#handleWhereCallback(column, "OR");
+        //     return this;
+        // }
 
         if (!value) {
             value = operator;
@@ -250,8 +271,7 @@ export class Query {
 
         this.#validateComparisonOperator(operator);
 
-        const query = `${column} ${operator} ${Utility.valuesToString([value])}`
-        this.#queryWhere += this.#buildWherePartialQueryString(query, 'OR');
+        this.#queryWhere.push(new OrWhere(column, operator, value));
 
         return this;
     }
@@ -261,8 +281,7 @@ export class Query {
      * @returns Query
      */
     whereNull(column) {
-        const query = `${column} IS NULL`
-        this.#queryWhere += this.#buildWherePartialQueryString(query);
+        this.#queryWhere.push(new WhereNull(column));
 
         return this;
     }
@@ -272,8 +291,7 @@ export class Query {
      * @returns Query
      */
     orWhereNull(column) {
-        const query = `${column} IS NULL`
-        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR");
+        this.#queryWhere.push(new OrWhereNull(column));
 
         return this;
     }
@@ -283,8 +301,7 @@ export class Query {
      * @returns Query
      */
     whereNotNull(column) {
-        const query = `${column} IS NOT NULL`
-        this.#queryWhere += this.#buildWherePartialQueryString(query);
+        this.#queryWhere.push(new WhereNotNull(column));
 
         return this;
     }
@@ -294,8 +311,7 @@ export class Query {
      * @returns Query
      */
     orWhereNotNull(column) {
-        const query = `${column} IS NOT NULL`
-        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR");
+        this.#queryWhere.push(new OrWhereNotNull(column));
 
         return this;
     }
@@ -323,7 +339,7 @@ export class Query {
      * @returns Query
      */
     whereIn(column, values) {
-        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, false);
+        this.#queryWhere.push(new WhereIn(column, values));
 
         return this;
     }
@@ -334,7 +350,7 @@ export class Query {
      * @returns Query
      */
     orWhereIn(column, values) {
-        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, false, 'OR');
+        this.#queryWhere.push(new OrWhereIn(column, values));
 
         return this;
     }
@@ -345,7 +361,7 @@ export class Query {
      * @returns Query
      */
     whereNotIn(column, values) {
-        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, true);
+        this.#queryWhere.push(new WhereNotIn(column, values));
 
         return this;
     }
@@ -356,7 +372,7 @@ export class Query {
      * @returns Query
      */
     orWhereNotIn(column, values) {
-        this.#queryWhere += this.#buildPartialWhereInQueryString(values, column, true, 'OR');
+        this.#queryWhere.push(new OrWhereNotIn(column, values));
 
         return this;
     }
@@ -367,9 +383,7 @@ export class Query {
      * @returns Query
      */
     whereBetween(column, values) {
-        const query = `(${column} BETWEEN ${values[0]} and ${values[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query)
+        this.#queryWhere.push(new WhereBetween(column, values));
 
         return this;
     }
@@ -380,9 +394,7 @@ export class Query {
      * @returns Query
      */
     orWhereBetween(column, values) {
-        const query = `(${column} BETWEEN ${values[0]} and ${values[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR")
+        this.#queryWhere.push(new OrWhereBetween(column, values));
 
         return this;
     }
@@ -393,9 +405,7 @@ export class Query {
      * @returns Query
      */
     whereNotBetween(column, values) {
-        const query = `(${column} NOT BETWEEN ${values[0]} and ${values[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query)
+        this.#queryWhere.push(new WhereNotBetween(column, values));
 
         return this;
     }
@@ -406,9 +416,7 @@ export class Query {
      * @returns Query
      */
     orWhereNotBetween(column, values) {
-        const query = `(${column} NOT BETWEEN ${values[0]} and ${values[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR")
+        this.#queryWhere.push(new OrWhereNotBetween(column, values));
 
         return this;
     }
@@ -419,9 +427,7 @@ export class Query {
      * @returns Query
      */
     whereBetweenColumns(column, columns) {
-        const query = `(${column} BETWEEN ${columns[0]} and ${columns[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query)
+        this.#queryWhere.push(new WhereBetweenColumns(column, columns));
 
         return this;
     }
@@ -432,9 +438,7 @@ export class Query {
      * @returns Query
      */
     orWhereBetweenColumns(column, columns) {
-        const query = `(${column} BETWEEN ${columns[0]} and ${columns[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR")
+        this.#queryWhere.push(new OrWhereBetweenColumns(column, columns));
 
         return this;
     }
@@ -445,9 +449,7 @@ export class Query {
      * @returns Query
      */
     whereNotBetweenColumns(column, columns) {
-        const query = `(${column} NOT BETWEEN ${columns[0]} and ${columns[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query)
+        this.#queryWhere.push(new WhereNotBetweenColumns(column, columns));
 
         return this;
     }
@@ -458,49 +460,9 @@ export class Query {
      * @returns Query
      */
     orWhereNotBetweenColumns(column, columns) {
-        const query = `(${column} NOT BETWEEN ${columns[0]} and ${columns[1]})`;
-
-        this.#queryWhere += this.#buildWherePartialQueryString(query, "OR")
+        this.#queryWhere.push(new OrWhereNotBetweenColumns(column, columns));
 
         return this;
-    }
-
-    /**
-     * @param {Array<string|number>} values
-     * @param {string} column
-     * @param {boolean} notIn
-     * @param {string|'AND'|'OR'} [condition='AND']
-     * @returns string
-     */
-    #buildPartialWhereInQueryString(values, column, notIn, condition = 'AND') {
-        const inArray = values
-            .reduce((prev, current, index) => {
-                if (index > 0) {
-                    return prev += `, ${Utility.valuesToString([current])}`;
-                }
-
-                return prev += Utility.valuesToString([current]);
-            }, "");
-
-        const query = notIn ? `${column} NOT IN (${inArray})` : `${column} IN (${inArray})`;
-        return this.#buildWherePartialQueryString(query, condition);
-    }
-
-    /**
-     * @param {string} query
-     * @param {string|'AND'|'OR'} [condition='AND']
-     * @returns string
-     */
-    #buildWherePartialQueryString(query, condition = 'AND') {
-        if (this.#queryWhere && (this.#queryWhere.slice(-1) !== '(')) {
-            return ` ${condition} ${query}`;
-        }
-
-        if (this.#queryWhere && (this.#queryWhere.slice(-1) === '(')) {
-            return `${query}`;
-        }
-
-        return `WHERE ${query}`;
     }
 
     /**
@@ -751,7 +713,7 @@ export class Query {
      * @returns string
      */
     #buildWhereQuery() {
-        return this.#queryWhere;
+        return this.#queryWhere.toString();
     }
 
     /**
