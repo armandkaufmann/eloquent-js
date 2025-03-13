@@ -7,6 +7,6 @@ export default class OrWhereBetweenColumns extends WhereBetweenColumns {
      * @param {Array<string>} columns
      */
     constructor(column, columns) {
-        super(column, columns, 'OR');
+        super(column, columns, 'BETWEEN', 'OR');
     }
 }
