@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import WhereNotBetween from "../../../../src/builder/statement/where/WhereNotBetween.js";
 
-describe('Statement: WhereBetween', () => {
+describe('Statement: WhereNotBetween', () => {
     describe('toString', () => {
         test("It builds where partial statement", () => {
             const column = 'age';
