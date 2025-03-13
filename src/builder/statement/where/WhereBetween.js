@@ -9,7 +9,7 @@ export default class WhereBetween extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, values, condition = 'BETWEEN', separator = 'AND') {
-        const query = `${column} ${condition} ? and ?`;
+        const query = `${column} ${condition} ? AND ?`;
         const bindings = [values[0], values[1]];
 
         super(bindings, query, STATEMENTS.where, separator);
