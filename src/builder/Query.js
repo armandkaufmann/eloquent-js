@@ -640,7 +640,7 @@ export class Query {
         const queryUpdate = this.#buildPartialUpdateSqlQuery(fields);
 
         const queries = [
-            queryUpdate, this.#buildWhereQuery(),
+            queryUpdate, this.#queryWhere.toString(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
@@ -665,7 +665,7 @@ export class Query {
         const queryDelete = this.#buildPartialDeleteSqlQuery();
 
         const queries = [
-            queryDelete, this.#buildWhereQuery(),
+            queryDelete, this.#queryWhere.toString(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
@@ -682,7 +682,7 @@ export class Query {
      */
     #buildFullSelectSqlQuery() {
         const queries = [
-            this.#buildSelectQuery(), this.#buildJoinQuery(), this.#buildWhereQuery(),
+            this.#buildSelectQuery(), this.#buildJoinQuery(), this.#queryWhere.toString(),
             this.#buildGroupByQuery(), this.#buildHavingQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
@@ -707,13 +707,6 @@ export class Query {
      */
     #buildJoinQuery() {
         return this.#queryJoin.join(" ");
-    }
-
-    /**
-     * @returns string
-     */
-    #buildWhereQuery() {
-        return this.#queryWhere.toString();
     }
 
     /**
