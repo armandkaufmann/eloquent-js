@@ -14,6 +14,7 @@ export default class Builder {
     constructor(type) {
         this.#type = type;
         this.#parseType();
+        this.#prepareBuilder();
     }
 
     /**
@@ -21,6 +22,11 @@ export default class Builder {
      * @return Builder
      */
     push(statement) {
+        if (this.#type === STATEMENTS.select) {
+            this.#pushOrUpdate(statement);
+            return this;
+        }
+
         this.#statements.push(statement);
 
         return this;
@@ -30,7 +36,7 @@ export default class Builder {
      * @param {Base} statement
      * @return Builder
      */
-    pushOrUpdate(statement) {
+    #pushOrUpdate(statement) {
         this.#statements = [statement];
 
         return this;
@@ -84,6 +90,14 @@ export default class Builder {
                 break;
             default:
                 this.#withStatement = true;
+        }
+    }
+
+    #prepareBuilder() {
+        switch (this.#type) {
+            case STATEMENTS.select:
+                this.#statements.push('*');
+                break;
         }
     }
 }

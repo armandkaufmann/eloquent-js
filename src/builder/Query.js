@@ -21,6 +21,7 @@ import WhereBetweenColumns from "./statement/where/WhereBetweenColumns.js";
 import OrWhereBetweenColumns from "./statement/where/OrWhereBetweenColumns.js";
 import WhereNotBetweenColumns from "./statement/where/WhereNotBetweenColumns.js";
 import OrWhereNotBetweenColumns from "./statement/where/OrWhereNotBetweenColumns.js";
+import Select from "./statement/select/Select.js";
 
 export class Query {
     /** @type {?string} */
@@ -29,8 +30,8 @@ export class Query {
     #model = null;
     /** @type {boolean} */
     #toSql = false;
-    /** @type {Array<string>}  */
-    #querySelect = [];
+    /** @type {Builder}  */
+    #querySelect = new Builder(STATEMENTS.select);
     /** @type []  */
     #queryJoin = [];
     /** @type Builder  */
@@ -190,7 +191,8 @@ export class Query {
      * @returns Query
      */
     select(...columns) {
-        columns.forEach((column) => this.#querySelect.push(column))
+        this.#querySelect.push(new Select([...columns]));
+
         return this;
     }
 
@@ -695,11 +697,7 @@ export class Query {
      * @returns string
      */
     #buildSelectQuery() {
-        let query = "SELECT ";
-        query += this.#querySelect.join(', ') || '*';
-        query += ' FROM ' + this.#table;
-
-        return query;
+        return `${this.#querySelect.toString()} FROM ${this.#table}`;
     }
 
     /**

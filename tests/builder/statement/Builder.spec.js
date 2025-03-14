@@ -23,13 +23,13 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
-            test("pushOrUpdate: does not append select statement if it exists", () => {
+            test("push: does not append select statement if it exists", () => {
                 const firstSelectStatement = new Select(['name', 'age', 'sex']);
                 const secondSelectStatement = new Select(['location', 'role', 'preference']);
                 const expectedResult = "SELECT location, role, preference";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.pushOrUpdate(firstSelectStatement).pushOrUpdate(secondSelectStatement);
+                builder.push(firstSelectStatement).push(secondSelectStatement);
 
                 const result = builder.toString();
 
