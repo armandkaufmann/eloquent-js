@@ -6,6 +6,7 @@ export default class Group extends Builder {
     constructor() {
         super(STATEMENTS.none);
     }
+
     toString() {
         let query = super.toString(false);
 

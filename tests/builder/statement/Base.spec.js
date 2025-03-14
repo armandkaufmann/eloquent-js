@@ -32,7 +32,7 @@ describe("Statement: Base Test", () => {
                 query, bindings
             };
 
-            const result = new Base(bindings, query, STATEMENTS.where, 'AND').serialize()
+            const result = new Base(bindings, query, STATEMENTS.where, 'AND').prepare()
 
             expect(result).toEqual(expectedObject);
         });
@@ -44,7 +44,7 @@ describe("Statement: Base Test", () => {
                 query: "AND " + query, bindings
             };
 
-            const result = new Base(bindings, query, STATEMENTS.where, 'AND').serialize(true)
+            const result = new Base(bindings, query, STATEMENTS.where, 'AND').prepare(true)
 
             expect(result).toEqual(expectedObject);
         });

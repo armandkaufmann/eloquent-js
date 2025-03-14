@@ -25,7 +25,7 @@ export default class Select extends Base {
      * @param {Boolean} [withSeparator=false]
      * @returns PrepareObject
      */
-    serialize(withSeparator = false) {
-        return super.serialize(false);
+    prepare(withSeparator = false) {
+        return super.prepare(false);
     }
 }

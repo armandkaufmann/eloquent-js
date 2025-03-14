@@ -65,7 +65,7 @@ export default class Builder {
         /** @type {PrepareObject} */
         let result = this.#statements
             .reduce((result, statement, index) => {
-                const prepare = statement.serialize(index !== 0);
+                const prepare = statement.prepare(index !== 0);
 
                 result.query += `${index > 0 ? ' ' : ''}${prepare.query}`;
                 result.bindings.push(...prepare.bindings);

@@ -30,7 +30,7 @@ describe('Statement: WhereIn', () => {
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "names IN (?, ?, ?, ?)";
 
-            const result = new WhereIn(column, values).serialize();
+            const result = new WhereIn(column, values).prepare();
 
             expect(result.query).toEqual(expectedQuery);
             expect(result.bindings).toEqual(values);
@@ -41,7 +41,7 @@ describe('Statement: WhereIn', () => {
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "AND names IN (?, ?, ?, ?)";
 
-            const result = new WhereIn(column, values).serialize(true);
+            const result = new WhereIn(column, values).prepare(true);
 
             expect(result.query).toEqual(expectedQuery);
             expect(result.bindings).toEqual(values);

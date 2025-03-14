@@ -45,7 +45,7 @@ export class Base {
      * @param {Boolean} [withSeparator=false]
      * @returns PrepareObject
      */
-    serialize(withSeparator = false) {
+    prepare(withSeparator = false) {
         let result = {
             query: this._query,
             bindings: this._bindings

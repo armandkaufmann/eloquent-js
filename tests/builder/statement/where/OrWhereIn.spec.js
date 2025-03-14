@@ -30,7 +30,7 @@ describe('Statement: OrWhereIn', () => {
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "names IN (?, ?, ?, ?)";
 
-            const result = new OrWhereIn(column, values).serialize();
+            const result = new OrWhereIn(column, values).prepare();
 
             expect(result.query).toEqual(expectedQuery);
             expect(result.bindings).toEqual(values);
@@ -41,7 +41,7 @@ describe('Statement: OrWhereIn', () => {
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "OR names IN (?, ?, ?, ?)";
 
-            const result = new OrWhereIn(column, values).serialize(true);
+            const result = new OrWhereIn(column, values).prepare(true);
 
             expect(result.query).toEqual(expectedQuery);
             expect(result.bindings).toEqual(values);
