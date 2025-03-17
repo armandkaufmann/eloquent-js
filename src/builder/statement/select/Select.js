@@ -10,7 +10,7 @@ export default class Select extends Base {
         const separator = ', ';
         const query = columns.join(separator);
 
-        super([], query, STATEMENTS.select, separator);
+        super([], query, separator);
     }
 
     /**

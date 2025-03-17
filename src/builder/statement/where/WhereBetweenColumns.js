@@ -11,6 +11,6 @@ export default class WhereBetweenColumns extends Base {
     constructor(column, columns, condition = 'BETWEEN', separator = 'AND', ) {
         const query = `${column} ${condition} ${columns[0]} AND ${columns[1]}`;
 
-        super([], query, STATEMENTS.where, separator);
+        super([], query, separator);
     }
 }

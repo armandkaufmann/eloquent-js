@@ -6,6 +6,7 @@ import "./Base.types.js"
  */
 export const STATEMENTS = {
     select: 'SELECT',
+    join: 'INNER JOIN',
     where: 'WHERE',
     none: 'NONE'
 }
@@ -18,10 +19,9 @@ export class Base {
     /**
      * @param {Array<String|Number>} bindings
      * @param {String} query
-     * @param {Statement} statement
      * @param {String} separator
      */
-    constructor(bindings, query, statement, separator) {
+    constructor(bindings, query, separator) {
         this._bindings = bindings;
         this._query = query;
         this._separator = separator;

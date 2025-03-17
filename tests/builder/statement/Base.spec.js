@@ -8,7 +8,7 @@ describe("Statement: Base Test", () => {
            const bindings = ['John', 20];
            const expectedString = "WHERE name = 'John' AND age > 20";
 
-           const result = new Base(bindings, query, STATEMENTS.where, 'AND').toString()
+           const result = new Base(bindings, query, 'AND').toString()
 
             expect(result).toEqual(expectedString);
         });
@@ -18,7 +18,7 @@ describe("Statement: Base Test", () => {
             const bindings = ['John', 20];
             const expectedString = "AND WHERE name = 'John' AND age > 20";
 
-            const result = new Base(bindings, query, STATEMENTS.where, 'AND').toString(true)
+            const result = new Base(bindings, query, 'AND').toString(true)
 
             expect(result).toEqual(expectedString);
         });
@@ -32,7 +32,7 @@ describe("Statement: Base Test", () => {
                 query, bindings
             };
 
-            const result = new Base(bindings, query, STATEMENTS.where, 'AND').prepare()
+            const result = new Base(bindings, query, 'AND').prepare()
 
             expect(result).toEqual(expectedObject);
         });
@@ -44,7 +44,7 @@ describe("Statement: Base Test", () => {
                 query: "AND " + query, bindings
             };
 
-            const result = new Base(bindings, query, STATEMENTS.where, 'AND').prepare(true)
+            const result = new Base(bindings, query, 'AND').prepare(true)
 
             expect(result).toEqual(expectedObject);
         });

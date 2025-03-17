@@ -12,6 +12,6 @@ export default class Where extends Base {
         const query = `${column} ${operator} ?`;
         const bindings = [value];
 
-        super(bindings, query, STATEMENTS.where, separator);
+        super(bindings, query, separator);
     }
 }

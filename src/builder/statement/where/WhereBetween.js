@@ -12,6 +12,6 @@ export default class WhereBetween extends Base {
         const query = `${column} ${condition} ? AND ?`;
         const bindings = [values[0], values[1]];
 
-        super(bindings, query, STATEMENTS.where, separator);
+        super(bindings, query, separator);
     }
 }

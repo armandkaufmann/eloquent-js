@@ -24,6 +24,6 @@ export default class WhereIn extends Base {
 
         query = `${column} ${condition} (${query})`;
 
-        super(bindings, query, STATEMENTS.where, separator);
+        super(bindings, query, separator);
     }
 }

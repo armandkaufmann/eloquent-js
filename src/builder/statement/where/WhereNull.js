@@ -10,6 +10,6 @@ export default class WhereNull extends Base {
     constructor(column, condition = 'IS NULL', separator = 'AND') {
         const query = `${column} ${condition}`;
 
-        super([], query, STATEMENTS.where, separator);
+        super([], query, separator);
     }
 }
