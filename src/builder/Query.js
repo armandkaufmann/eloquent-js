@@ -319,23 +319,6 @@ export class Query {
     }
 
     /**
-     * @param {{(query: Query)}} callback
-     * @param {"AND"|"OR"} [condition="AND"]
-     * @returns void
-     */
-    #handleWhereCallback(callback, condition = "AND"){
-        if (this.#queryWhere) {
-            this.#queryWhere += ` ${condition} (`
-        } else {
-            this.#queryWhere += "WHERE (";
-        }
-
-        callback(this);
-
-        this.#queryWhere += ")";
-    }
-
-    /**
      * @param {string} column
      * @param {Array<string|number>} values
      * @returns Query
