@@ -8,7 +8,7 @@ export default class Group extends Builder {
     }
 
     toString() {
-        let query = super.toString(false);
+        let query = super.toString();
 
         if (query) {
             query = `(${query})`;
