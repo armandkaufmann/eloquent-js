@@ -1,12 +1,14 @@
 import {STATEMENTS} from "./Base.js";
 
 export default class Builder {
-    /** @type {Array<Base>} */
+    /** @type {Array<Base|Group>} */
     #statements = [];
     /** @type {Statement} */
     #type;
     /** @type {Boolean} */
     #withStatement;
+    /** @type {Boolean} */
+    #groupStatement = false;
 
     /**
      * @param {Statement} type
@@ -22,6 +24,11 @@ export default class Builder {
      * @return Builder
      */
     push(statement) {
+        if (this.#groupStatement) {
+            this.#statements[this.#statements.length - 1].push(statement);
+            return this;
+        }
+
         if (this.#type === STATEMENTS.select) {
             this.#pushOrUpdate(statement);
             return this;
@@ -30,6 +37,20 @@ export default class Builder {
         this.#statements.push(statement);
 
         return this;
+    }
+
+    /**
+     * @param {Group} statement
+     * @return Builder
+     */
+    setGroupStatement(statement) {
+        this.#statements.push(statement);
+
+        this.#groupStatement = true;
+    }
+
+    unsetGroupStatement() {
+        this.#groupStatement = false;
     }
 
     /**
@@ -48,6 +69,7 @@ export default class Builder {
      */
     toString() {
         let result = this.#statements
+            .filter((statement) => statement.toString(false))
             .map((statement, index) => statement.toString(index !== 0))
             .join(" ");
 

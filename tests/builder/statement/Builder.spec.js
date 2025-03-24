@@ -7,6 +7,7 @@ import Select from "../../../src/builder/statement/select/Select.js";
 import WhereNull from "../../../src/builder/statement/where/WhereNull.js";
 import OrWhereNull from "../../../src/builder/statement/where/OrWhereNull.js";
 import WhereNotNull from "../../../src/builder/statement/where/WhereNotNull.js";
+import Group from "../../../src/builder/statement/Group.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -94,6 +95,73 @@ describe('Statement: Statement Builder', () => {
                 expect(result.query).toEqual('');
                 expect(result.bindings).toEqual([]);
             });
+        });
+    });
+
+    describe("Group queries", () => {
+        test("it can group queries", () => {
+            const first = new Where('name', '=', 'John');
+            const second = new OrWhere('age', '>', 20);
+            const third = new WhereNull('sex');
+            const fourth = new OrWhereNull('taco');
+            const fifth = new WhereNotNull('mouse');
+
+            const expectedResult = "WHERE name = 'John' AND (age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+
+            const builder = new Builder(STATEMENTS.where);
+            builder.push(first)
+
+            builder.setGroupStatement(new Group());
+            builder.push(second).push(third);
+            builder.unsetGroupStatement();
+
+            builder.push(fourth).push(fifth);
+
+            const result = builder.toString();
+
+            expect(result).toEqual(expectedResult);
+        });
+
+        test("it omits the group if no queries exist within it", () => {
+            const first = new Where('name', '=', 'John');
+            const fourth = new OrWhereNull('taco');
+            const fifth = new WhereNotNull('mouse');
+
+            const expectedResult = "WHERE name = 'John' OR taco IS NULL AND mouse IS NOT NULL"
+
+            const builder = new Builder(STATEMENTS.where);
+            builder.push(first)
+
+            builder.setGroupStatement(new Group());
+            builder.unsetGroupStatement();
+
+            builder.push(fourth).push(fifth);
+
+            const result = builder.toString();
+
+            expect(result).toEqual(expectedResult);
+        });
+
+        test("it does not add the condition if it is the first", () => {
+            const first = new Where('name', '=', 'John');
+            const second = new OrWhere('age', '>', 20);
+            const third = new WhereNull('sex');
+            const fourth = new OrWhereNull('taco');
+            const fifth = new WhereNotNull('mouse');
+
+            const expectedResult = "WHERE (name = 'John' OR age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+
+            const builder = new Builder(STATEMENTS.where);
+
+            builder.setGroupStatement(new Group());
+            builder.push(first).push(second).push(third);
+            builder.unsetGroupStatement();
+
+            builder.push(fourth).push(fifth);
+
+            const result = builder.toString();
+
+            expect(result).toEqual(expectedResult);
         });
     });
 });
