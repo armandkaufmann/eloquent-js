@@ -23,4 +23,28 @@ describe('Statement: WhereNotBetween', () => {
             expect(result).toEqual(expectedResult);
         });
     });
+
+    describe('Prepare', () => {
+        test("It builds prepared where partial statement", () => {
+            const column = 'age';
+            const values = [20, 55];
+            const expectedQuery = "age NOT BETWEEN ? AND ?";
+
+            const result = new WhereNotBetween(column, values).prepare();
+
+            expect(result.query).toEqual(expectedQuery);
+            expect(result.bindings).toEqual(values);
+        });
+
+        test("It builds prepared statement with 'AND' when withSeparator is true", () => {
+            const column = 'age';
+            const values = [20, 55];
+            const expectedQuery = "AND age NOT BETWEEN ? AND ?";
+
+            const result = new WhereNotBetween(column, values).prepare(true);
+
+            expect(result.query).toEqual(expectedQuery);
+            expect(result.bindings).toEqual(values);
+        });
+    });
 });
