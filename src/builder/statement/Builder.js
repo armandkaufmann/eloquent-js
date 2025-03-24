@@ -1,4 +1,5 @@
 import {STATEMENTS} from "./Base.js";
+import Select from "./select/Select.js";
 
 export default class Builder {
     /** @type {Array<Base|Group>} */
@@ -118,7 +119,9 @@ export default class Builder {
     #prepareBuilder() {
         switch (this.#type) {
             case STATEMENTS.select:
-                this.#statements.push('*');
+                this.#statements.push(new Select(['*']));
+                break;
+            default:
                 break;
         }
     }

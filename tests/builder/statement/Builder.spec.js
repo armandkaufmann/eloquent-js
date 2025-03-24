@@ -36,6 +36,16 @@ describe('Statement: Statement Builder', () => {
 
                 expect(result).toEqual(expectedResult);
             });
+
+            test("it defaults to '*' when no select columns provided", () => {
+                const expectedResult = "SELECT *";
+
+                const builder = new Builder(STATEMENTS.select);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
         });
     });
 
