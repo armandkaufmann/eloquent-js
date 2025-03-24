@@ -1,4 +1,3 @@
-import {STATEMENTS} from "../Base.js";
 import WhereNull from "./WhereNull.js";
 
 export default class WhereNotNull extends WhereNull {
