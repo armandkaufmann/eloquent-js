@@ -23,4 +23,28 @@ describe('Statement: WhereBetweenColumns', () => {
             expect(result).toEqual(expectedResult);
         });
     });
+
+    describe('Prepare', () => {
+        test("It builds a prepare object with the correct values", () => {
+            const column = 'age';
+            const values = ['minimum_age', 'maximum_age'];
+            const expectedResult = "age BETWEEN minimum_age AND maximum_age";
+
+            const result = new WhereBetweenColumns(column, values).prepare();
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+
+        test('It builds a prepare object query with "AND"', () => {
+            const column = 'age';
+            const values = ['minimum_age', 'maximum_age'];
+            const expectedResult = "AND age BETWEEN minimum_age AND maximum_age";
+
+            const result = new WhereBetweenColumns(column, values).prepare(true);
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+    });
 });

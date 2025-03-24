@@ -23,4 +23,28 @@ describe('Statement: WhereNotBetweenColumns', () => {
             expect(result).toEqual(expectedResult);
         });
     });
+
+    describe('Prepare', () => {
+        test("It builds where partial statement", () => {
+            const column = 'age';
+            const values = ['minimum_age', 'maximum_age'];
+            const expectedResult = "age NOT BETWEEN minimum_age AND maximum_age";
+
+            const result = new WhereNotBetweenColumns(column, values).prepare();
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+
+        test("It builds with 'AND' when withSeparator is true", () => {
+            const column = 'age';
+            const values = ['minimum_age', 'maximum_age'];
+            const expectedResult = "AND age NOT BETWEEN minimum_age AND maximum_age";
+
+            const result = new WhereNotBetweenColumns(column, values).prepare(true);
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+    });
 });

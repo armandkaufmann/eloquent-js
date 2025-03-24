@@ -21,4 +21,26 @@ describe('Statement: WhereNotNull', () => {
             expect(result).toEqual(expectedResult);
         });
     });
+
+    describe('Prepare', () => {
+        test("It builds a prepare object with the correct values", () => {
+            const column = 'users';
+            const expectedResult = "users IS NOT NULL";
+
+            const result = new WhereNotNull(column).prepare();
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+
+        test('It builds a prepare object query with "AND"', () => {
+            const column = 'users';
+            const expectedResult = "AND users IS NOT NULL";
+
+            const result = new WhereNotNull(column).prepare(true);
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+    });
 });

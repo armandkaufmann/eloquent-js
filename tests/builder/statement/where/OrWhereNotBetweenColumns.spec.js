@@ -23,4 +23,28 @@ describe('Statement: WhereNotBetweenColumns', () => {
             expect(result).toEqual(expectedResult);
         });
     });
+
+    describe('Prepare', () => {
+        test("It builds a prepare object where", () => {
+            const column = 'age';
+            const values = ['minimum_age', 'maximum_age'];
+            const expectedQuery = "age NOT BETWEEN minimum_age AND maximum_age";
+
+            const result = new OrWhereNotBetweenColumns(column, values).prepare();
+
+            expect(result.query).toEqual(expectedQuery);
+            expect(result.bindings).toEqual([]);
+        });
+
+        test("It builds a prepare object with 'AND' when withSeparator is true", () => {
+            const column = 'age';
+            const values = ['minimum_age', 'maximum_age'];
+            const expectedQuery = "OR age NOT BETWEEN minimum_age AND maximum_age";
+
+            const result = new OrWhereNotBetweenColumns(column, values).prepare(true);
+
+            expect(result.query).toEqual(expectedQuery);
+            expect(result.bindings).toEqual([]);
+        });
+    });
 });

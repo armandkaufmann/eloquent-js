@@ -21,4 +21,26 @@ describe('Statement: OrWhereNotNull', () => {
             expect(result).toEqual(expectedResult);
         });
     });
+
+    describe("Prepare", () => {
+        test("It builds a prepare object with the correct values", () => {
+            const column = 'users';
+            const expectedQuery = "users IS NOT NULL";
+
+            const result = new OrWhereNotNull(column).prepare();
+
+            expect(result.query).toEqual(expectedQuery);
+            expect(result.bindings).toEqual([]);
+        });
+
+        test('It builds a prepare object query with "AND"', () => {
+            const column = 'users';
+            const expectedResult = "OR users IS NOT NULL";
+
+            const result = new OrWhereNotNull(column).prepare(true);
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+    });
 });

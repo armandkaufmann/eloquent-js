@@ -24,7 +24,7 @@ describe('Statement: OrWhereIn', () => {
         });
     });
 
-    describe('serialize', () => {
+    describe('Prepare', () => {
         test('It builds a prepare object with the correct values', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
