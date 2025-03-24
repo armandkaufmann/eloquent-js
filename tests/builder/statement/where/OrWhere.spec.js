@@ -25,4 +25,34 @@ describe('Statement: OrWhere', () => {
            expect(result).toEqual(expectedResult);
        })
     });
+
+    describe('Prepare', () => {
+        test("It builds prepared where partial statement", () => {
+            const column = 'users';
+            const operator = '=';
+            const value = 'John';
+
+            const expectedBindings = [value];
+            const expectedQuery = "users = ?";
+
+            const result = new OrWhere(column, operator, value).prepare();
+
+            expect(result.query).toEqual(expectedQuery);
+            expect(result.bindings).toEqual(expectedBindings);
+        });
+
+        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+            const column = 'users';
+            const operator = '=';
+            const value = 'John';
+
+            const expectedBindings = [value];
+            const expectedQuery = "OR users = ?";
+
+            const result = new OrWhere(column, operator, value).prepare(true);
+
+            expect(result.query).toEqual(expectedQuery);
+            expect(result.bindings).toEqual(expectedBindings);
+        });
+    });
 });
