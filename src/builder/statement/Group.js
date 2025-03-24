@@ -30,4 +30,22 @@ export default class Group extends Builder {
 
         return query;
     }
+
+    /**
+     * @param {Boolean} withCondition
+     * @return PrepareObject
+     */
+    prepare(withCondition) {
+        let prepareObject = super.prepare();
+
+        if (prepareObject.query) {
+            prepareObject.query = `(${prepareObject.query})`;
+        }
+
+        if (withCondition && prepareObject.query) {
+            prepareObject.query = `${this.#condition} ${prepareObject.query}`;
+        }
+
+        return prepareObject;
+    }
 }

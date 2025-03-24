@@ -66,9 +66,10 @@ export default class Builder {
 
 
     /**
+     * @param {Boolean} [withCondition=true]
      * @return String
      */
-    toString() {
+    toString(withCondition = true) {
         let result = this.#statements
             .filter((statement) => statement.toString(false))
             .map((statement, index) => statement.toString(index !== 0))
@@ -82,9 +83,10 @@ export default class Builder {
     }
 
     /**
+     * @param {Boolean} [withCondition=true]
      * @return PrepareObject
      */
-    prepare() {
+    prepare(withCondition = true) {
         /** @type {PrepareObject} */
         let result = this.#statements
             .reduce((result, statement, index) => {
