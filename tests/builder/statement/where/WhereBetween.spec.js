@@ -24,7 +24,7 @@ describe('Statement: WhereBetween', () => {
         });
     });
 
-    describe('toString', () => {
+    describe('Prepare', () => {
         test("It builds prepared where partial statement", () => {
             const column = 'age';
             const values = [20, 55];
