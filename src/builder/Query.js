@@ -19,6 +19,12 @@ import WhereNotBetween from "./statement/where/WhereNotBetween.js";
 import OrWhereNotBetween from "./statement/where/OrWhereNotBetween.js";
 import Select from "./statement/select/Select.js";
 import Group from "./statement/Group.js";
+import WhereBetweenColumns from "./statement/where/WhereBetweenColumns.js";
+import OrWhereBetweenColumns from "./statement/where/OrWhereBetweenColumns.js";
+import WhereNotBetweenColumns from "./statement/where/WhereNotBetweenColumns.js";
+import OrWhereNotBetweenColumns from "./statement/where/OrWhereNotBetweenColumns.js";
+import WhereColumn from "./statement/where/WhereColumn.js";
+import OrWhereColumn from "./statement/where/OrWhereColumn.js";
 
 export class Query {
     /** @type {?string} */
@@ -397,6 +403,46 @@ export class Query {
      */
     orWhereNotBetween(column, values) {
         this.#queryWhere.push(new OrWhereNotBetween(column, values));
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {string} operator
+     * @param {string|null} [comparisonColumn=null]
+     * @returns Query
+     * @throws InvalidComparisonOperatorError
+     */
+    whereColumn(column, operator, comparisonColumn = null) {
+        if (!comparisonColumn) {
+            comparisonColumn = operator;
+            operator = '=';
+        }
+
+        this.#validateComparisonOperator(operator);
+
+        this.#queryWhere.push(new WhereColumn(column, operator, comparisonColumn));
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {string} operator
+     * @param {string|null} [comparisonColumn=null]
+     * @returns Query
+     * @throws InvalidComparisonOperatorError
+     */
+    orWhereColumn(column, operator, comparisonColumn = null) {
+        if (!comparisonColumn) {
+            comparisonColumn = operator;
+            operator = '=';
+        }
+
+        this.#validateComparisonOperator(operator);
+
+        this.#queryWhere.push(new OrWhereColumn(column, operator, comparisonColumn));
 
         return this;
     }

@@ -398,6 +398,86 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
             });
+
+            describe("Where column/where between columns/where not between columns", () => {
+                test("whereColumn", () => {
+                    const result = Query
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .whereColumn('created_at', 'updated_at')
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND created_at = updated_at";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("orWhereColumn", () => {
+                    const result = Query
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .orWhereColumn('created_at', 'updated_at')
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR created_at = updated_at";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("whereBetweenColumns", () => {
+                    const result = Query
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .whereBetweenColumns('created_at', ['updated_at', 'deleted_at'])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND created_at >= updated_at AND created_at <= deleted_at";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("orWhereBetweenColumns", () => {
+                    const result = Query
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .orWhereBetweenColumns('created_at', ['updated_at', 'deleted_at'])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR created_at >= updated_at AND created_at <= deleted_at";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("WhereNotBetweenColumns", () => {
+                    const result = Query
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .whereNotBetweenColumns('created_at', ['updated_at', 'deleted_at'])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND created_at < updated_at AND created_at > deleted_at";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("OrWhereNotBetweenColumns", () => {
+                    const result = Query
+                        .table('users')
+                        .toSql()
+                        .where('id', '>', 1)
+                        .orWhereNotBetweenColumns('created_at', ['updated_at', 'deleted_at'])
+                        .get();
+
+                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR created_at < updated_at AND created_at > deleted_at";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
         });
 
         describe("Select", () => {
@@ -680,11 +760,13 @@ describe("QueryBuilderTest", () => {
                     expect(() => Query.table("users").where("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.table("users").orWhere("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.table("users").having("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").whereColumn("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                 } else {
                     expect(() => Query.table("users").join("posts", 'id', operator, 'id')).not.toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.table("users").where("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.table("users").orWhere("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.table("users").having("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.table("users").whereColumn("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                 }
             });
         });
