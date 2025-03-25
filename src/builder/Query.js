@@ -17,10 +17,6 @@ import WhereBetween from "./statement/where/WhereBetween.js";
 import OrWhereBetween from "./statement/where/OrWhereBetween.js";
 import WhereNotBetween from "./statement/where/WhereNotBetween.js";
 import OrWhereNotBetween from "./statement/where/OrWhereNotBetween.js";
-import WhereBetweenColumns from "./statement/where/WhereBetweenColumns.js";
-import OrWhereBetweenColumns from "./statement/where/OrWhereBetweenColumns.js";
-import WhereNotBetweenColumns from "./statement/where/WhereNotBetweenColumns.js";
-import OrWhereNotBetweenColumns from "./statement/where/OrWhereNotBetweenColumns.js";
 import Select from "./statement/select/Select.js";
 import Group from "./statement/Group.js";
 
