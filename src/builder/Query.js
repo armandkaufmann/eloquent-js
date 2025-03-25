@@ -22,6 +22,7 @@ import OrWhereBetweenColumns from "./statement/where/OrWhereBetweenColumns.js";
 import WhereNotBetweenColumns from "./statement/where/WhereNotBetweenColumns.js";
 import OrWhereNotBetweenColumns from "./statement/where/OrWhereNotBetweenColumns.js";
 import Select from "./statement/select/Select.js";
+import Group from "./statement/Group.js";
 
 export class Query {
     /** @type {?string} */
@@ -150,7 +151,7 @@ export class Query {
         try {
             const statement = this.#buildPreparedInsertSqlQuery(fields);
             await this.#database.insert(statement.query, statement.bindings);
-        }catch (e) {
+        } catch (e) {
             return false;
         }
 
@@ -234,11 +235,10 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     where(column, operator, value = null) {
-        //TODO: uncomment this
-        // if (typeof column === "function") {
-        //     this.#handleWhereCallback(column);
-        //     return this;
-        // }
+        if (typeof column === "function") {
+            this.#handleWhereCallback(column);
+            return this;
+        }
 
         if (!value) {
             value = operator;
@@ -260,11 +260,10 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     orWhere(column, operator, value = null) {
-        //TODO: uncomment this
-        // if (typeof column === "function") {
-        //     this.#handleWhereCallback(column, "OR");
-        //     return this;
-        // }
+        if (typeof column === "function") {
+            this.#handleWhereCallback(column, "OR");
+            return this;
+        }
 
         if (!value) {
             value = operator;
@@ -577,6 +576,19 @@ export class Query {
     offset(number) {
         this.#offset = number;
         return this;
+    }
+
+    /**
+     * @param {{(query: Query)}} callback
+     * @param {"AND"|"OR"} [condition="AND"]
+     * @returns void
+     */
+    #handleWhereCallback(callback, condition = "AND") {
+        this.#queryWhere.setGroupStatement(new Group(condition));
+
+        callback(this);
+
+        this.#queryWhere.unsetGroupStatement();
     }
 
     /**

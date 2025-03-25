@@ -11,6 +11,7 @@ export default class Group extends Builder {
      */
     constructor(condition = "AND") {
         super(STATEMENTS.none);
+        this.#condition = condition;
     }
 
     /**

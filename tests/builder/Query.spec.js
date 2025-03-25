@@ -246,8 +246,7 @@ describe("QueryBuilderTest", () => {
                 });
             });
 
-            //TODO: unskip this test
-            describe.skip("Where callback", () => {
+            describe("Where callback", () => {
                 describe("Where", () => {
                     test("It groups where statement with callback", () => {
                         const result = Query
