@@ -21,3 +21,13 @@ export class InvalidComparisonOperatorError extends Error {
         this.name = "InvalidComparisonOperatorError";
     }
 }
+
+export class InvalidBetweenValueArrayLength extends Error {
+    constructor(length) {
+        let message = `\nAttempting to pass an argument to a function that expects an array length of 2, with a length of: ${length}.`
+        message += `\nPlease ensure that the proper number of array elements are being passed.`;
+
+        super(message);
+        this.name = "InvalidBetweenValueArrayLength";
+    }
+}

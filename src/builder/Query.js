@@ -1,5 +1,9 @@
 import {Utility} from "../utils/Utility.js";
-import {InvalidComparisonOperatorError, TableNotSetError} from "../errors/QueryBuilder/Errors.js";
+import {
+    InvalidBetweenValueArrayLength,
+    InvalidComparisonOperatorError,
+    TableNotSetError
+} from "../errors/QueryBuilder/Errors.js";
 import {DB} from "../DB.js";
 import Builder from "./statement/Builder.js";
 import {STATEMENTS} from "./statement/Base.js";
@@ -367,8 +371,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string|number>} values
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     whereBetween(column, values) {
+        this.#validateBetweenArrayLength(values);
+
         this.#queryWhere.push(new WhereBetween(column, values));
 
         return this;
@@ -378,8 +385,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string|number>} values
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     orWhereBetween(column, values) {
+        this.#validateBetweenArrayLength(values);
+
         this.#queryWhere.push(new OrWhereBetween(column, values));
 
         return this;
@@ -389,8 +399,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string|number>} values
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     whereNotBetween(column, values) {
+        this.#validateBetweenArrayLength(values);
+
         this.#queryWhere.push(new WhereNotBetween(column, values));
 
         return this;
@@ -400,8 +413,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string|number>} values
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     orWhereNotBetween(column, values) {
+        this.#validateBetweenArrayLength(values);
+
         this.#queryWhere.push(new OrWhereNotBetween(column, values));
 
         return this;
@@ -451,8 +467,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string>} columns
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     whereBetweenColumns(column, columns) {
+        this.#validateBetweenArrayLength(columns);
+
         this.#queryWhere.push(new WhereBetweenColumns(column, columns));
 
         return this;
@@ -462,8 +481,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string>} columns
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     orWhereBetweenColumns(column, columns) {
+        this.#validateBetweenArrayLength(columns);
+
         this.#queryWhere.push(new OrWhereBetweenColumns(column, columns));
 
         return this;
@@ -473,8 +495,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string>} columns
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     whereNotBetweenColumns(column, columns) {
+        this.#validateBetweenArrayLength(columns);
+
         this.#queryWhere.push(new WhereNotBetweenColumns(column, columns));
 
         return this;
@@ -484,8 +509,11 @@ export class Query {
      * @param {string} column
      * @param {Array<string>} columns
      * @returns Query
+     * @throws InvalidBetweenValueArrayLength
      */
     orWhereNotBetweenColumns(column, columns) {
+        this.#validateBetweenArrayLength(columns);
+
         this.#queryWhere.push(new OrWhereNotBetweenColumns(column, columns));
 
         return this;
@@ -821,14 +849,33 @@ export class Query {
     }
 
     /**
-     * @param {string} operator
+     * @param {string|null|number|Object|Array} operator
      * @throws InvalidComparisonOperatorError
      */
     #validateComparisonOperator(operator) {
+        if (typeof operator !== 'string') {
+            throw new InvalidComparisonOperatorError(operator);
+        }
+
         const validOperators = ["==", "=", "!=", "<>", ">", "<", ">=", "<=", "!<", "!>", 'like'];
 
         if (validOperators.filter((valid) => valid === operator?.toLowerCase()).length === 0) {
             throw new InvalidComparisonOperatorError(operator);
+        }
+    }
+
+    /**
+     * @param {Array<string|number>|null|Object} array
+     * @throws InvalidComparisonOperatorError
+     */
+    #validateBetweenArrayLength(array) {
+        if (!array) {
+            throw new InvalidBetweenValueArrayLength(0);
+        }
+
+        const arrayLength = array.length;
+        if (!Array.isArray(array) || arrayLength !== 2) {
+            throw new InvalidBetweenValueArrayLength(arrayLength)
         }
     }
 }

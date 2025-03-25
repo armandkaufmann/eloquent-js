@@ -1,6 +1,10 @@
 import {describe, expect, beforeEach, test, vi} from 'vitest';
 import {Query} from "../../src/builder/Query.js";
-import {InvalidComparisonOperatorError, TableNotSetError} from "../../src/errors/QueryBuilder/Errors.js";
+import {
+    InvalidComparisonOperatorError,
+    InvalidBetweenValueArrayLength,
+    TableNotSetError
+} from "../../src/errors/QueryBuilder/Errors.js";
 import {DB} from "../../src/DB.js";
 import {DatabaseNotFoundError} from "../../src/errors/DB/Errors.js";
 
@@ -738,6 +742,9 @@ describe("QueryBuilderTest", () => {
         describe("Comparison Operators", () => {
             const operators = [
                 [null, false],
+                [1, false],
+                [[], false],
+                [{}, false],
                 ["o", false],
                 ["taco", false],
                 ["!", false],
@@ -770,6 +777,40 @@ describe("QueryBuilderTest", () => {
                 }
             });
         });
+
+        describe("Improper array length", () => {
+            const arrays = [
+                [[], false],
+                [{}, false],
+                [["one"], false],
+                [["one", "two", "three"], false],
+                [null, false],
+                ["taco", false],
+                [["one", "two"], true],
+            ];
+
+            test.each(arrays)('validating that %s is %s', (arrayValues, isValid) => {
+                if (!isValid) {
+                    expect(() => Query.table("users").whereBetween("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereBetween("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").whereNotBetween("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereNotBetween("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").whereBetweenColumns("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereBetweenColumns("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").whereNotBetweenColumns("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereNotBetweenColumns("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                } else {
+                    expect(() => Query.table("users").whereBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").whereNotBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereNotBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").whereBetweenColumns("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereBetweenColumns("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").whereNotBetweenColumns("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.table("users").orWhereNotBetweenColumns("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                }
+            });
+        })
     });
 
     describe("Execute Queries", () => {
