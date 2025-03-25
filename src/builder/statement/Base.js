@@ -6,7 +6,7 @@ import "./Base.types.js"
  */
 export const STATEMENTS = {
     select: 'SELECT',
-    join: 'INNER JOIN',
+    innerJoin: 'INNER JOIN',
     where: 'WHERE',
     none: 'NONE'
 }
@@ -19,7 +19,7 @@ export class Base {
     /**
      * @param {Array<String|Number>} bindings
      * @param {String} query
-     * @param {String} separator
+     * @param {String|null} [separator=null]
      */
     constructor(bindings, query, separator) {
         this._bindings = bindings;
@@ -35,7 +35,7 @@ export class Base {
         let result = this.#mergeBindings(this._query, this._bindings);
 
         if (withSeparator) {
-            result = `${this._separator} ${result}`;
+            result = `${this._separator ? `${this._separator} ` : ''}${result}`;
         }
 
         return result;
@@ -52,7 +52,7 @@ export class Base {
         }
 
         if (withSeparator) {
-            result.query = `${this._separator} ${result.query}`;
+            result.query = `${this._separator ? `${this._separator} ` : ''}${result.query}`;
         }
 
         return result;

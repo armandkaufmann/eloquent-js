@@ -110,6 +110,7 @@ export default class Builder {
 
     #parseType() {
         switch (this.#type) {
+            case STATEMENTS.innerJoin:
             case STATEMENTS.none:
                 this.#withStatement = false;
                 break;

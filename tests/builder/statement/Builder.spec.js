@@ -9,6 +9,7 @@ import OrWhereNull from "../../../src/builder/statement/where/OrWhereNull.js";
 import WhereNotNull from "../../../src/builder/statement/where/WhereNotNull.js";
 import Group from "../../../src/builder/statement/Group.js";
 import WhereBetween from "../../../src/builder/statement/where/WhereBetween.js";
+import InnerJoin from "../../../src/builder/statement/join/InnerJoin.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -46,6 +47,38 @@ describe('Statement: Statement Builder', () => {
                 const result = builder.toString();
 
                 expect(result).toEqual(expectedResult);
+            });
+        });
+    });
+
+    describe("Join", () => {
+        describe("Inner Join", () => {
+            describe("toString", () => {
+                test("It builds complete statement string", () => {
+                    const firstJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
+                    const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
+                    const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+
+                    const builder = new Builder(STATEMENTS.innerJoin);
+                    builder.push(firstJoin).push(secondJoin);
+
+                    const result = builder.toString();
+
+                    expect(result).toEqual(expectedResult);
+                });
+
+                test("It builds complete statement string and disregards withStatement = true", () => {
+                    const firstJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
+                    const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
+                    const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+
+                    const builder = new Builder(STATEMENTS.innerJoin);
+                    builder.push(firstJoin).push(secondJoin);
+
+                    const result = builder.toString(true);
+
+                    expect(result).toEqual(expectedResult);
+                });
             });
         });
     });
