@@ -6,7 +6,6 @@ import {
     TableNotSetError
 } from "../../src/errors/QueryBuilder/Errors.js";
 import {DB} from "../../src/DB.js";
-import {DatabaseNotFoundError} from "../../src/errors/DB/Errors.js";
 
 vi.mock("../../src/DB.js", () => {
     const DB = vi.fn();
@@ -507,7 +506,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts on users.id = posts.user_id";
+                const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts ON users.id = posts.user_id";
 
                 expect(result).toBe(expectedResult);
             });
@@ -521,7 +520,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts on users.id = posts.user_id INNER JOIN comments on users.id = comments.user_id";
+                const expectedResult = "SELECT users.id, users.name, posts.title FROM users INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
 
                 expect(result).toBe(expectedResult);
             });
@@ -535,7 +534,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT users.id, users.name, posts.title FROM users LEFT JOIN posts on users.id = posts.user_id";
+                    const expectedResult = "SELECT users.id, users.name, posts.title FROM users LEFT JOIN posts ON users.id = posts.user_id";
 
                     expect(result).toBe(expectedResult);
                 });

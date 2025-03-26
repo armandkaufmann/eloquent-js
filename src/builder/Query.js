@@ -29,6 +29,8 @@ import WhereNotBetweenColumns from "./statement/where/WhereNotBetweenColumns.js"
 import OrWhereNotBetweenColumns from "./statement/where/OrWhereNotBetweenColumns.js";
 import WhereColumn from "./statement/where/WhereColumn.js";
 import OrWhereColumn from "./statement/where/OrWhereColumn.js";
+import InnerJoin from "./statement/join/InnerJoin.js";
+import LeftJoin from "./statement/join/LeftJoin.js";
 
 export class Query {
     /** @type {?string} */
@@ -39,8 +41,8 @@ export class Query {
     #toSql = false;
     /** @type {Builder}  */
     #querySelect = new Builder(STATEMENTS.select);
-    /** @type []  */
-    #queryJoin = [];
+    /** @type {Builder}  */
+    #queryJoin = new Builder(STATEMENTS.join);
     /** @type Builder  */
     #queryWhere = new Builder(STATEMENTS.where);
     /** @type {Array<string>}  */
@@ -214,7 +216,7 @@ export class Query {
     join(table, localKey, operator, foreignKey) {
         this.#validateComparisonOperator(operator);
 
-        this.#queryJoin.push(`INNER JOIN ${table} on ${localKey} ${operator} ${foreignKey}`);
+        this.#queryJoin.push(new InnerJoin(table, localKey, operator, foreignKey));
         return this;
     }
 
@@ -229,7 +231,7 @@ export class Query {
     leftJoin(table, localKey, operator, foreignKey) {
         this.#validateComparisonOperator(operator);
 
-        this.#queryJoin.push(`LEFT JOIN ${table} on ${localKey} ${operator} ${foreignKey}`);
+        this.#queryJoin.push(new LeftJoin(table, localKey, operator, foreignKey));
         return this;
     }
 
@@ -749,7 +751,7 @@ export class Query {
      */
     #buildFullSelectSqlQuery() {
         const queries = [
-            this.#buildSelectQuery(), this.#buildJoinQuery(), this.#queryWhere.toString(),
+            this.#buildSelectQuery(), this.#queryJoin.toString(), this.#queryWhere.toString(),
             this.#buildGroupByQuery(), this.#buildHavingQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
@@ -763,13 +765,6 @@ export class Query {
      */
     #buildSelectQuery() {
         return `${this.#querySelect.toString()} FROM ${this.#table}`;
-    }
-
-    /**
-     * @returns string
-     */
-    #buildJoinQuery() {
-        return this.#queryJoin.join(" ");
     }
 
     /**
