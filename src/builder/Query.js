@@ -32,6 +32,8 @@ import OrWhereColumn from "./statement/where/OrWhereColumn.js";
 import InnerJoin from "./statement/join/InnerJoin.js";
 import LeftJoin from "./statement/join/LeftJoin.js";
 import CrossJoin from "./statement/join/CrossJoin.js";
+import Validation from "../utils/Validation.js";
+import WhereCallback from "./callback/WhereCallback.js";
 
 export class Query {
     /** @type {?string} */
@@ -215,7 +217,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     join(table, localKey, operator, foreignKey) {
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         this.#queryJoin.push(new InnerJoin(table, localKey, operator, foreignKey));
 
@@ -231,7 +233,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     leftJoin(table, localKey, operator, foreignKey) {
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         this.#queryJoin.push(new LeftJoin(table, localKey, operator, foreignKey));
 
@@ -249,7 +251,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: Query)}} column
+     * @param {string|{(query: WhereCallback)}} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -266,7 +268,7 @@ export class Query {
             operator = '=';
         }
 
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new Where(column, operator, value));
 
@@ -274,7 +276,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: Query)}} column
+     * @param {string|{(query: WhereCallback)}} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -291,7 +293,7 @@ export class Query {
             operator = '=';
         }
 
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new OrWhere(column, operator, value));
 
@@ -389,7 +391,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     whereBetween(column, values) {
-        this.#validateBetweenArrayLength(values);
+        Validation.validateBetweenArrayLength(values);
 
         this.#queryWhere.push(new WhereBetween(column, values));
 
@@ -403,7 +405,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     orWhereBetween(column, values) {
-        this.#validateBetweenArrayLength(values);
+        Validation.validateBetweenArrayLength(values);
 
         this.#queryWhere.push(new OrWhereBetween(column, values));
 
@@ -417,7 +419,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     whereNotBetween(column, values) {
-        this.#validateBetweenArrayLength(values);
+        Validation.validateBetweenArrayLength(values);
 
         this.#queryWhere.push(new WhereNotBetween(column, values));
 
@@ -431,7 +433,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     orWhereNotBetween(column, values) {
-        this.#validateBetweenArrayLength(values);
+        Validation.validateBetweenArrayLength(values);
 
         this.#queryWhere.push(new OrWhereNotBetween(column, values));
 
@@ -451,7 +453,7 @@ export class Query {
             operator = '=';
         }
 
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new WhereColumn(column, operator, comparisonColumn));
 
@@ -471,7 +473,7 @@ export class Query {
             operator = '=';
         }
 
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new OrWhereColumn(column, operator, comparisonColumn));
 
@@ -485,7 +487,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     whereBetweenColumns(column, columns) {
-        this.#validateBetweenArrayLength(columns);
+        Validation.validateBetweenArrayLength(columns);
 
         this.#queryWhere.push(new WhereBetweenColumns(column, columns));
 
@@ -499,7 +501,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     orWhereBetweenColumns(column, columns) {
-        this.#validateBetweenArrayLength(columns);
+        Validation.validateBetweenArrayLength(columns);
 
         this.#queryWhere.push(new OrWhereBetweenColumns(column, columns));
 
@@ -513,7 +515,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     whereNotBetweenColumns(column, columns) {
-        this.#validateBetweenArrayLength(columns);
+        Validation.validateBetweenArrayLength(columns);
 
         this.#queryWhere.push(new WhereNotBetweenColumns(column, columns));
 
@@ -527,7 +529,7 @@ export class Query {
      * @throws InvalidBetweenValueArrayLength
      */
     orWhereNotBetweenColumns(column, columns) {
-        this.#validateBetweenArrayLength(columns);
+        Validation.validateBetweenArrayLength(columns);
 
         this.#queryWhere.push(new OrWhereNotBetweenColumns(column, columns));
 
@@ -551,7 +553,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     having(column, operator, value) {
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valueToString(value)}`
         this.#queryHaving += this.#buildPartialHavingQueryString(query);
@@ -567,7 +569,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     orHaving(column, operator, value) {
-        Utility.validateComparisonOperator(operator);
+        Validation.validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valueToString(value)}`
         this.#queryHaving += this.#buildPartialHavingQueryString(query, 'OR');
@@ -664,16 +666,17 @@ export class Query {
     }
 
     /**
-     * @param {{(query: Query)}} callback
+     * @param {{(query: WhereCallback)}} callback
      * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
     #handleWhereCallback(callback, condition = "AND") {
-        this.#queryWhere.setGroupStatement(new Group(condition));
+        const group = new Group(condition);
+        const whereCallback = new WhereCallback(group);
 
-        callback(this);
+        callback(whereCallback);
 
-        this.#queryWhere.unsetGroupStatement();
+        this.#queryWhere.push(group);
     }
 
     /**
@@ -853,21 +856,6 @@ export class Query {
     #validateTableSet() {
         if (!this.#table) {
             throw new TableNotSetError("Query Builder");
-        }
-    }
-
-    /**
-     * @param {Array<string|number>|null|Object} array
-     * @throws InvalidComparisonOperatorError
-     */
-    #validateBetweenArrayLength(array) {
-        if (!array) {
-            throw new InvalidBetweenValueArrayLength(0);
-        }
-
-        const arrayLength = array.length;
-        if (!Array.isArray(array) || arrayLength !== 2) {
-            throw new InvalidBetweenValueArrayLength(arrayLength)
         }
     }
 }

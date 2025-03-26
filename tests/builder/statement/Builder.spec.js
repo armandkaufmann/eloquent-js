@@ -232,11 +232,11 @@ describe('Statement: Statement Builder', () => {
                 const expectedResult = "WHERE name = 'John' AND (age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
+                const group = new Group();
                 builder.push(first)
 
-                builder.setGroupStatement(new Group());
-                builder.push(second).push(third);
-                builder.unsetGroupStatement();
+                group.push(second).push(third);
+                builder.push(group);
 
                 builder.push(fourth).push(fifth);
 
@@ -253,11 +253,10 @@ describe('Statement: Statement Builder', () => {
                 const expectedResult = "WHERE name = 'John' OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
+                const group = new Group();
+
                 builder.push(first)
-
-                builder.setGroupStatement(new Group());
-                builder.unsetGroupStatement();
-
+                builder.push(group);
                 builder.push(fourth).push(fifth);
 
                 const result = builder.toString();
@@ -275,10 +274,10 @@ describe('Statement: Statement Builder', () => {
                 const expectedResult = "WHERE (name = 'John' OR age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
+                const group = new Group();
 
-                builder.setGroupStatement(new Group());
-                builder.push(first).push(second).push(third);
-                builder.unsetGroupStatement();
+                group.push(first).push(second).push(third);
+                builder.push(group);
 
                 builder.push(fourth).push(fifth);
 
@@ -300,11 +299,11 @@ describe('Statement: Statement Builder', () => {
                 const expectedQuery = "WHERE name = ? AND (age > ? AND role = ?) OR taco IS NULL AND hours BETWEEN ? AND ?"
 
                 const builder = new Builder(STATEMENTS.where);
+                const group = new Group();
                 builder.push(first)
 
-                builder.setGroupStatement(new Group());
-                builder.push(second).push(third);
-                builder.unsetGroupStatement();
+                group.push(second).push(third);
+                builder.push(group);
 
                 builder.push(fourth).push(fifth);
 
