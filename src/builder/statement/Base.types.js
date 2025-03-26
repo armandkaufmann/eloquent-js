@@ -7,6 +7,7 @@
 /**
  * @typedef Statement
  * @property {"SELECT"} select
+ * @property {"JOIN"} join
  * @property {"WHERE"} where
  * @property {"NONE"} none
  */

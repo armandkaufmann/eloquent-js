@@ -10,6 +10,7 @@ import WhereNotNull from "../../../src/builder/statement/where/WhereNotNull.js";
 import Group from "../../../src/builder/statement/Group.js";
 import WhereBetween from "../../../src/builder/statement/where/WhereBetween.js";
 import InnerJoin from "../../../src/builder/statement/join/InnerJoin.js";
+import LeftJoin from "../../../src/builder/statement/join/LeftJoin.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -52,6 +53,21 @@ describe('Statement: Statement Builder', () => {
     });
 
     describe("Join", () => {
+        describe("All joins", () => {
+            test("Can combine all joins together", () => {
+                const innerJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
+                const leftJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
+                const expectedResult = "INNER JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+
+                const builder = new Builder(STATEMENTS.join);
+                builder.push(innerJoin).push(leftJoin);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+        });
+
         describe("Inner Join", () => {
             describe("toString", () => {
                 test("It builds complete statement string", () => {
@@ -59,7 +75,7 @@ describe('Statement: Statement Builder', () => {
                     const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
                     const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
 
-                    const builder = new Builder(STATEMENTS.innerJoin);
+                    const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
 
                     const result = builder.toString();
@@ -72,7 +88,37 @@ describe('Statement: Statement Builder', () => {
                     const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
                     const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
 
-                    const builder = new Builder(STATEMENTS.innerJoin);
+                    const builder = new Builder(STATEMENTS.join);
+                    builder.push(firstJoin).push(secondJoin);
+
+                    const result = builder.toString(true);
+
+                    expect(result).toEqual(expectedResult);
+                });
+            });
+        });
+
+        describe("Left Join", () => {
+            describe("toString", () => {
+                test("It builds complete statement string", () => {
+                    const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
+                    const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
+                    const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+
+                    const builder = new Builder(STATEMENTS.join);
+                    builder.push(firstJoin).push(secondJoin);
+
+                    const result = builder.toString();
+
+                    expect(result).toEqual(expectedResult);
+                });
+
+                test("It builds complete statement string and disregards withStatement = true", () => {
+                    const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
+                    const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
+                    const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+
+                    const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
 
                     const result = builder.toString(true);
