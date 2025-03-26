@@ -69,11 +69,12 @@ describe("QueryBuilderTest", () => {
                     .limit(2)
                     .groupBy('class')
                     .offset(5)
+                    .leftJoin('comments', 'my_table.id', '=', 'comments.my_table_id')
                     .orderBy('id')
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT id, name FROM my_table WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT id, name FROM my_table LEFT JOIN comments ON my_table.id = comments.my_table_id WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
