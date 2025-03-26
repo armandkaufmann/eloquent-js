@@ -11,6 +11,7 @@ import Group from "../../../src/builder/statement/Group.js";
 import WhereBetween from "../../../src/builder/statement/where/WhereBetween.js";
 import InnerJoin from "../../../src/builder/statement/join/InnerJoin.js";
 import LeftJoin from "../../../src/builder/statement/join/LeftJoin.js";
+import CrossJoin from "../../../src/builder/statement/join/CrossJoin.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -57,10 +58,11 @@ describe('Statement: Statement Builder', () => {
             test("Can combine all joins together", () => {
                 const innerJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                 const leftJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
-                const expectedResult = "INNER JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+                const crossJoin = new CrossJoin('likes');
+                const expectedResult = "INNER JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id CROSS JOIN likes";
 
                 const builder = new Builder(STATEMENTS.join);
-                builder.push(innerJoin).push(leftJoin);
+                builder.push(innerJoin).push(leftJoin).push(crossJoin);
 
                 const result = builder.toString();
 
@@ -117,6 +119,36 @@ describe('Statement: Statement Builder', () => {
                     const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
                     const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+
+                    const builder = new Builder(STATEMENTS.join);
+                    builder.push(firstJoin).push(secondJoin);
+
+                    const result = builder.toString(true);
+
+                    expect(result).toEqual(expectedResult);
+                });
+            });
+        });
+
+        describe("Cross Join", () => {
+            describe("toString", () => {
+                test("It builds complete statement string", () => {
+                    const firstJoin = new CrossJoin('posts');
+                    const secondJoin = new CrossJoin('comments');
+                    const expectedResult = "CROSS JOIN posts CROSS JOIN comments";
+
+                    const builder = new Builder(STATEMENTS.join);
+                    builder.push(firstJoin).push(secondJoin);
+
+                    const result = builder.toString();
+
+                    expect(result).toEqual(expectedResult);
+                });
+
+                test("It builds complete statement string and disregards withStatement = true", () => {
+                    const firstJoin = new CrossJoin('posts');
+                    const secondJoin = new CrossJoin('comments');
+                    const expectedResult = "CROSS JOIN posts CROSS JOIN comments";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
