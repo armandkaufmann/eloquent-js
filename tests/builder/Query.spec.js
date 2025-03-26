@@ -540,6 +540,21 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
             });
+
+            describe('Cross Join', () => {
+                test('builds query to cross join a table', () => {
+                    const result = new Query()
+                        .table('users')
+                        .select('users.id', 'users.name', 'posts.title')
+                        .crossJoin('comments')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT users.id, users.name, posts.title FROM users CROSS JOIN comments";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
         });
 
         describe("Order by", () => {

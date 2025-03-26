@@ -31,6 +31,7 @@ import WhereColumn from "./statement/where/WhereColumn.js";
 import OrWhereColumn from "./statement/where/OrWhereColumn.js";
 import InnerJoin from "./statement/join/InnerJoin.js";
 import LeftJoin from "./statement/join/LeftJoin.js";
+import CrossJoin from "./statement/join/CrossJoin.js";
 
 export class Query {
     /** @type {?string} */
@@ -217,6 +218,7 @@ export class Query {
         this.#validateComparisonOperator(operator);
 
         this.#queryJoin.push(new InnerJoin(table, localKey, operator, foreignKey));
+
         return this;
     }
 
@@ -232,6 +234,17 @@ export class Query {
         this.#validateComparisonOperator(operator);
 
         this.#queryJoin.push(new LeftJoin(table, localKey, operator, foreignKey));
+
+        return this;
+    }
+
+    /**
+     * @param {string} table
+     * @returns Query
+     */
+    crossJoin(table) {
+        this.#queryJoin.push(new CrossJoin(table));
+
         return this;
     }
 
