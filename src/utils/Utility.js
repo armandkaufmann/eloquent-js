@@ -1,3 +1,5 @@
+import {InvalidComparisonOperatorError} from "../errors/QueryBuilder/Errors.js";
+
 export class Utility {
 
     /**
@@ -27,6 +29,22 @@ export class Utility {
             return "'" + value + "'";
         } else {
             return value;
+        }
+    }
+
+    /**
+     * @param {string|null|number|Object|Array} operator
+     * @throws InvalidComparisonOperatorError
+     */
+    static validateComparisonOperator(operator) {
+        if (typeof operator !== 'string') {
+            throw new InvalidComparisonOperatorError(operator);
+        }
+
+        const validOperators = ["==", "=", "!=", "<>", ">", "<", ">=", "<=", "!<", "!>", 'like'];
+
+        if (validOperators.filter((valid) => valid === operator?.toLowerCase()).length === 0) {
+            throw new InvalidComparisonOperatorError(operator);
         }
     }
 }

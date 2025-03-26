@@ -215,7 +215,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     join(table, localKey, operator, foreignKey) {
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         this.#queryJoin.push(new InnerJoin(table, localKey, operator, foreignKey));
 
@@ -231,7 +231,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     leftJoin(table, localKey, operator, foreignKey) {
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         this.#queryJoin.push(new LeftJoin(table, localKey, operator, foreignKey));
 
@@ -266,7 +266,7 @@ export class Query {
             operator = '=';
         }
 
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new Where(column, operator, value));
 
@@ -291,7 +291,7 @@ export class Query {
             operator = '=';
         }
 
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new OrWhere(column, operator, value));
 
@@ -451,7 +451,7 @@ export class Query {
             operator = '=';
         }
 
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new WhereColumn(column, operator, comparisonColumn));
 
@@ -471,7 +471,7 @@ export class Query {
             operator = '=';
         }
 
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new OrWhereColumn(column, operator, comparisonColumn));
 
@@ -551,7 +551,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     having(column, operator, value) {
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valueToString(value)}`
         this.#queryHaving += this.#buildPartialHavingQueryString(query);
@@ -567,7 +567,7 @@ export class Query {
      * @throws InvalidComparisonOperatorError
      */
     orHaving(column, operator, value) {
-        this.#validateComparisonOperator(operator);
+        Utility.validateComparisonOperator(operator);
 
         const query = `${column} ${operator} ${Utility.valueToString(value)}`
         this.#queryHaving += this.#buildPartialHavingQueryString(query, 'OR');
@@ -853,22 +853,6 @@ export class Query {
     #validateTableSet() {
         if (!this.#table) {
             throw new TableNotSetError("Query Builder");
-        }
-    }
-
-    /**
-     * @param {string|null|number|Object|Array} operator
-     * @throws InvalidComparisonOperatorError
-     */
-    #validateComparisonOperator(operator) {
-        if (typeof operator !== 'string') {
-            throw new InvalidComparisonOperatorError(operator);
-        }
-
-        const validOperators = ["==", "=", "!=", "<>", ">", "<", ">=", "<=", "!<", "!>", 'like'];
-
-        if (validOperators.filter((valid) => valid === operator?.toLowerCase()).length === 0) {
-            throw new InvalidComparisonOperatorError(operator);
         }
     }
 
