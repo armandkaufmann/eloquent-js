@@ -93,7 +93,7 @@ export class Query {
      */
     table(table, as = null) {
         this.#table = table;
-        this.#queryFrom.pushOrUpdate(new From(table, as))
+        this.#queryFrom.push(new From(table, as))
         return this;
     }
 
@@ -208,7 +208,7 @@ export class Query {
      * @returns Query
      */
     select(...columns) {
-        this.#querySelect.pushOrUpdate(new Select([...columns]));
+        this.#querySelect.push(new Select([...columns]));
 
         return this;
     }

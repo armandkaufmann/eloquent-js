@@ -9,6 +9,8 @@ export default class Builder {
     #withStatement;
     /** @type {string|null} */
     #defaultQueryPartial = null;
+    /** @type {string} */
+    #glue = " ";
 
     /**
      * @param {Statement} type
@@ -30,17 +32,6 @@ export default class Builder {
     }
 
     /**
-     * @param {Base} statement
-     * @return Builder
-     */
-    pushOrUpdate(statement) {
-        this.#statements = [statement];
-
-        return this;
-    }
-
-
-    /**
      * @param {Boolean} [withCondition=true]
      * @return String
      */
@@ -52,7 +43,7 @@ export default class Builder {
         let result = this.#statements
             .filter((statement) => statement.toString(false))
             .map((statement, index) => statement.toString(index !== 0))
-            .join(" ");
+            .join(this.#glue);
 
         if (result) {
             result = this.#formatFullStatement(result);
@@ -75,7 +66,7 @@ export default class Builder {
             .reduce((result, statement, index) => {
                 const prepare = statement.prepare(index !== 0);
 
-                result.query += `${index > 0 ? ' ' : ''}${prepare.query}`;
+                result.query += `${index > 0 ? this.#glue : ''}${prepare.query}`;
                 result.bindings.push(...prepare.bindings);
 
                 return result;
@@ -114,6 +105,7 @@ export default class Builder {
         switch (this.#type) {
             case STATEMENTS.select:
                 this.#defaultQueryPartial = '*';
+                this.#glue = "";
                 break;
             default:
                 break;

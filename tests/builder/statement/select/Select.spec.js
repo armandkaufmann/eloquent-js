@@ -11,15 +11,6 @@ describe('Statement: Select', () => {
 
             expect(result).toEqual(expectedResult);
         });
-
-        test("It does not build with separator when withSeparator is true", () => {
-            const columns = ['name', 'age', 'sex'];
-            const expectedResult = "name, age, sex";
-
-            const result = new Select(columns).toString(true);
-
-            expect(result).toEqual(expectedResult);
-        });
     });
 
     describe('Prepare', () => {
@@ -28,16 +19,6 @@ describe('Statement: Select', () => {
             const expectedResult = "name, age, sex";
 
             const result = new Select(columns).prepare();
-
-            expect(result.query).toEqual(expectedResult);
-            expect(result.bindings).toEqual([]);
-        });
-
-        test("It does not build prepare object with separator when withSeparator is true", () => {
-            const columns = ['name', 'age', 'sex'];
-            const expectedResult = "name, age, sex";
-
-            const result = new Select(columns).prepare(true);
 
             expect(result.query).toEqual(expectedResult);
             expect(result.bindings).toEqual([]);

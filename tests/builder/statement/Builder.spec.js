@@ -21,27 +21,27 @@ describe('Statement: Statement Builder', () => {
                 const expectedResult = "SELECT name, age, sex";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.pushOrUpdate(selectStatement);
+                builder.push(selectStatement);
 
                 const result = builder.toString();
 
                 expect(result).toEqual(expectedResult);
             });
 
-            test("push: does not append select statement if it exists", () => {
+            test("push: appends select statement if it exists", () => {
                 const firstSelectStatement = new Select(['name', 'age', 'sex']);
                 const secondSelectStatement = new Select(['location', 'role', 'preference']);
-                const expectedResult = "SELECT location, role, preference";
+                const expectedResult = "SELECT name, age, sex, location, role, preference";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.pushOrUpdate(firstSelectStatement).pushOrUpdate(secondSelectStatement);
+                builder.push(firstSelectStatement).push(secondSelectStatement);
 
                 const result = builder.toString();
 
                 expect(result).toEqual(expectedResult);
             });
 
-            test("it defaults to '*' when no select columns provided: toString", () => {
+            test("it defaults to '*' when no select columns provided", () => {
                 const expectedResult = "SELECT *";
 
                 const builder = new Builder(STATEMENTS.select);
@@ -50,8 +50,37 @@ describe('Statement: Statement Builder', () => {
 
                 expect(result).toEqual(expectedResult);
             });
+        });
 
-            test("it defaults to '*' when no select columns provided: prepare", () => {
+        describe("prepare", () => {
+            test('it builds complete prepareObject', () => {
+                const selectStatement = new Select(['name', 'age', 'sex']);
+                const expectedResult = "SELECT name, age, sex";
+
+                const builder = new Builder(STATEMENTS.select);
+                builder.push(selectStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual([]);
+            });
+
+            test("push: appends select statement if it exists", () => {
+                const firstSelectStatement = new Select(['name', 'age', 'sex']);
+                const secondSelectStatement = new Select(['location', 'role', 'preference']);
+                const expectedResult = "SELECT name, age, sex, location, role, preference";
+
+                const builder = new Builder(STATEMENTS.select);
+                builder.push(firstSelectStatement).push(secondSelectStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual([]);
+            });
+
+            test("it defaults to '*' when no select columns provided", () => {
                 const expectedResult = "SELECT *";
 
                 const builder = new Builder(STATEMENTS.select);
@@ -59,6 +88,7 @@ describe('Statement: Statement Builder', () => {
                 const result = builder.prepare();
 
                 expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual([]);
             });
         });
     });
