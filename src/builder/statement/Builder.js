@@ -1,5 +1,4 @@
 import {STATEMENTS} from "./Base.js";
-import Select from "./select/Select.js";
 
 export default class Builder {
     /** @type {Array<Base|Group>} */
@@ -8,6 +7,8 @@ export default class Builder {
     #type;
     /** @type {Boolean} */
     #withStatement;
+    /** @type {string|null} */
+    #defaultQueryPartial = null;
 
     /**
      * @param {Statement} type
@@ -44,13 +45,17 @@ export default class Builder {
      * @return String
      */
     toString(withCondition = true) {
+        if (this.#defaultQueryPartial && this.#statements.length === 0) {
+            return this.#formatFullStatement(this.#defaultQueryPartial);
+        }
+
         let result = this.#statements
             .filter((statement) => statement.toString(false))
             .map((statement, index) => statement.toString(index !== 0))
             .join(" ");
 
-        if (result && this.#withStatement) {
-            result = `${this.#type} ${result}`;
+        if (result) {
+            result = this.#formatFullStatement(result);
         }
 
         return result;
@@ -61,6 +66,10 @@ export default class Builder {
      * @return PrepareObject
      */
     prepare(withCondition = true) {
+        if (this.#defaultQueryPartial && this.#statements.length === 0) {
+            return {query: this.#defaultQueryPartial, bindings: []};
+        }
+
         /** @type {PrepareObject} */
         let result = this.#statements
             .reduce((result, statement, index) => {
@@ -75,11 +84,19 @@ export default class Builder {
                 bindings: []
             });
 
-        if (result.query && this.#withStatement) {
-            result.query = `${this.#type} ${result.query}`;
+        if (result.query) {
+            result.query = this.#formatFullStatement(result.query);
         }
 
         return result;
+    }
+
+    /**
+     * @param {string} query
+     * @return string
+     */
+    #formatFullStatement(query) {
+        return `${this.#withStatement ? `${this.#type} ` : ''}${query}`;
     }
 
     #parseType() {
@@ -96,7 +113,7 @@ export default class Builder {
     #prepareBuilder() {
         switch (this.#type) {
             case STATEMENTS.select:
-                this.#statements.push(new Select(['*']));
+                this.#defaultQueryPartial = '*';
                 break;
             default:
                 break;
