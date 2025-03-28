@@ -21,7 +21,7 @@ describe('Statement: Statement Builder', () => {
                 const expectedResult = "SELECT name, age, sex";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(selectStatement);
+                builder.pushOrUpdate(selectStatement);
 
                 const result = builder.toString();
 
@@ -34,7 +34,7 @@ describe('Statement: Statement Builder', () => {
                 const expectedResult = "SELECT location, role, preference";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(firstSelectStatement).push(secondSelectStatement);
+                builder.pushOrUpdate(firstSelectStatement).pushOrUpdate(secondSelectStatement);
 
                 const result = builder.toString();
 

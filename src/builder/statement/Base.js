@@ -6,6 +6,7 @@ import "./Base.types.js"
  */
 export const STATEMENTS = {
     select: 'SELECT',
+    from: 'FROM',
     join: 'JOIN',
     where: 'WHERE',
     none: 'NONE'

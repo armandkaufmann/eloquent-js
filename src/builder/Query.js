@@ -34,6 +34,7 @@ import LeftJoin from "./statement/join/LeftJoin.js";
 import CrossJoin from "./statement/join/CrossJoin.js";
 import Validation from "../utils/Validation.js";
 import WhereCallback from "./callback/WhereCallback.js";
+import From from "./statement/from/From.js";
 
 export class Query {
     /** @type {?string} */
@@ -44,6 +45,8 @@ export class Query {
     #toSql = false;
     /** @type {Builder}  */
     #querySelect = new Builder(STATEMENTS.select);
+    /** @type {Builder}  */
+    #queryFrom = new Builder(STATEMENTS.from);
     /** @type {Builder}  */
     #queryJoin = new Builder(STATEMENTS.join);
     /** @type Builder  */
@@ -85,10 +88,12 @@ export class Query {
 
     /**
      * @param {string} table
+     * @param {string|null} [as=null]
      * @returns Query
      */
-    table(table) {
+    table(table, as = null) {
         this.#table = table;
+        this.#queryFrom.pushOrUpdate(new From(table, as))
         return this;
     }
 
@@ -203,7 +208,7 @@ export class Query {
      * @returns Query
      */
     select(...columns) {
-        this.#querySelect.push(new Select([...columns]));
+        this.#querySelect.pushOrUpdate(new Select([...columns]));
 
         return this;
     }
@@ -767,20 +772,14 @@ export class Query {
      */
     #buildFullSelectSqlQuery() {
         const queries = [
-            this.#buildSelectQuery(), this.#queryJoin.toString(), this.#queryWhere.toString(),
+            this.#querySelect.toString(), this.#queryFrom.toString(),
+            this.#queryJoin.toString(), this.#queryWhere.toString(),
             this.#buildGroupByQuery(), this.#buildHavingQuery(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
 
         return this.#joinQueryStrings(queries);
-    }
-
-    /**
-     * @returns string
-     */
-    #buildSelectQuery() {
-        return `${this.#querySelect.toString()} FROM ${this.#table}`;
     }
 
     /**

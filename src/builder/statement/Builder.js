@@ -23,11 +23,6 @@ export default class Builder {
      * @return Builder
      */
     push(statement) {
-        if (this.#type === STATEMENTS.select) {
-            this.#pushOrUpdate(statement);
-            return this;
-        }
-
         this.#statements.push(statement);
 
         return this;
@@ -37,7 +32,7 @@ export default class Builder {
      * @param {Base} statement
      * @return Builder
      */
-    #pushOrUpdate(statement) {
+    pushOrUpdate(statement) {
         this.#statements = [statement];
 
         return this;
