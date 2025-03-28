@@ -41,7 +41,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
-            test("it defaults to '*' when no select columns provided", () => {
+            test("it defaults to '*' when no select columns provided: toString", () => {
                 const expectedResult = "SELECT *";
 
                 const builder = new Builder(STATEMENTS.select);
@@ -49,6 +49,16 @@ describe('Statement: Statement Builder', () => {
                 const result = builder.toString();
 
                 expect(result).toEqual(expectedResult);
+            });
+
+            test("it defaults to '*' when no select columns provided: prepare", () => {
+                const expectedResult = "SELECT *";
+
+                const builder = new Builder(STATEMENTS.select);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
             });
         });
     });

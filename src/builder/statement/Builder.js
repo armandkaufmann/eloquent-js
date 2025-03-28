@@ -67,7 +67,7 @@ export default class Builder {
      */
     prepare(withCondition = true) {
         if (this.#defaultQueryPartial && this.#statements.length === 0) {
-            return {query: this.#defaultQueryPartial, bindings: []};
+            return {query: this.#formatFullStatement(this.#defaultQueryPartial), bindings: []};
         }
 
         /** @type {PrepareObject} */
