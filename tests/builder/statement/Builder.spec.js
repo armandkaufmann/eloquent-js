@@ -12,6 +12,7 @@ import WhereBetween from "../../../src/builder/statement/where/WhereBetween.js";
 import InnerJoin from "../../../src/builder/statement/join/InnerJoin.js";
 import LeftJoin from "../../../src/builder/statement/join/LeftJoin.js";
 import CrossJoin from "../../../src/builder/statement/join/CrossJoin.js";
+import SelectRaw from "../../../src/builder/statement/select/SelectRaw.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -45,6 +46,19 @@ describe('Statement: Statement Builder', () => {
                 const expectedResult = "SELECT *";
 
                 const builder = new Builder(STATEMENTS.select);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+
+            test("it can build select statement with different select types", () => {
+                const firstSelectStatement = new Select(['name', 'age', 'sex']);
+                const secondSelectStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
+                const expectedResult = "SELECT name, age, sex, price * 1.0825 as price_with_tax";
+
+                const builder = new Builder(STATEMENTS.select);
+                builder.push(firstSelectStatement).push(secondSelectStatement);
 
                 const result = builder.toString();
 
@@ -89,6 +103,21 @@ describe('Statement: Statement Builder', () => {
 
                 expect(result.query).toEqual(expectedResult);
                 expect(result.bindings).toEqual([]);
+            });
+
+            test("it can build select prepare object with different select types", () => {
+                const firstSelectStatement = new Select(['name', 'age', 'sex']);
+                const secondSelectStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
+                const expectedResult = "SELECT name, age, sex, price * ? as price_with_tax";
+                const expectedBindings = [1.0825];
+
+                const builder = new Builder(STATEMENTS.select);
+                builder.push(firstSelectStatement).push(secondSelectStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual(expectedBindings);
             });
         });
     });

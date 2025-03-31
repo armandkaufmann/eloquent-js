@@ -35,6 +35,7 @@ import CrossJoin from "./statement/join/CrossJoin.js";
 import Validation from "../utils/Validation.js";
 import WhereCallback from "./callback/WhereCallback.js";
 import From from "./statement/from/From.js";
+import SelectRaw from "./statement/select/SelectRaw.js";
 
 export class Query {
     /** @type {?string} */
@@ -209,6 +210,17 @@ export class Query {
      */
     select(...columns) {
         this.#querySelect.push(new Select([...columns]));
+
+        return this;
+    }
+
+    /**
+     * @param {String} expression
+     * @param {Array<String>|null} [bindings=null]
+     * @returns Query
+     */
+    selectRaw(expression, bindings = null) {
+        this.#querySelect.push(new SelectRaw(expression, bindings));
 
         return this;
     }

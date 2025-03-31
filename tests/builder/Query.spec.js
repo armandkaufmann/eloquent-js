@@ -496,6 +496,34 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe(expectedResult);
             });
+
+            describe("Select Raw:", () => {
+                test("Builds query string with binding", () => {
+                    const result = new Query()
+                        .table('test_models')
+                        .select('test_id', 'test_name')
+                        .selectRaw('price * ? as price_with_tax', [1.0825])
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT test_id, test_name, price * 1.0825 as price_with_tax FROM test_models";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Builds query string without binding", () => {
+                    const result = new Query()
+                        .table('test_models')
+                        .select('test_id', 'test_name')
+                        .selectRaw('price as price_with_tax')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT test_id, test_name, price as price_with_tax FROM test_models";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
         });
 
         describe("Join", () => {
