@@ -4,7 +4,7 @@ export default class SelectRaw extends Base {
 
     /**
      * @param {String} expression
-     * @param {Array<String>|null} [bindings=null]
+     * @param {Array<String|Number>|null} [bindings=null]
      * @returns Query
      */
     constructor(expression, bindings = null) {

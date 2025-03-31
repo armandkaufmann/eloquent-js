@@ -216,7 +216,7 @@ export class Query {
 
     /**
      * @param {String} expression
-     * @param {Array<String>|null} [bindings=null]
+     * @param {Array<String|Number>|null} [bindings=null]
      * @returns Query
      */
     selectRaw(expression, bindings = null) {
