@@ -36,6 +36,8 @@ import Validation from "../utils/Validation.js";
 import WhereCallback from "./callback/WhereCallback.js";
 import From from "./statement/from/From.js";
 import SelectRaw from "./statement/select/SelectRaw.js";
+import WhereRaw from "./statement/where/WhereRaw.js";
+import OrWhereRaw from "./statement/where/OrWhereRaw.js";
 
 export class Query {
     /** @type {?string} */
@@ -313,6 +315,28 @@ export class Query {
         Validation.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new OrWhere(column, operator, value));
+
+        return this;
+    }
+
+    /**
+     * @param {String} expression
+     * @param {Array<String|number>|null} [bindings=null]
+     * @returns Query
+     */
+    whereRaw(expression, bindings = null) {
+        this.#queryWhere.push(new WhereRaw(expression, bindings));
+
+        return this;
+    }
+
+    /**
+     * @param {String} expression
+     * @param {Array<String|number>|null} [bindings=null]
+     * @returns Query
+     */
+    orWhereRaw(expression, bindings = null) {
+        this.#queryWhere.push(new OrWhereRaw(expression, bindings));
 
         return this;
     }

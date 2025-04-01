@@ -19,6 +19,8 @@ import WhereBetweenColumns from "../statement/where/WhereBetweenColumns.js";
 import OrWhereBetweenColumns from "../statement/where/OrWhereBetweenColumns.js";
 import WhereNotBetweenColumns from "../statement/where/WhereNotBetweenColumns.js";
 import OrWhereNotBetweenColumns from "../statement/where/OrWhereNotBetweenColumns.js";
+import WhereRaw from "../statement/where/WhereRaw.js";
+import OrWhereRaw from "../statement/where/OrWhereRaw.js";
 
 export default class WhereCallback {
     /** @type {Group}  */
@@ -67,6 +69,28 @@ export default class WhereCallback {
         Validation.validateComparisonOperator(operator);
 
         this.#query.push(new OrWhere(column, operator, value));
+
+        return this;
+    }
+
+    /**
+     * @param {String} expression
+     * @param {Array<String|number>|null} [bindings=null]
+     * @returns WhereCallback
+     */
+    whereRaw(expression, bindings = null) {
+        this.#query.push(new WhereRaw(expression, bindings));
+
+        return this;
+    }
+
+    /**
+     * @param {String} expression
+     * @param {Array<String|number>|null} [bindings=null]
+     * @returns WhereCallback
+     */
+    orWhereRaw(expression, bindings = null) {
+        this.#query.push(new OrWhereRaw(expression, bindings));
 
         return this;
     }

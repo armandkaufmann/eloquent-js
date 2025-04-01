@@ -107,6 +107,60 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe(expectedResult);
             });
 
+            describe("Where Raw/Or Where Raw", () => {
+                test("WhereRaw: Builds query string without bindings", () => {
+                    const result = new Query()
+                        .table('my_table')
+                        .where('test_name', '=', 'John')
+                        .whereRaw("price > IF(state = 'TX', 200, 100)")
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND price > IF(state = 'TX', 200, 100)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("WhereRaw: Builds query string with bindings", () => {
+                    const result = new Query()
+                        .table('my_table')
+                        .where('test_name', '=', 'John')
+                        .whereRaw("price > IF(state = 'TX', ?, 100)", [200])
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND price > IF(state = 'TX', 200, 100)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("OrWhereRaw: Builds query string without bindings", () => {
+                    const result = new Query()
+                        .table('my_table')
+                        .where('test_name', '=', 'John')
+                        .orWhereRaw("price > IF(state = 'TX', 200, 100)")
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR price > IF(state = 'TX', 200, 100)";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("OrWhereRaw: Builds query string with bindings", () => {
+                    const result = new Query()
+                        .table('my_table')
+                        .where('test_name', '=', 'John')
+                        .orWhereRaw("price > IF(state = 'TX', ?, 100)", [200])
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR price > IF(state = 'TX', 200, 100)";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
+
             describe("Where null/not null", () => {
                 test("Builds where null query string", () => {
                     const result = new Query()
