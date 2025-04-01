@@ -70,8 +70,8 @@ export class Query {
      * @param {string} table
      * @returns Query
      */
-    static table(table) {
-        return new Query().table(table)
+    static from(table) {
+        return new Query().from(table)
     }
 
     /**
@@ -94,7 +94,7 @@ export class Query {
      * @param {string|null} [as=null]
      * @returns Query
      */
-    table(table, as = null) {
+    from(table, as = null) {
         this.#table = table;
         this.#queryFrom.push(new From(table, as))
         return this;

@@ -6,7 +6,7 @@ describe('Model Query Builder integration Test', () => {
    describe('Initialization', () => {
 
        test('can initialize query builder with model class name', () => {
-           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "from");
            class TestModel extends Model {}
 
            new TestModel();
@@ -15,7 +15,7 @@ describe('Model Query Builder integration Test', () => {
        });
 
        test('can initialize with table override', () => {
-           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "from");
 
            const table = 'users';
 
@@ -31,7 +31,7 @@ describe('Model Query Builder integration Test', () => {
        });
 
        test('static create on model loads config', () => {
-           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "from");
 
            const table = 'users';
 
