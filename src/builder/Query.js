@@ -228,6 +228,15 @@ export class Query {
     }
 
     /**
+     * @returns Query
+     */
+    distinct() {
+        this.#querySelect.setDistinct();
+
+        return this;
+    }
+
+    /**
      * @param {string} table
      * @param {string} localKey
      * @param {string} operator
@@ -880,9 +889,10 @@ export class Query {
      * @returns string
      */
     #joinQueryStrings(queries) {
-        return queries.reduce((result, queryString, index) => {
-            return result += queryString !== "" ? (index > 0 ? ' ' : '') + queryString : ''
-        }, "");
+        return queries
+            .reduce((result, queryString, index) => {
+                return result += queryString !== "" ? (index > 0 ? ' ' : '') + queryString : ''
+            }, "");
     }
 
     /**

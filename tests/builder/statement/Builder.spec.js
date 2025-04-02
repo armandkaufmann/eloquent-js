@@ -29,6 +29,29 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
+            test('it builds complete statement string with distinct', () => {
+                const selectStatement = new Select(['name', 'age', 'sex']);
+                const expectedResult = "SELECT DISTINCT name, age, sex";
+
+                const builder = new Builder(STATEMENTS.select);
+                builder.push(selectStatement).setDistinct();
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+
+            test('it does not add DISTINCT when using default "*" ', () => {
+                const expectedResult = "SELECT *";
+
+                const builder = new Builder(STATEMENTS.select);
+                builder.setDistinct();
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+
             test("push: appends select statement if it exists", () => {
                 const firstSelectStatement = new Select(['name', 'age', 'sex']);
                 const secondSelectStatement = new Select(['location', 'role', 'preference']);
@@ -73,6 +96,19 @@ describe('Statement: Statement Builder', () => {
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(selectStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual([]);
+            });
+
+            test('it builds complete statement prepare object string with distinct', () => {
+                const selectStatement = new Select(['name', 'age', 'sex']);
+                const expectedResult = "SELECT DISTINCT name, age, sex";
+
+                const builder = new Builder(STATEMENTS.select);
+                builder.push(selectStatement).setDistinct();
 
                 const result = builder.prepare();
 

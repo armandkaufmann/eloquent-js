@@ -551,6 +551,33 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe(expectedResult);
             });
 
+            describe("Distinct:", () => {
+                test("it builds select statement with distinct", () => {
+                    const result = new Query()
+                        .from('test_models')
+                        .distinct()
+                        .select('test_id', 'test_name')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT DISTINCT test_id, test_name FROM test_models";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("it does not DISTINCT when there is no specified select", () => {
+                    const result = new Query()
+                        .from('test_models')
+                        .distinct()
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM test_models";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
+
             describe("Select Raw:", () => {
                 test("Builds query string with binding", () => {
                     const result = new Query()

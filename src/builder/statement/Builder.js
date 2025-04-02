@@ -11,6 +11,8 @@ export default class Builder {
     #defaultQueryPartial = null;
     /** @type {string} */
     #glue = " ";
+    /** @type {Boolean} */
+    #withDistinct = false;
 
     /**
      * @param {Statement} type
@@ -82,12 +84,30 @@ export default class Builder {
         return result;
     }
 
+    setDistinct() {
+        if (this.#type !== STATEMENTS.select) {
+            throw new Error("Can not set distinct in a non-select statement builder.")
+        }
+
+        this.#withDistinct = true;
+    }
+
     /**
      * @param {string} query
      * @return string
      */
     #formatFullStatement(query) {
-        return `${this.#withStatement ? `${this.#type} ` : ''}${query}`;
+        let result = "";
+
+        if (this.#withStatement) {
+            result += `${this.#type} `;
+        }
+
+        if (this.#withDistinct && query !== this.#defaultQueryPartial) {
+            result += 'DISTINCT '
+        }
+
+        return result + query;
     }
 
     #parseType() {
