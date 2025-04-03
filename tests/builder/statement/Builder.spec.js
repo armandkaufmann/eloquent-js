@@ -15,6 +15,7 @@ import CrossJoin from "../../../src/builder/statement/join/CrossJoin.js";
 import SelectRaw from "../../../src/builder/statement/select/SelectRaw.js";
 import Having from "../../../src/builder/statement/having/Having.js";
 import OrHaving from "../../../src/builder/statement/having/OrHaving.js";
+import HavingRaw from "../../../src/builder/statement/having/HavingRaw.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -428,11 +429,12 @@ describe('Statement: Statement Builder', () => {
                 const first = new Having('name', '=', 'John');
                 const second = new Having('age', '>', 20);
                 const third = new OrHaving('role', '=', 'HR');
+                const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedResult = "HAVING name = 'John' AND age > 20 OR role = 'HR'"
+                const expectedResult = "HAVING name = 'John' AND age > 20 OR role = 'HR' AND SUM(price) > 2500"
 
                 const builder = new Builder(STATEMENTS.having);
-                builder.push(first).push(second).push(third);
+                builder.push(first).push(second).push(third).push(fourth);
 
                 const result = builder.toString();
 
@@ -453,12 +455,13 @@ describe('Statement: Statement Builder', () => {
                 const first = new Having('name', '=', 'John');
                 const second = new Having('age', '>', 20);
                 const third = new OrHaving('role', '=', 'HR');
+                const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedQuery = "HAVING name = ? AND age > ? OR role = ?"
-                const expectedBindings = ['John', 20, 'HR']
+                const expectedQuery = "HAVING name = ? AND age > ? OR role = ? AND SUM(price) > ?"
+                const expectedBindings = ['John', 20, 'HR', 2500]
 
                 const builder = new Builder(STATEMENTS.having);
-                builder.push(first).push(second).push(third);
+                builder.push(first).push(second).push(third).push(fourth);
 
                 const result = builder.prepare();
 
