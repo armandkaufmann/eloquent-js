@@ -16,6 +16,7 @@ import SelectRaw from "../../../src/builder/statement/select/SelectRaw.js";
 import Having from "../../../src/builder/statement/having/Having.js";
 import OrHaving from "../../../src/builder/statement/having/OrHaving.js";
 import HavingRaw from "../../../src/builder/statement/having/HavingRaw.js";
+import OrHavingRaw from "../../../src/builder/statement/having/OrHavingRaw.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -427,11 +428,11 @@ describe('Statement: Statement Builder', () => {
         describe('toString', () => {
             test('It builds complete statement string', () => {
                 const first = new Having('name', '=', 'John');
-                const second = new Having('age', '>', 20);
+                const second = new OrHavingRaw('team LIKE ?', ['Nippon%']);
                 const third = new OrHaving('role', '=', 'HR');
                 const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedResult = "HAVING name = 'John' AND age > 20 OR role = 'HR' AND SUM(price) > 2500"
+                const expectedResult = "HAVING name = 'John' OR team LIKE 'Nippon%' OR role = 'HR' AND SUM(price) > 2500"
 
                 const builder = new Builder(STATEMENTS.having);
                 builder.push(first).push(second).push(third).push(fourth);
@@ -453,12 +454,12 @@ describe('Statement: Statement Builder', () => {
         describe('prepare', () => {
             test('it builds the prepare object with correct values', () => {
                 const first = new Having('name', '=', 'John');
-                const second = new Having('age', '>', 20);
+                const second = new OrHavingRaw('team LIKE ?', ['Nippon%']);
                 const third = new OrHaving('role', '=', 'HR');
                 const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedQuery = "HAVING name = ? AND age > ? OR role = ? AND SUM(price) > ?"
-                const expectedBindings = ['John', 20, 'HR', 2500]
+                const expectedQuery = "HAVING name = ? OR team LIKE ? OR role = ? AND SUM(price) > ?"
+                const expectedBindings = ['John', 'Nippon%', 'HR', 2500]
 
                 const builder = new Builder(STATEMENTS.having);
                 builder.push(first).push(second).push(third).push(fourth);
