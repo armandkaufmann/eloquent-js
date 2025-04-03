@@ -9,6 +9,7 @@ export const STATEMENTS = {
     from: 'FROM',
     join: 'JOIN',
     where: 'WHERE',
+    having: 'HAVING',
     none: 'NONE'
 }
 

@@ -13,6 +13,7 @@ import InnerJoin from "../../../src/builder/statement/join/InnerJoin.js";
 import LeftJoin from "../../../src/builder/statement/join/LeftJoin.js";
 import CrossJoin from "../../../src/builder/statement/join/CrossJoin.js";
 import SelectRaw from "../../../src/builder/statement/select/SelectRaw.js";
+import Having from "../../../src/builder/statement/having/Having.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -419,4 +420,57 @@ describe('Statement: Statement Builder', () => {
             });
         })
     });
+
+    describe("Having", () => {
+        describe('toString', () => {
+            test('It builds complete statement string', () => {
+                const first = new Having('name', '=', 'John');
+                const second = new Having('age', '>', 20);
+
+                const expectedResult = "HAVING name = 'John' AND age > 20"
+
+                const builder = new Builder(STATEMENTS.having);
+                builder.push(first).push(second);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+
+            test('It returns an empty string if there are no statements', () => {
+                const builder = new Builder(STATEMENTS.having);
+
+                const result = builder.toString();
+
+                expect(result).toEqual('');
+            });
+        });
+
+        describe('prepare', () => {
+            test('it builds the prepare object with correct values', () => {
+                const first = new Having('name', '=', 'John');
+                const second = new Having('age', '>', 20);
+
+                const expectedQuery = "HAVING name = ? AND age > ?"
+                const expectedBindings = ['John', 20]
+
+                const builder = new Builder(STATEMENTS.having);
+                builder.push(first).push(second);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedQuery);
+                expect(result.bindings).toEqual(expectedBindings);
+            });
+
+            test('it builds an empty prepare object when no statements provided', () => {
+                const builder = new Builder(STATEMENTS.having);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual('');
+                expect(result.bindings).toEqual([]);
+            });
+        });
+    })
 });

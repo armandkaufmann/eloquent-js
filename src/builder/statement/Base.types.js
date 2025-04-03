@@ -10,6 +10,7 @@
  * @property {"FROM"} from
  * @property {"JOIN"} join
  * @property {"WHERE"} where
+ * @property {"HAVING"} having
  * @property {"NONE"} none
  */
 
