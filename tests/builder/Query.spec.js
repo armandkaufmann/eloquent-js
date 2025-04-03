@@ -698,7 +698,7 @@ describe("QueryBuilderTest", () => {
             test("Having query string", () => {
                 const result = new Query()
                     .from('my_table')
-                    .having('test_id', '=', 5)
+                    .having('test_id',5)
                     .having('test_name', '=', 'test')
                     .toSql()
                     .get();
@@ -736,7 +736,7 @@ describe("QueryBuilderTest", () => {
                         const result = new Query()
                             .from('my_table')
                             .having('test_id', '=', 5)
-                            .orHaving('test_name', '=', 'test')
+                            .orHaving('test_name','test')
                             .toSql()
                             .get();
 

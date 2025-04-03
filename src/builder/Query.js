@@ -38,6 +38,10 @@ import From from "./statement/from/From.js";
 import SelectRaw from "./statement/select/SelectRaw.js";
 import WhereRaw from "./statement/where/WhereRaw.js";
 import OrWhereRaw from "./statement/where/OrWhereRaw.js";
+import Having from "./statement/having/Having.js";
+import OrHaving from "./statement/having/OrHaving.js";
+import HavingRaw from "./statement/having/HavingRaw.js";
+import OrHavingRaw from "./statement/having/OrHavingRaw.js";
 
 export class Query {
     /** @type {?string} */
@@ -56,8 +60,8 @@ export class Query {
     #queryWhere = new Builder(STATEMENTS.where);
     /** @type {Array<string>}  */
     #queryGroupBy = [];
-    /** @type string  */
-    #queryHaving = "";
+    /** @type Builder  */
+    #queryHaving = new Builder(STATEMENTS.having);
     /** @type {Array<string>}  */
     #queryOrderBy = [];
     /** @type {?number}  */
@@ -598,15 +602,19 @@ export class Query {
     /**
      * @param {string} column
      * @param {string} operator
-     * @param {string | number } value
+     * @param {string|number|null} [value=null]
      * @returns Query
      * @throws InvalidComparisonOperatorError
      */
-    having(column, operator, value) {
+    having(column, operator, value = null) {
+        if (!value) {
+            value = operator;
+            operator = '=';
+        }
+
         Validation.validateComparisonOperator(operator);
 
-        const query = `${column} ${operator} ${Utility.valueToString(value)}`
-        this.#queryHaving += this.#buildPartialHavingQueryString(query);
+        this.#queryHaving.push(new Having(column, operator, value));
 
         return this;
     }
@@ -614,76 +622,43 @@ export class Query {
     /**
      * @param {string} column
      * @param {string} operator
-     * @param {string | number } value
+     * @param {string|number|null} [value=null]
      * @returns Query
      * @throws InvalidComparisonOperatorError
      */
-    orHaving(column, operator, value) {
+    orHaving(column, operator, value = null) {
+        if (!value) {
+            value = operator;
+            operator = '=';
+        }
+
         Validation.validateComparisonOperator(operator);
 
-        const query = `${column} ${operator} ${Utility.valueToString(value)}`
-        this.#queryHaving += this.#buildPartialHavingQueryString(query, 'OR');
+        this.#queryHaving.push(new OrHaving(column, operator, value));
 
         return this;
     }
 
     /**
      * @param {string} expression
-     * @param {Array<String|Number>} values
+     * @param {Array<String|Number>|null} [bindings=null]
      * @returns Query
      */
-    havingRaw(expression, values) {
-        const query = this.#mergeBindings(expression, values);
-        this.#queryHaving += this.#buildPartialHavingQueryString(query);
+    havingRaw(expression, bindings = null) {
+        this.#queryHaving.push(new HavingRaw(expression, bindings));
 
         return this;
     }
 
     /**
      * @param {string} expression
-     * @param {Array<String|Number>} values
+     * @param {Array<String|Number>|null} [bindings=null]
      * @returns Query
      */
-    orHavingRaw(expression, values) {
-        const query = this.#mergeBindings(expression, values);
-        this.#queryHaving += this.#buildPartialHavingQueryString(query, 'OR');
+    orHavingRaw(expression, bindings = null) {
+        this.#queryHaving.push(new OrHavingRaw(expression, bindings));
 
         return this;
-    }
-
-    /**
-     * @param {string} query
-     * @param {Array<String|Number>} bindings
-     * @param {String|'?'} [replacer='?']
-     * @returns String
-     */
-    #mergeBindings(query, bindings, replacer = '?') {
-        let result = ``;
-        let bindingsIndex = 0;
-
-        for (let i = 0; i < query.length; i++) {
-            if (query[i] === replacer) {
-                result += Utility.valueToString(bindings[bindingsIndex]);
-                bindingsIndex++;
-            } else {
-                result += query[i];
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * @param {string} query
-     * @param {string|'AND'|'OR'} [condition='AND']
-     * @returns string
-     */
-    #buildPartialHavingQueryString(query, condition = 'AND') {
-        if (this.#queryHaving) {
-            return ` ${condition} ${query}`;
-        }
-
-        return `HAVING ${query}`;
     }
 
     /**
@@ -819,7 +794,7 @@ export class Query {
         const queries = [
             this.#querySelect.toString(), this.#queryFrom.toString(),
             this.#queryJoin.toString(), this.#queryWhere.toString(),
-            this.#buildGroupByQuery(), this.#buildHavingQuery(),
+            this.#buildGroupByQuery(), this.#queryHaving.toString(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
@@ -839,13 +814,6 @@ export class Query {
         query += this.#queryGroupBy.join(', ');
 
         return query;
-    }
-
-    /**
-     * @returns string
-     */
-    #buildHavingQuery() {
-        return this.#queryHaving;
     }
 
     /**
