@@ -14,6 +14,7 @@ import LeftJoin from "../../../src/builder/statement/join/LeftJoin.js";
 import CrossJoin from "../../../src/builder/statement/join/CrossJoin.js";
 import SelectRaw from "../../../src/builder/statement/select/SelectRaw.js";
 import Having from "../../../src/builder/statement/having/Having.js";
+import OrHaving from "../../../src/builder/statement/having/OrHaving.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -426,11 +427,12 @@ describe('Statement: Statement Builder', () => {
             test('It builds complete statement string', () => {
                 const first = new Having('name', '=', 'John');
                 const second = new Having('age', '>', 20);
+                const third = new OrHaving('role', '=', 'HR');
 
-                const expectedResult = "HAVING name = 'John' AND age > 20"
+                const expectedResult = "HAVING name = 'John' AND age > 20 OR role = 'HR'"
 
                 const builder = new Builder(STATEMENTS.having);
-                builder.push(first).push(second);
+                builder.push(first).push(second).push(third);
 
                 const result = builder.toString();
 
@@ -450,12 +452,13 @@ describe('Statement: Statement Builder', () => {
             test('it builds the prepare object with correct values', () => {
                 const first = new Having('name', '=', 'John');
                 const second = new Having('age', '>', 20);
+                const third = new OrHaving('role', '=', 'HR');
 
-                const expectedQuery = "HAVING name = ? AND age > ?"
-                const expectedBindings = ['John', 20]
+                const expectedQuery = "HAVING name = ? AND age > ? OR role = ?"
+                const expectedBindings = ['John', 20, 'HR']
 
                 const builder = new Builder(STATEMENTS.having);
-                builder.push(first).push(second);
+                builder.push(first).push(second).push(third);
 
                 const result = builder.prepare();
 
