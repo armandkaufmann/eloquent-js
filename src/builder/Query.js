@@ -42,6 +42,7 @@ import Having from "./statement/having/Having.js";
 import OrHaving from "./statement/having/OrHaving.js";
 import HavingRaw from "./statement/having/HavingRaw.js";
 import OrHavingRaw from "./statement/having/OrHavingRaw.js";
+import GroupBy from "./statement/group/GroupBy.js";
 
 export class Query {
     /** @type {?string} */
@@ -58,8 +59,8 @@ export class Query {
     #queryJoin = new Builder(STATEMENTS.join);
     /** @type Builder  */
     #queryWhere = new Builder(STATEMENTS.where);
-    /** @type {Array<string>}  */
-    #queryGroupBy = [];
+    /** @type Builder  */
+    #queryGroupBy = new Builder(STATEMENTS.group);
     /** @type Builder  */
     #queryHaving = new Builder(STATEMENTS.having);
     /** @type {Array<string>}  */
@@ -595,7 +596,8 @@ export class Query {
      * @returns Query
      */
     groupBy(...columns) {
-        columns.forEach((column) => this.#queryGroupBy.push(column))
+        this.#queryGroupBy.push(new GroupBy([...columns]));
+
         return this;
     }
 
@@ -794,26 +796,12 @@ export class Query {
         const queries = [
             this.#querySelect.toString(), this.#queryFrom.toString(),
             this.#queryJoin.toString(), this.#queryWhere.toString(),
-            this.#buildGroupByQuery(), this.#queryHaving.toString(),
+            this.#queryGroupBy.toString(), this.#queryHaving.toString(),
             this.#buildOrderByQuery(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
 
         return this.#joinQueryStrings(queries);
-    }
-
-    /**
-     * @returns string
-     */
-    #buildGroupByQuery() {
-        if (this.#queryGroupBy.length === 0) {
-            return "";
-        }
-
-        let query = "GROUP BY ";
-        query += this.#queryGroupBy.join(', ');
-
-        return query;
     }
 
     /**

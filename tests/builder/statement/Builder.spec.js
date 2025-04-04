@@ -17,6 +17,7 @@ import Having from "../../../src/builder/statement/having/Having.js";
 import OrHaving from "../../../src/builder/statement/having/OrHaving.js";
 import HavingRaw from "../../../src/builder/statement/having/HavingRaw.js";
 import OrHavingRaw from "../../../src/builder/statement/having/OrHavingRaw.js";
+import GroupBy from "../../../src/builder/statement/group/GroupBy.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -329,7 +330,7 @@ describe('Statement: Statement Builder', () => {
         });
     });
 
-    describe("Group queries", () => {
+    describe("Grouping queries", () => {
         describe("toString", () => {
             test("it can group queries", () => {
                 const first = new Where('name', '=', 'John');
@@ -480,4 +481,62 @@ describe('Statement: Statement Builder', () => {
             });
         });
     })
+
+    describe("Group", () => {
+        describe("toString", () => {
+            test('it builds complete statement string', () => {
+                const selectStatement = new GroupBy(['name', 'age', 'sex']);
+                const expectedResult = "GROUP BY name, age, sex";
+
+                const builder = new Builder(STATEMENTS.group);
+                builder.push(selectStatement);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+
+            test("push: appends select statement if it exists", () => {
+                const firstGroupStatement = new GroupBy(['name', 'age', 'sex']);
+                const secondGroupStatement = new GroupBy(['location', 'role', 'preference']);
+                const expectedResult = "GROUP BY name, age, sex, location, role, preference";
+
+                const builder = new Builder(STATEMENTS.group);
+                builder.push(firstGroupStatement).push(secondGroupStatement);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+        });
+
+        describe("prepare", () => {
+            test('it builds complete prepareObject', () => {
+                const selectStatement = new Select(['name', 'age', 'sex']);
+                const expectedResult = "GROUP BY name, age, sex";
+
+                const builder = new Builder(STATEMENTS.group);
+                builder.push(selectStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual([]);
+            });
+
+            test("push: appends select statement if it exists", () => {
+                const firstSelectStatement = new GroupBy(['name', 'age', 'sex']);
+                const secondSelectStatement = new GroupBy(['location', 'role', 'preference']);
+                const expectedResult = "GROUP BY name, age, sex, location, role, preference";
+
+                const builder = new Builder(STATEMENTS.group);
+                builder.push(firstSelectStatement).push(secondSelectStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual([]);
+            });
+        });
+    });
 });
