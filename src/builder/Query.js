@@ -43,6 +43,7 @@ import OrHaving from "./statement/having/OrHaving.js";
 import HavingRaw from "./statement/having/HavingRaw.js";
 import OrHavingRaw from "./statement/having/OrHavingRaw.js";
 import GroupBy from "./statement/group/GroupBy.js";
+import GroupByRaw from "./statement/group/GroupByRaw.js";
 
 export class Query {
     /** @type {?string} */
@@ -597,6 +598,16 @@ export class Query {
      */
     groupBy(...columns) {
         this.#queryGroupBy.push(new GroupBy([...columns]));
+
+        return this;
+    }
+
+    /**
+     * @param {string} expression
+     * @returns Query
+     */
+    groupByRaw(expression) {
+        this.#queryGroupBy.push(new GroupByRaw(expression));
 
         return this;
     }

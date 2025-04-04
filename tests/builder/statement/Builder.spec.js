@@ -18,6 +18,7 @@ import OrHaving from "../../../src/builder/statement/having/OrHaving.js";
 import HavingRaw from "../../../src/builder/statement/having/HavingRaw.js";
 import OrHavingRaw from "../../../src/builder/statement/having/OrHavingRaw.js";
 import GroupBy from "../../../src/builder/statement/group/GroupBy.js";
+import GroupByRaw from "../../../src/builder/statement/group/GroupByRaw.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -499,10 +500,11 @@ describe('Statement: Statement Builder', () => {
             test("push: appends select statement if it exists", () => {
                 const firstGroupStatement = new GroupBy(['name', 'age', 'sex']);
                 const secondGroupStatement = new GroupBy(['location', 'role', 'preference']);
-                const expectedResult = "GROUP BY name, age, sex, location, role, preference";
+                const thirdGroupStatement = new GroupByRaw('price, desk, id');
+                const expectedResult = "GROUP BY name, age, sex, location, role, preference, price, desk, id";
 
                 const builder = new Builder(STATEMENTS.group);
-                builder.push(firstGroupStatement).push(secondGroupStatement);
+                builder.push(firstGroupStatement).push(secondGroupStatement).push(thirdGroupStatement);
 
                 const result = builder.toString();
 

@@ -692,6 +692,17 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe("SELECT * FROM my_table GROUP BY test_id, test_name");
             });
+
+            test("Group by raw query string", () => {
+                const result = new Query()
+                    .from('my_table')
+                    .groupBy('test_id', 'test_name')
+                    .groupByRaw('role, location')
+                    .toSql()
+                    .get();
+
+                expect(result).toBe("SELECT * FROM my_table GROUP BY test_id, test_name, role, location");
+            });
         });
 
         describe("Having", () => {
