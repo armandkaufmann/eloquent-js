@@ -44,6 +44,7 @@ import HavingRaw from "./statement/having/HavingRaw.js";
 import OrHavingRaw from "./statement/having/OrHavingRaw.js";
 import GroupBy from "./statement/group/GroupBy.js";
 import GroupByRaw from "./statement/group/GroupByRaw.js";
+import OrderBy from "./statement/order/OrderBy.js";
 
 export class Query {
     /** @type {?string} */
@@ -65,7 +66,7 @@ export class Query {
     /** @type Builder  */
     #queryHaving = new Builder(STATEMENTS.having);
     /** @type {Array<string>}  */
-    #queryOrderBy = [];
+    #queryOrderBy = new Builder(STATEMENTS.orderBy);
     /** @type {?number}  */
     #limit = null;
     /** @type {?number}  */
@@ -676,12 +677,11 @@ export class Query {
 
     /**
      * @param {string} column
-     * @param {"ASC" | "DESC"} [order=DESC]
+     * @param {"ASC"|"DESC"} [order=ASC]
      * @returns Query
      */
     orderBy(column, order = "DESC") {
-        const query = `${column} ${order}`;
-        this.#queryOrderBy.push(query)
+        this.#queryOrderBy.push(new OrderBy(column, order));
         return this;
     }
 
@@ -764,7 +764,7 @@ export class Query {
 
         const queries = [
             queryUpdate, this.#queryWhere.toString(),
-            this.#buildOrderByQuery(), this.#buildLimitQuery(),
+            this.#queryOrderBy.toString(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
 
@@ -789,7 +789,7 @@ export class Query {
 
         const queries = [
             queryDelete, this.#queryWhere.toString(),
-            this.#buildOrderByQuery(), this.#buildLimitQuery(),
+            this.#queryOrderBy.toString(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
 
@@ -808,25 +808,11 @@ export class Query {
             this.#querySelect.toString(), this.#queryFrom.toString(),
             this.#queryJoin.toString(), this.#queryWhere.toString(),
             this.#queryGroupBy.toString(), this.#queryHaving.toString(),
-            this.#buildOrderByQuery(), this.#buildLimitQuery(),
+            this.#queryOrderBy.toString(), this.#buildLimitQuery(),
             this.#buildOffsetQuery(),
         ];
 
         return this.#joinQueryStrings(queries);
-    }
-
-    /**
-     * @returns string
-     */
-    #buildOrderByQuery() {
-        if (this.#queryOrderBy.length === 0) {
-            return "";
-        }
-
-        let query = "ORDER BY ";
-        query += this.#queryOrderBy.join(', ');
-
-        return query;
     }
 
     /**

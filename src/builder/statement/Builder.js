@@ -127,6 +127,7 @@ export default class Builder {
                 this.#defaultQueryPartial = '*';
                 this.#glue = "";
                 break;
+            case STATEMENTS.orderBy:
             case STATEMENTS.group:
                 this.#glue = "";
                 break;

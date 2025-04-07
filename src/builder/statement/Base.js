@@ -11,6 +11,7 @@ export const STATEMENTS = {
     where: 'WHERE',
     group: 'GROUP BY',
     having: 'HAVING',
+    orderBy: 'ORDER BY',
     none: 'NONE'
 }
 

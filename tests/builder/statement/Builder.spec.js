@@ -19,6 +19,7 @@ import HavingRaw from "../../../src/builder/statement/having/HavingRaw.js";
 import OrHavingRaw from "../../../src/builder/statement/having/OrHavingRaw.js";
 import GroupBy from "../../../src/builder/statement/group/GroupBy.js";
 import GroupByRaw from "../../../src/builder/statement/group/GroupByRaw.js";
+import OrderBy from "../../../src/builder/statement/order/OrderBy.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -482,6 +483,39 @@ describe('Statement: Statement Builder', () => {
             });
         });
     })
+
+    describe("OrderBy", () => {
+        describe("toString", () => {
+            test('it builds complete statement string', () => {
+                const orderByStatement = new OrderBy('name');
+                const orderByStatementTwo = new OrderBy('role', "DESC");
+                const expectedResult = "ORDER BY name ASC, role DESC";
+
+                const builder = new Builder(STATEMENTS.orderBy);
+                builder.push(orderByStatement).push(orderByStatementTwo);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+        });
+
+        describe("prepare", () => {
+            test('it builds complete statement prepare object', () => {
+                const orderByStatement = new OrderBy('name');
+                const orderByStatementTwo = new OrderBy('role', "DESC");
+                const expectedResult = "ORDER BY name ASC, role DESC";
+
+                const builder = new Builder(STATEMENTS.orderBy);
+                builder.push(orderByStatement).push(orderByStatementTwo);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedResult);
+                expect(result.bindings).toEqual([]);
+            });
+        });
+    });
 
     describe("Group", () => {
         describe("toString", () => {
