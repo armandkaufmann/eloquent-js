@@ -20,6 +20,7 @@ import OrHavingRaw from "../../../src/builder/statement/having/OrHavingRaw.js";
 import GroupBy from "../../../src/builder/statement/group/GroupBy.js";
 import GroupByRaw from "../../../src/builder/statement/group/GroupByRaw.js";
 import OrderBy from "../../../src/builder/statement/order/OrderBy.js";
+import OrderByDesc from "../../../src/builder/statement/order/OrderByDesc.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -489,10 +490,11 @@ describe('Statement: Statement Builder', () => {
             test('it builds complete statement string', () => {
                 const orderByStatement = new OrderBy('name');
                 const orderByStatementTwo = new OrderBy('role', "DESC");
-                const expectedResult = "ORDER BY name ASC, role DESC";
+                const orderByDesc = new OrderByDesc('address');
+                const expectedResult = "ORDER BY name ASC, role DESC, address DESC";
 
                 const builder = new Builder(STATEMENTS.orderBy);
-                builder.push(orderByStatement).push(orderByStatementTwo);
+                builder.push(orderByStatement).push(orderByStatementTwo).push(orderByDesc);
 
                 const result = builder.toString();
 

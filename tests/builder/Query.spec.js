@@ -672,11 +672,11 @@ describe("QueryBuilderTest", () => {
                     .from('my_table')
                     .orderBy('test_id')
                     .orderBy('test_name', 'ASC')
+                    .orderByDesc('name')
                     .toSql()
                     .get();
 
-
-                const expectedResult = "SELECT * FROM my_table ORDER BY test_id DESC, test_name ASC";
+                const expectedResult = "SELECT * FROM my_table ORDER BY test_id DESC, test_name ASC, name DESC";
 
                 expect(result).toBe(expectedResult);
             });

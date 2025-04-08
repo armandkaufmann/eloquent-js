@@ -45,6 +45,7 @@ import OrHavingRaw from "./statement/having/OrHavingRaw.js";
 import GroupBy from "./statement/group/GroupBy.js";
 import GroupByRaw from "./statement/group/GroupByRaw.js";
 import OrderBy from "./statement/order/OrderBy.js";
+import OrderByDesc from "./statement/order/OrderByDesc.js";
 
 export class Query {
     /** @type {?string} */
@@ -682,6 +683,15 @@ export class Query {
      */
     orderBy(column, order = "DESC") {
         this.#queryOrderBy.push(new OrderBy(column, order));
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @returns Query
+     */
+    orderByDesc(column) {
+        this.#queryOrderBy.push(new OrderByDesc(column));
         return this;
     }
 
