@@ -21,6 +21,7 @@ import WhereNotBetweenColumns from "../statement/where/WhereNotBetweenColumns.js
 import OrWhereNotBetweenColumns from "../statement/where/OrWhereNotBetweenColumns.js";
 import WhereRaw from "../statement/where/WhereRaw.js";
 import OrWhereRaw from "../statement/where/OrWhereRaw.js";
+import WhereAny from "../statement/where/WhereAny.js";
 
 export default class WhereCallback {
     /** @type {Group}  */
@@ -131,6 +132,18 @@ export default class WhereCallback {
      */
     orWhereNotNull(column) {
         this.#query.push(new OrWhereNotNull(column));
+
+        return this;
+    }
+
+    /**
+     * @param {Array<String>} columns
+     * @param {String} operator
+     * @param {String|number} value
+     * @returns WhereCallback
+     */
+    whereAny(columns, operator, value) {
+        this.#query.push(new WhereAny(columns, operator, value));
 
         return this;
     }

@@ -21,6 +21,7 @@ import GroupBy from "../../../src/builder/statement/group/GroupBy.js";
 import GroupByRaw from "../../../src/builder/statement/group/GroupByRaw.js";
 import OrderBy from "../../../src/builder/statement/order/OrderBy.js";
 import OrderByDesc from "../../../src/builder/statement/order/OrderByDesc.js";
+import WhereAny from "../../../src/builder/statement/where/WhereAny.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -282,15 +283,27 @@ describe('Statement: Statement Builder', () => {
                 const third = new WhereNull('sex');
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
+                const sixth = new WhereAny([
+                    'name',
+                    'email',
+                    'phone',
+                ], 'LIKE', 'Example%')
 
-                const expectedResult = "WHERE name = 'John' OR age > 20 AND sex IS NULL OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = [
+                    "WHERE name = 'John'",
+                    "OR age > 20",
+                    "AND sex IS NULL",
+                    "OR taco IS NULL",
+                    "AND mouse IS NOT NULL",
+                    "AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')"
+                ]
 
                 const builder = new Builder(STATEMENTS.where);
-                builder.push(first).push(second).push(third).push(fourth).push(fifth);
+                builder.push(first).push(second).push(third).push(fourth).push(fifth).push(sixth);
 
                 const result = builder.toString();
 
-                expect(result).toEqual(expectedResult);
+                expect(result).toEqual(expectedResult.join(" "));
             });
 
             test('It returns an empty string if there are no statements', () => {

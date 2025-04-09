@@ -217,6 +217,25 @@ describe("QueryBuilderTest", () => {
                 });
             });
 
+            describe("Where Any", () => {
+                test("whereAny: Builds where query string", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .where('test_name', '=', 'John')
+                        .whereAny([
+                            'name',
+                            'email',
+                            'phone',
+                        ], 'LIKE', 'Example%')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
+
             describe("Or Where", () => {
                 test("Does not add or if orWhere is called without an existing where", () => {
                     const result = Query.from('my_table')

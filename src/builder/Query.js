@@ -46,6 +46,7 @@ import GroupBy from "./statement/group/GroupBy.js";
 import GroupByRaw from "./statement/group/GroupByRaw.js";
 import OrderBy from "./statement/order/OrderBy.js";
 import OrderByDesc from "./statement/order/OrderByDesc.js";
+import WhereAny from "./statement/where/WhereAny.js";
 
 export class Query {
     /** @type {?string} */
@@ -394,6 +395,18 @@ export class Query {
      */
     orWhereNotNull(column) {
         this.#queryWhere.push(new OrWhereNotNull(column));
+
+        return this;
+    }
+
+    /**
+     * @param {Array<String>} columns
+     * @param {String} operator
+     * @param {String|number} value
+     * @returns Query
+     */
+    whereAny(columns, operator, value) {
+        this.#queryWhere.push(new WhereAny(columns, operator, value));
 
         return this;
     }
