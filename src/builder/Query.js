@@ -47,6 +47,7 @@ import GroupByRaw from "./statement/group/GroupByRaw.js";
 import OrderBy from "./statement/order/OrderBy.js";
 import OrderByDesc from "./statement/order/OrderByDesc.js";
 import WhereAny from "./statement/where/WhereAny.js";
+import WhereAll from "./statement/where/WhereAll.js";
 
 export class Query {
     /** @type {?string} */
@@ -407,6 +408,18 @@ export class Query {
      */
     whereAny(columns, operator, value) {
         this.#queryWhere.push(new WhereAny(columns, operator, value));
+
+        return this;
+    }
+
+    /**
+     * @param {Array<String>} columns
+     * @param {String} operator
+     * @param {String|number} value
+     * @returns Query
+     */
+    whereAll(columns, operator, value) {
+        this.#queryWhere.push(new WhereAll(columns, operator, value));
 
         return this;
     }
