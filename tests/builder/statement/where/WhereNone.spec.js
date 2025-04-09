@@ -1,0 +1,56 @@
+import {describe, expect, test} from 'vitest';
+import WhereNone from "../../../../src/builder/statement/where/WhereNone.js";
+
+describe('Statement: WhereNone', () => {
+    describe('toString', () => {
+       test("It builds where partial statement", () => {
+           const columns = ['name', 'email', 'phone'];
+           const operator = "LIKE";
+           const value = 'Example%';
+           const expectedResult = `NOT (name ${operator} '${value}' OR email ${operator} '${value}' OR phone ${operator} '${value}')`;
+
+           const result = new WhereNone(columns, operator, value).toString();
+
+           expect(result).toEqual(expectedResult);
+       });
+
+        test("It builds with 'AND' when withSeparator is true", () => {
+            const columns = ['name', 'email', 'phone'];
+            const operator = "LIKE";
+            const value = 'Example%';
+            const expectedResult = `AND NOT (name ${operator} '${value}' OR email ${operator} '${value}' OR phone ${operator} '${value}')`;
+
+            const result = new WhereNone(columns, operator, value).toString(true);
+
+            expect(result).toEqual(expectedResult);
+        });
+    });
+
+    describe('Prepare', () => {
+        test("It builds prepared where partial statement", () => {
+            const columns = ['name', 'email', 'phone'];
+            const operator = "LIKE";
+            const value = 'Example%';
+            const expectedResult = `NOT (name ${operator} ? OR email ${operator} ? OR phone ${operator} ?)`;
+            const expectedBindings = [value, value, value];
+
+            const result = new WhereNone(columns, operator, value).prepare();
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual(expectedBindings);
+        });
+
+        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+            const columns = ['name', 'email', 'phone'];
+            const operator = "LIKE";
+            const value = 'Example%';
+            const expectedResult = `AND NOT (name ${operator} ? OR email ${operator} ? OR phone ${operator} ?)`;
+            const expectedBindings = [value, value, value];
+
+            const result = new WhereNone(columns, operator, value).prepare(true);
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual(expectedBindings);
+        });
+    });
+});

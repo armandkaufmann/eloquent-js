@@ -251,6 +251,23 @@ describe("QueryBuilderTest", () => {
 
                     expect(result).toBe(expectedResult);
                 });
+
+                test("whereNone: Builds where query string", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .where('test_name', '=', 'John')
+                        .whereNone([
+                            'name',
+                            'email',
+                            'phone',
+                        ], 'LIKE', 'Example%')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND NOT (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')";
+
+                    expect(result).toBe(expectedResult);
+                });
             });
 
             describe("Or Where", () => {

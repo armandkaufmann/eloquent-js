@@ -48,6 +48,7 @@ import OrderBy from "./statement/order/OrderBy.js";
 import OrderByDesc from "./statement/order/OrderByDesc.js";
 import WhereAny from "./statement/where/WhereAny.js";
 import WhereAll from "./statement/where/WhereAll.js";
+import WhereNone from "./statement/where/WhereNone.js";
 
 export class Query {
     /** @type {?string} */
@@ -420,6 +421,18 @@ export class Query {
      */
     whereAll(columns, operator, value) {
         this.#queryWhere.push(new WhereAll(columns, operator, value));
+
+        return this;
+    }
+
+    /**
+     * @param {Array<String>} columns
+     * @param {String} operator
+     * @param {String|number} value
+     * @returns Query
+     */
+    whereNone(columns, operator, value) {
+        this.#queryWhere.push(new WhereNone(columns, operator, value));
 
         return this;
     }
