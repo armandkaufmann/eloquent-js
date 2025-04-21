@@ -12,6 +12,7 @@ export const STATEMENTS = {
     group: 'GROUP BY',
     having: 'HAVING',
     orderBy: 'ORDER BY',
+    limit: 'LIMIT',
     none: 'NONE'
 }
 

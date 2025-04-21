@@ -49,6 +49,7 @@ import OrderByDesc from "./statement/order/OrderByDesc.js";
 import WhereAny from "./statement/where/WhereAny.js";
 import WhereAll from "./statement/where/WhereAll.js";
 import WhereNone from "./statement/where/WhereNone.js";
+import Limit from "./statement/limit/Limit.js";
 
 export class Query {
     /** @type {?string} */
@@ -71,8 +72,8 @@ export class Query {
     #queryHaving = new Builder(STATEMENTS.having);
     /** @type {Array<string>}  */
     #queryOrderBy = new Builder(STATEMENTS.orderBy);
-    /** @type {?number}  */
-    #limit = null;
+    /** @type Builder  */
+    #limit = new  Builder(STATEMENTS.limit);
     /** @type {?number}  */
     #offset = null;
     #database = new DB();
@@ -739,7 +740,7 @@ export class Query {
      * @returns Query
      */
     limit(number) {
-        this.#limit = number;
+        this.#limit.push(new Limit(number));
         return this;
     }
 
@@ -813,7 +814,7 @@ export class Query {
 
         const queries = [
             queryUpdate, this.#queryWhere.toString(),
-            this.#queryOrderBy.toString(), this.#buildLimitQuery(),
+            this.#queryOrderBy.toString(), this.#limit.toString(),
             this.#buildOffsetQuery(),
         ];
 
@@ -838,7 +839,7 @@ export class Query {
 
         const queries = [
             queryDelete, this.#queryWhere.toString(),
-            this.#queryOrderBy.toString(), this.#buildLimitQuery(),
+            this.#queryOrderBy.toString(), this.#limit.toString(),
             this.#buildOffsetQuery(),
         ];
 
@@ -857,22 +858,11 @@ export class Query {
             this.#querySelect.toString(), this.#queryFrom.toString(),
             this.#queryJoin.toString(), this.#queryWhere.toString(),
             this.#queryGroupBy.toString(), this.#queryHaving.toString(),
-            this.#queryOrderBy.toString(), this.#buildLimitQuery(),
+            this.#queryOrderBy.toString(), this.#limit.toString(),
             this.#buildOffsetQuery(),
         ];
 
         return this.#joinQueryStrings(queries);
-    }
-
-    /**
-     * @returns string
-     */
-    #buildLimitQuery() {
-        if (!this.#limit) {
-            return "";
-        }
-
-        return "LIMIT " + this.#limit;
     }
 
     /**

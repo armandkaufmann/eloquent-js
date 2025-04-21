@@ -12,6 +12,7 @@
  * @property {"WHERE"} where
  * @property {"GROUP BY"} group
  * @property {"HAVING"} having
+ * @property {"LIMIT"} limit
  * @property {"NONE"} none
  */
 

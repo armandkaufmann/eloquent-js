@@ -22,6 +22,7 @@ import GroupByRaw from "../../../src/builder/statement/group/GroupByRaw.js";
 import OrderBy from "../../../src/builder/statement/order/OrderBy.js";
 import OrderByDesc from "../../../src/builder/statement/order/OrderByDesc.js";
 import WhereAny from "../../../src/builder/statement/where/WhereAny.js";
+import Limit from "../../../src/builder/statement/limit/Limit.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -587,6 +588,49 @@ describe('Statement: Statement Builder', () => {
 
                 expect(result.query).toEqual(expectedResult);
                 expect(result.bindings).toEqual([]);
+            });
+        });
+    });
+
+    describe("Limit", () => {
+        describe("toString", () => {
+            test("It builds complete string", () => {
+                const limitStatement = new Limit(5);
+                const expectedQuery = "LIMIT 5";
+
+                const builder = new Builder(STATEMENTS.limit);
+
+                builder.push(limitStatement);
+
+                expect(builder.toString()).toEqual(expectedQuery);
+            });
+
+            test("It only pushes a single value, and uses the most recent push", () => {
+                const limitOne = new Limit(5);
+                const limitTwo = new Limit(10);
+                const expectedQuery = "LIMIT 10";
+
+                const builder = new Builder(STATEMENTS.limit);
+
+                builder.push(limitOne).push(limitTwo);
+
+                expect(builder.toString()).toEqual(expectedQuery);
+            });
+        });
+
+        describe("Prepare", () => {
+            test("It builds complete prepare object", () => {
+                const limitStatement = new Limit(5);
+                const expectedQuery = "LIMIT ?";
+
+                const builder = new Builder(STATEMENTS.limit);
+
+                builder.push(limitStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedQuery);
+                expect(result.bindings).toEqual([5]);
             });
         });
     });

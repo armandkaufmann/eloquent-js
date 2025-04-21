@@ -28,6 +28,12 @@ export default class Builder {
      * @return Builder
      */
     push(statement) {
+        if (this.#type === STATEMENTS.limit) {
+            this.#statements = [statement];
+
+            return this;
+        }
+
         this.#statements.push(statement);
 
         return this;
