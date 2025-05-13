@@ -50,6 +50,7 @@ import WhereAny from "./statement/where/WhereAny.js";
 import WhereAll from "./statement/where/WhereAll.js";
 import WhereNone from "./statement/where/WhereNone.js";
 import Limit from "./statement/limit/Limit.js";
+import Offset from "./statement/offset/Offset.js";
 
 export class Query {
     /** @type {?string} */
@@ -73,9 +74,9 @@ export class Query {
     /** @type {Array<string>}  */
     #queryOrderBy = new Builder(STATEMENTS.orderBy);
     /** @type Builder  */
-    #limit = new  Builder(STATEMENTS.limit);
-    /** @type {?number}  */
-    #offset = null;
+    #limit = new Builder(STATEMENTS.limit);
+    /** @type Builder  */
+    #offset = new Builder(STATEMENTS.offset);
     #database = new DB();
 
     /**
@@ -749,7 +750,7 @@ export class Query {
      * @returns Query
      */
     offset(number) {
-        this.#offset = number;
+        this.#offset.push(new Offset(number));
         return this;
     }
 
@@ -815,7 +816,7 @@ export class Query {
         const queries = [
             queryUpdate, this.#queryWhere.toString(),
             this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#buildOffsetQuery(),
+            this.#offset.toString(),
         ];
 
         return this.#joinQueryStrings(queries)
@@ -840,7 +841,7 @@ export class Query {
         const queries = [
             queryDelete, this.#queryWhere.toString(),
             this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#buildOffsetQuery(),
+            this.#offset.toString(),
         ];
 
         return this.#joinQueryStrings(queries)
@@ -859,21 +860,10 @@ export class Query {
             this.#queryJoin.toString(), this.#queryWhere.toString(),
             this.#queryGroupBy.toString(), this.#queryHaving.toString(),
             this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#buildOffsetQuery(),
+            this.#offset.toString(),
         ];
 
         return this.#joinQueryStrings(queries);
-    }
-
-    /**
-     * @returns string
-     */
-    #buildOffsetQuery() {
-        if (!this.#offset) {
-            return "";
-        }
-
-        return "OFFSET " + this.#offset;
     }
 
     /**

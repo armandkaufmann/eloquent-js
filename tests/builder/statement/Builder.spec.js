@@ -23,6 +23,7 @@ import OrderBy from "../../../src/builder/statement/order/OrderBy.js";
 import OrderByDesc from "../../../src/builder/statement/order/OrderByDesc.js";
 import WhereAny from "../../../src/builder/statement/where/WhereAny.js";
 import Limit from "../../../src/builder/statement/limit/Limit.js";
+import Offset from "../../../src/builder/statement/offset/Offset.js";
 
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
@@ -626,6 +627,49 @@ describe('Statement: Statement Builder', () => {
                 const builder = new Builder(STATEMENTS.limit);
 
                 builder.push(limitStatement);
+
+                const result = builder.prepare();
+
+                expect(result.query).toEqual(expectedQuery);
+                expect(result.bindings).toEqual([5]);
+            });
+        });
+    });
+
+    describe("Offset", () => {
+        describe("toString", () => {
+            test("It builds complete string", () => {
+                const offsetStatement = new Offset(5);
+                const expectedQuery = "OFFSET 5";
+
+                const builder = new Builder(STATEMENTS.offset);
+
+                builder.push(offsetStatement);
+
+                expect(builder.toString()).toEqual(expectedQuery);
+            });
+
+            test("It only pushes a single value, and uses the most recent push", () => {
+                const offsetOne = new Offset(5);
+                const offsetTwo = new Offset(10);
+                const expectedQuery = "OFFSET 10";
+
+                const builder = new Builder(STATEMENTS.offset);
+
+                builder.push(offsetOne).push(offsetTwo);
+
+                expect(builder.toString()).toEqual(expectedQuery);
+            });
+        });
+
+        describe("Prepare", () => {
+            test("It builds complete prepare object", () => {
+                const offsetStatement = new Offset(5);
+                const expectedQuery = "OFFSET ?";
+
+                const builder = new Builder(STATEMENTS.offset);
+
+                builder.push(offsetStatement);
 
                 const result = builder.prepare();
 

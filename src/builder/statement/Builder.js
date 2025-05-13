@@ -13,6 +13,8 @@ export default class Builder {
     #glue = " ";
     /** @type {Boolean} */
     #withDistinct = false;
+    /** @type {Boolean} */
+    #appendable = true;
 
     /**
      * @param {Statement} type
@@ -28,7 +30,7 @@ export default class Builder {
      * @return Builder
      */
     push(statement) {
-        if (this.#type === STATEMENTS.limit) {
+        if (this.#isNotAppendable()) {
             this.#statements = [statement];
 
             return this;
@@ -96,6 +98,10 @@ export default class Builder {
         }
 
         this.#withDistinct = true;
+    }
+
+    #isNotAppendable() {
+        return this.#type === STATEMENTS.limit || this.#type === STATEMENTS.offset;
     }
 
     /**

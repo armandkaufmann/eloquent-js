@@ -13,6 +13,7 @@ export const STATEMENTS = {
     having: 'HAVING',
     orderBy: 'ORDER BY',
     limit: 'LIMIT',
+    offset: 'OFFSET',
     none: 'NONE'
 }
 

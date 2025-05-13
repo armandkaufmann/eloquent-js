@@ -13,6 +13,7 @@
  * @property {"GROUP BY"} group
  * @property {"HAVING"} having
  * @property {"LIMIT"} limit
+ * @property {"OFFSET"} offset
  * @property {"NONE"} none
  */
 
