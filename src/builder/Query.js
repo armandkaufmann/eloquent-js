@@ -732,7 +732,7 @@ export class Query {
 
     /**
      * @param {string} column
-     * @param {string<String|Number>} values
+     * @param {Array<String|Number>} values
      * @returns Query
      * @throws InvalidBetweenValueArrayLength
      */
@@ -746,7 +746,7 @@ export class Query {
 
     /**
      * @param {string} column
-     * @param {string<String|Number>} values
+     * @param {Array<String|Number>} values
      * @returns Query
      * @throws InvalidBetweenValueArrayLength
      */

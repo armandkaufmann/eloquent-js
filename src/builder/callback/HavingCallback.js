@@ -81,7 +81,7 @@ export default class HavingCallback {
 
     /**
      * @param {string} column
-     * @param {string<String|Number>} values
+     * @param {Array<String|Number>} values
      * @returns HavingCallback
      * @throws InvalidBetweenValueArrayLength
      */
@@ -95,7 +95,7 @@ export default class HavingCallback {
 
     /**
      * @param {string} column
-     * @param {string<String|Number>} values
+     * @param {Array<String|Number>} values
      * @returns HavingCallback
      * @throws InvalidBetweenValueArrayLength
      */
