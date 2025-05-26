@@ -51,6 +51,9 @@ import WhereAll from "./statement/where/WhereAll.js";
 import WhereNone from "./statement/where/WhereNone.js";
 import Limit from "./statement/limit/Limit.js";
 import Offset from "./statement/offset/Offset.js";
+import HavingBetween from "./statement/having/HavingBetween.js";
+import OrHavingBetween from "./statement/having/OrHavingBetween.js";
+import HavingCallback from "./callback/HavingCallback.js";
 
 export class Query {
     /** @type {?string} */
@@ -656,13 +659,18 @@ export class Query {
     }
 
     /**
-     * @param {string} column
-     * @param {string} operator
+     * @param {string|{(query: HavingCallback)}} column
+     * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
      * @throws InvalidComparisonOperatorError
      */
     having(column, operator, value = null) {
+        if (typeof column === "function") {
+            this.#handleHavingCallback(column);
+            return this;
+        }
+
         if (!value) {
             value = operator;
             operator = '=';
@@ -676,13 +684,18 @@ export class Query {
     }
 
     /**
-     * @param {string} column
-     * @param {string} operator
+     * @param {string|{(query: HavingCallback)}} column
+     * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
      * @throws InvalidComparisonOperatorError
      */
     orHaving(column, operator, value = null) {
+        if (typeof column === "function") {
+            this.#handleHavingCallback(column, "OR");
+            return this;
+        }
+
         if (!value) {
             value = operator;
             operator = '=';
@@ -713,6 +726,34 @@ export class Query {
      */
     orHavingRaw(expression, bindings = null) {
         this.#queryHaving.push(new OrHavingRaw(expression, bindings));
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {string<String|Number>} values
+     * @returns Query
+     * @throws InvalidBetweenValueArrayLength
+     */
+    havingBetween(column, values) {
+        Validation.validateBetweenArrayLength(values);
+
+        this.#queryHaving.push(new HavingBetween(column, values));
+
+        return this;
+    }
+
+    /**
+     * @param {string} column
+     * @param {string<String|Number>} values
+     * @returns Query
+     * @throws InvalidBetweenValueArrayLength
+     */
+    orHavingBetween(column, values) {
+        Validation.validateBetweenArrayLength(values);
+
+        this.#queryHaving.push(new OrHavingBetween(column, values));
 
         return this;
     }
@@ -766,6 +807,20 @@ export class Query {
         callback(whereCallback);
 
         this.#queryWhere.push(group);
+    }
+
+    /**
+     * @param {{(query: HavingCallback)}} callback
+     * @param {"AND"|"OR"} [condition="AND"]
+     * @returns void
+     */
+    #handleHavingCallback(callback, condition = "AND") {
+        const group = new Group(condition);
+        const whereCallback = new HavingCallback(group);
+
+        callback(whereCallback);
+
+        this.#queryHaving.push(group);
     }
 
     /**

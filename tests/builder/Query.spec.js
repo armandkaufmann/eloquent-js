@@ -762,7 +762,7 @@ describe("QueryBuilderTest", () => {
             test("Having query string", () => {
                 const result = new Query()
                     .from('my_table')
-                    .having('test_id',5)
+                    .having('test_id', 5)
                     .having('test_name', '=', 'test')
                     .toSql()
                     .get();
@@ -800,7 +800,7 @@ describe("QueryBuilderTest", () => {
                         const result = new Query()
                             .from('my_table')
                             .having('test_id', '=', 5)
-                            .orHaving('test_name','test')
+                            .orHaving('test_name', 'test')
                             .toSql()
                             .get();
 
@@ -840,6 +840,132 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe("SELECT * FROM my_table HAVING SUM(price) > 2500");
                     });
                 });
+            });
+
+            describe("HavingBetween/OrHavingBetween", () => {
+                test("Having between query string", () => {
+                    const result = new Query()
+                        .from('orders')
+                        .having('name', '=', 'test')
+                        .havingBetween('orders', [5, 15])
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND orders BETWEEN 5 AND 15");
+                });
+
+                test("Or Having between query string", () => {
+                    const result = new Query()
+                        .from('orders')
+                        .having('name', '=', 'test')
+                        .orHavingBetween('orders', [5, 15])
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' OR orders BETWEEN 5 AND 15");
+                });
+            });
+
+            describe("Having callback", () => {
+                describe("Having", () => {
+                    test("It groups 'HAVING' statement with callback", () => {
+                        const result = Query
+                            .from('users')
+                            .toSql()
+                            .groupBy('account_id')
+                            .having(($query) => {
+                                $query
+                                    .having("account_id", '>', 100)
+                                    .havingBetween("order_count", [5, 15])
+                                    .orHaving("purchase_count", 5);
+                            })
+                            .get();
+
+                        const expectedResult = [
+                            "SELECT * FROM users",
+                            "GROUP BY account_id",
+                            "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
+                        ];
+
+                        expect(result).toBe(expectedResult.join(" "));
+                    });
+
+                    test("It can correctly add grouped 'HAVING' with an existing 'HAVING'", () => {
+                        const result = Query
+                            .from("users")
+                            .toSql()
+                            .groupBy("account_id")
+                            .having('age', '>', 90)
+                            .having(($query) => {
+                                $query
+                                    .having("account_id", '>', 100)
+                                    .havingBetween("order_count", [5, 15])
+                                    .orHaving("purchase_count", 5);
+                            })
+                            .orHaving('size', 'xl')
+                            .get();
+
+                        const expectedResult = [
+                            "SELECT * FROM users",
+                            "GROUP BY account_id",
+                            "HAVING age > 90",
+                            "AND (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
+                            "OR size = 'xl'"
+                        ];
+
+                        expect(result).toBe(expectedResult.join(" "));
+                    });
+                });
+
+                describe("Or Having", () => {
+                    test("It groups 'OR HAVING' statement with callback in typical use case", () => {
+                        const result = Query
+                            .from("users")
+                            .toSql()
+                            .groupBy("account_id")
+                            .having('age', '>', 90)
+                            .orHaving(($query) => {
+                                $query
+                                    .having("account_id", '>', 100)
+                                    .havingBetween("order_count", [5, 15])
+                                    .orHaving("purchase_count", 5);
+                            })
+                            .having('size', 'xl')
+                            .get();
+
+                        const expectedResult = [
+                            "SELECT * FROM users",
+                            "GROUP BY account_id",
+                            "HAVING age > 90",
+                            "OR (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
+                            "AND size = 'xl'"
+                        ];
+
+                        expect(result).toBe(expectedResult.join(" "));
+                    });
+
+                    test("It groups 'OR HAVING' statement with callback when only single 'HAVING' statement", () => {
+                        const result = Query
+                            .from('users')
+                            .toSql()
+                            .groupBy('account_id')
+                            .orHaving(($query) => {
+                                $query
+                                    .having("account_id", '>', 100)
+                                    .havingBetween("order_count", [5, 15])
+                                    .orHaving("purchase_count", 5);
+                            })
+                            .get();
+
+                        const expectedResult = [
+                            "SELECT * FROM users",
+                            "GROUP BY account_id",
+                            "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
+                        ];
+
+                        expect(result).toBe(expectedResult.join(" "));
+                    });
+                })
             });
         });
 
@@ -955,12 +1081,14 @@ describe("QueryBuilderTest", () => {
                     expect(() => Query.from("users").where("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.from("users").orWhere("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.from("users").having("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.from("users").orHaving("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.from("users").whereColumn("name", operator, 'John')).toThrow(InvalidComparisonOperatorError)
                 } else {
                     expect(() => Query.from("users").join("posts", 'id', operator, 'id')).not.toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.from("users").where("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.from("users").orWhere("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.from("users").having("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
+                    expect(() => Query.from("users").orHaving("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                     expect(() => Query.from("users").whereColumn("name", operator, 'John')).not.toThrow(InvalidComparisonOperatorError)
                 }
             });
@@ -987,6 +1115,8 @@ describe("QueryBuilderTest", () => {
                     expect(() => Query.from("users").orWhereBetweenColumns("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
                     expect(() => Query.from("users").whereNotBetweenColumns("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
                     expect(() => Query.from("users").orWhereNotBetweenColumns("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.from("users").havingBetween("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.from("users").orHavingBetween("name", arrayValues)).toThrow(InvalidBetweenValueArrayLength)
                 } else {
                     expect(() => Query.from("users").whereBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
                     expect(() => Query.from("users").orWhereBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
@@ -996,6 +1126,8 @@ describe("QueryBuilderTest", () => {
                     expect(() => Query.from("users").orWhereBetweenColumns("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
                     expect(() => Query.from("users").whereNotBetweenColumns("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
                     expect(() => Query.from("users").orWhereNotBetweenColumns("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.from("users").havingBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
+                    expect(() => Query.from("users").orHavingBetween("name", arrayValues)).not.toThrow(InvalidBetweenValueArrayLength)
                 }
             });
         })

@@ -28,7 +28,7 @@ import Offset from "../../../src/builder/statement/offset/Offset.js";
 describe('Statement: Statement Builder', () => {
     describe("Select", () => {
         describe("toString", () => {
-            test('it builds complete statement string', () => {
+            test("it builds complete 'SELECT' statement string", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
                 const expectedResult = "SELECT name, age, sex";
 
@@ -40,7 +40,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
-            test('it builds complete statement string with distinct', () => {
+            test("it builds complete 'SELECT DISTINCT' statement string", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
                 const expectedResult = "SELECT DISTINCT name, age, sex";
 
@@ -52,7 +52,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
-            test('it does not add DISTINCT when using default "*" ', () => {
+            test("it does not add 'DISTINCT' to 'SELECT' when using default '*' ", () => {
                 const expectedResult = "SELECT *";
 
                 const builder = new Builder(STATEMENTS.select);
@@ -101,7 +101,7 @@ describe('Statement: Statement Builder', () => {
         });
 
         describe("prepare", () => {
-            test('it builds complete prepareObject', () => {
+            test("it builds complete prepareObject", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
                 const expectedResult = "SELECT name, age, sex";
 
@@ -114,7 +114,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result.bindings).toEqual([]);
             });
 
-            test('it builds complete statement prepare object string with distinct', () => {
+            test("it builds complete statement prepare object string with distinct", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
                 const expectedResult = "SELECT DISTINCT name, age, sex";
 
@@ -201,7 +201,7 @@ describe('Statement: Statement Builder', () => {
                     expect(result).toEqual(expectedResult);
                 });
 
-                test("It builds complete statement string and disregards withStatement = true", () => {
+                test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
                     const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
@@ -231,7 +231,7 @@ describe('Statement: Statement Builder', () => {
                     expect(result).toEqual(expectedResult);
                 });
 
-                test("It builds complete statement string and disregards withStatement = true", () => {
+                test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
                     const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
@@ -261,7 +261,7 @@ describe('Statement: Statement Builder', () => {
                     expect(result).toEqual(expectedResult);
                 });
 
-                test("It builds complete statement string and disregards withStatement = true", () => {
+                test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new CrossJoin('posts');
                     const secondJoin = new CrossJoin('comments');
                     const expectedResult = "CROSS JOIN posts CROSS JOIN comments";
@@ -278,8 +278,8 @@ describe('Statement: Statement Builder', () => {
     });
 
     describe("Where", () => {
-        describe('toString', () => {
-            test('It builds complete statement string', () => {
+        describe("toString", () => {
+            test("It builds complete statement string", () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
@@ -308,7 +308,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult.join(" "));
             });
 
-            test('It returns an empty string if there are no statements', () => {
+            test("It returns an empty string if there are no statements", () => {
                 const builder = new Builder(STATEMENTS.where);
 
                 const result = builder.toString();
@@ -317,8 +317,8 @@ describe('Statement: Statement Builder', () => {
             });
         });
 
-        describe('prepare', () => {
-            test('it builds the prepare object with correct values', () => {
+        describe("Prepare", () => {
+            test("it builds the prepare object with correct values", () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
@@ -337,7 +337,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result.bindings).toEqual(expectedBindings);
             });
 
-            test('it builds an empty prepare object when no statements provided', () => {
+            test("it builds an empty prepare object when no statements provided", () => {
                 const builder = new Builder(STATEMENTS.where);
 
                 const result = builder.prepare();
@@ -350,7 +350,7 @@ describe('Statement: Statement Builder', () => {
 
     describe("Grouping queries", () => {
         describe("toString", () => {
-            test("it can group queries", () => {
+            test("it can group queries with 'AND'", () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
@@ -361,6 +361,29 @@ describe('Statement: Statement Builder', () => {
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
+                builder.push(first)
+
+                group.push(second).push(third);
+                builder.push(group);
+
+                builder.push(fourth).push(fifth);
+
+                const result = builder.toString();
+
+                expect(result).toEqual(expectedResult);
+            });
+
+            test("it can group queries with 'OR'", () => {
+                const first = new Where('name', '=', 'John');
+                const second = new OrWhere('age', '>', 20);
+                const third = new WhereNull('sex');
+                const fourth = new OrWhereNull('taco');
+                const fifth = new WhereNotNull('mouse');
+
+                const expectedResult = "WHERE name = 'John' OR (age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+
+                const builder = new Builder(STATEMENTS.where);
+                const group = new Group('OR');
                 builder.push(first)
 
                 group.push(second).push(third);
@@ -392,7 +415,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
-            test("it does not add the condition if it is the first", () => {
+            test("it does not add the condition to the group when the group partial statement is the first", () => {
                 const first = new Where('name', '=', 'John');
                 const second = new OrWhere('age', '>', 20);
                 const third = new WhereNull('sex');
@@ -444,8 +467,8 @@ describe('Statement: Statement Builder', () => {
     });
 
     describe("Having", () => {
-        describe('toString', () => {
-            test('It builds complete statement string', () => {
+        describe("toString", () => {
+            test("It builds complete statement string", () => {
                 const first = new Having('name', '=', 'John');
                 const second = new OrHavingRaw('team LIKE ?', ['Nippon%']);
                 const third = new OrHaving('role', '=', 'HR');
@@ -461,7 +484,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
-            test('It returns an empty string if there are no statements', () => {
+            test("It returns an empty string if there are no statements", () => {
                 const builder = new Builder(STATEMENTS.having);
 
                 const result = builder.toString();
@@ -470,8 +493,8 @@ describe('Statement: Statement Builder', () => {
             });
         });
 
-        describe('prepare', () => {
-            test('it builds the prepare object with correct values', () => {
+        describe("Prepare", () => {
+            test("it builds the prepare object with correct values", () => {
                 const first = new Having('name', '=', 'John');
                 const second = new OrHavingRaw('team LIKE ?', ['Nippon%']);
                 const third = new OrHaving('role', '=', 'HR');
@@ -489,7 +512,7 @@ describe('Statement: Statement Builder', () => {
                 expect(result.bindings).toEqual(expectedBindings);
             });
 
-            test('it builds an empty prepare object when no statements provided', () => {
+            test("it builds an empty prepare object when no statements provided", () => {
                 const builder = new Builder(STATEMENTS.having);
 
                 const result = builder.prepare();

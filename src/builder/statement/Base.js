@@ -27,7 +27,7 @@ export class Base {
      * @param {String} query
      * @param {String|null} [separator=null]
      */
-    constructor(bindings, query, separator) {
+    constructor(bindings, query, separator = null) {
         this._bindings = bindings;
         this._query = query;
         this._separator = separator;

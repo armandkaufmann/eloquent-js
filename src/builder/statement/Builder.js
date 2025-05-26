@@ -13,8 +13,6 @@ export default class Builder {
     #glue = " ";
     /** @type {Boolean} */
     #withDistinct = false;
-    /** @type {Boolean} */
-    #appendable = true;
 
     /**
      * @param {Statement} type

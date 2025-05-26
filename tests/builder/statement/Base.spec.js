@@ -1,20 +1,20 @@
 import {describe, expect, test} from 'vitest';
-import {Base, STATEMENTS} from "../../../src/builder/statement/Base.js";
+import {Base} from "../../../src/builder/statement/Base.js";
 
 describe("Statement: Base Test", () => {
     describe("ToString", () => {
-        test("It builds string from query and bindings", () => {
-           const query =  "WHERE name = ? AND age > ?";
-           const bindings = ['John', 20];
-           const expectedString = "WHERE name = 'John' AND age > 20";
+        test("It builds a query string from prepared query string and bindings array", () => {
+            const query = "WHERE name = ? AND age > ?";
+            const bindings = ['John', 20];
+            const expectedString = "WHERE name = 'John' AND age > 20";
 
-           const result = new Base(bindings, query, 'AND').toString()
+            const result = new Base(bindings, query, 'AND').toString()
 
             expect(result).toEqual(expectedString);
         });
 
-        test("It builds string with condition", () => {
-            const query =  "WHERE name = ? AND age > ?";
+        test("It builds a query string with prefixed condition", () => {
+            const query = "WHERE name = ? AND age > ?";
             const bindings = ['John', 20];
             const expectedString = "AND WHERE name = 'John' AND age > 20";
 
@@ -24,9 +24,9 @@ describe("Statement: Base Test", () => {
         });
     });
 
-    describe("Serialize", () => {
-        test("It returns an object to serialze the state", () => {
-            const query =  "WHERE name = ? AND age > ?";
+    describe("Prepare", () => {
+        test("It returns a prepare object", () => {
+            const query = "WHERE name = ? AND age > ?";
             const bindings = ['John', 20];
             const expectedObject = {
                 query, bindings
@@ -37,8 +37,8 @@ describe("Statement: Base Test", () => {
             expect(result).toEqual(expectedObject);
         });
 
-        test("It returns an object with condition in query", () => {
-            const query =  "WHERE name = ? AND age > ?";
+        test("It returns a object with prefixed condition in query string", () => {
+            const query = "WHERE name = ? AND age > ?";
             const bindings = ['John', 20];
             const expectedObject = {
                 query: "AND " + query, bindings

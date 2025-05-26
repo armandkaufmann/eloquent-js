@@ -38,7 +38,7 @@ export default class WhereCallback {
 
     /**
      * @param {string} column
-     * @param {string} operator
+     * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns WhereCallback
      * @throws InvalidComparisonOperatorError
@@ -58,7 +58,7 @@ export default class WhereCallback {
 
     /**
      * @param {string} column
-     * @param {string} operator
+     * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns WhereCallback
      * @throws InvalidComparisonOperatorError
