@@ -11,7 +11,7 @@ describe('Model Query Builder integration Test', () => {
 
            new TestModel();
 
-           expect(queryBuilderTableSpy).toHaveBeenCalledWith('test_models');
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith('test_models', null);
        });
 
        test('can initialize with table override', () => {
@@ -27,7 +27,7 @@ describe('Model Query Builder integration Test', () => {
 
            new TestModel();
 
-           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table);
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table, null);
        });
 
        test('static create on model loads config', () => {
@@ -43,7 +43,7 @@ describe('Model Query Builder integration Test', () => {
 
            TestModel.first();
 
-           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table);
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table, null);
        });
 
    });

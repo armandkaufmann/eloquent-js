@@ -84,10 +84,11 @@ export class Query {
 
     /**
      * @param {string} table
+     * @param {string|null} [as=null]
      * @returns Query
      */
-    static from(table) {
-        return new Query().from(table)
+    static from(table, as = null) {
+        return new Query().from(table, as)
     }
 
     /**
