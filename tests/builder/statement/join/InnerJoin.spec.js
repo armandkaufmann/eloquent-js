@@ -3,7 +3,7 @@ import InnerJoin from "../../../../src/builder/statement/join/InnerJoin.js";
 
 describe('Statement: InnerJoin', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
 
            const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').toString();
@@ -21,7 +21,7 @@ describe('Statement: InnerJoin', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
 
             const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').prepare();
@@ -30,7 +30,7 @@ describe('Statement: InnerJoin', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
 
             const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').prepare(true);

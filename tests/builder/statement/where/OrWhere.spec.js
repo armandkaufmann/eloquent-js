@@ -1,12 +1,12 @@
 import {describe, expect, test} from 'vitest';
 import OrWhere from "../../../../src/builder/statement/where/OrWhere.js";
 
-describe('Statement: OrWhere', () => {
-    describe('toString', () => {
-       test("It builds where partial statement", () => {
-           const column = 'users';
+describe("Statement: OrWhere", () => {
+    describe("toString", () => {
+       test("It builds a partial statement", () => {
+           const column = "users";
            const operator = '=';
-           const value = 'John';
+           const value = "John";
            const expectedResult = "users = 'John'";
 
            const result = new OrWhere(column, operator, value).toString();
@@ -14,7 +14,7 @@ describe('Statement: OrWhere', () => {
            expect(result).toEqual(expectedResult);
        });
 
-       test('Adds the "OR" when with separator is true', () => {
+       test("It builds a partial statement with separator", () => {
            const column = 'users';
            const operator = '=';
            const value = 'John';
@@ -26,8 +26,8 @@ describe('Statement: OrWhere', () => {
        })
     });
 
-    describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+    describe("Prepare", () => {
+        test("It builds a prepare object", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';
@@ -41,7 +41,7 @@ describe('Statement: OrWhere', () => {
             expect(result.bindings).toEqual(expectedBindings);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds a prepare object with separator", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';

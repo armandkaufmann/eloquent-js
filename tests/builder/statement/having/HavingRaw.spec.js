@@ -11,7 +11,7 @@ describe('Statement: Having Raw', () => {
            expect(result).toEqual(expression);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds partial statement with separator", () => {
             const expression = 'SUM(price) > 2500';
             const expectedQuery = `AND ${expression}`;
 
@@ -20,7 +20,7 @@ describe('Statement: Having Raw', () => {
             expect(result).toEqual(expectedQuery);
         });
 
-        test("It builds where partial statement with bindings", () => {
+        test("It builds partial statement with bindings", () => {
             const expression = 'SUM(price) > ?';
             const bindings = [2500];
 
@@ -33,7 +33,7 @@ describe('Statement: Having Raw', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds where prepare object", () => {
+        test("It builds prepared object with a partial statement", () => {
             const expression = 'SUM(price) > 2500';
 
             const result = new HavingRaw(expression).prepare();
@@ -42,7 +42,7 @@ describe('Statement: Having Raw', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepare object query with 'AND' when withSeparator is true", () => {
+        test("It builds prepare object statement with separator", () => {
             const expression = 'SUM(price) > 2500';
             const expectedQuery = `AND ${expression}`;
 
@@ -52,7 +52,7 @@ describe('Statement: Having Raw', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds where prepare object with bindings", () => {
+        test("It builds prepare object with bindings", () => {
             const expression = 'SUM(price) > ?';
             const bindings = [2500];
 

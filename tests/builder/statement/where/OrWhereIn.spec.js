@@ -3,7 +3,7 @@ import OrWhereIn from "../../../../src/builder/statement/where/OrWhereIn.js";
 
 describe('Statement: OrWhereIn', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'names';
            const values = ['John', 'Armand', 'Alex', 'Ian'];
            const expectedResult = "names IN ('John', 'Armand', 'Alex', 'Ian')";

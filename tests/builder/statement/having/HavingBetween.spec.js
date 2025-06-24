@@ -13,7 +13,7 @@ describe('Statement: HavingBetween', () => {
             expect(result).toEqual(expectedResult);
         });
 
-        test("It builds partial having with 'AND' when withSeparator is true", () => {
+        test("It builds partial statement with separator", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedResult = "AND orders BETWEEN 5 AND 15";
@@ -25,7 +25,7 @@ describe('Statement: HavingBetween', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared object where partial statement", () => {
+        test("It builds prepared object with a partial statement", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedQuery = "orders BETWEEN ? AND ?";
@@ -36,7 +36,7 @@ describe('Statement: HavingBetween', () => {
             expect(result.bindings).toEqual(values);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedQuery = "AND orders BETWEEN ? AND ?";

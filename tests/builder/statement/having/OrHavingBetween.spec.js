@@ -3,7 +3,7 @@ import OrHavingBetween from "../../../../src/builder/statement/having/OrHavingBe
 
 describe('Statement: OrHavingBetween', () => {
     describe('toString', () => {
-        test("It builds having partial statement", () => {
+        test("It builds partial statement", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedResult = "orders BETWEEN 5 AND 15";
@@ -13,7 +13,7 @@ describe('Statement: OrHavingBetween', () => {
             expect(result).toEqual(expectedResult);
         });
 
-        test("It builds partial having with 'AND' when withSeparator is true", () => {
+        test("It builds partial statement with separator", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedResult = "OR orders BETWEEN 5 AND 15";
@@ -25,7 +25,7 @@ describe('Statement: OrHavingBetween', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared object where partial statement", () => {
+        test("It builds prepared object with a partial statement", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedQuery = "orders BETWEEN ? AND ?";
@@ -36,7 +36,7 @@ describe('Statement: OrHavingBetween', () => {
             expect(result.bindings).toEqual(values);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedQuery = "OR orders BETWEEN ? AND ?";

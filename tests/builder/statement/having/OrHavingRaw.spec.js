@@ -20,7 +20,7 @@ describe('Statement: Or Having Raw', () => {
             expect(result).toEqual(expectedQuery);
         });
 
-        test("It builds where partial statement with bindings", () => {
+        test("It builds a partial statement with bindings", () => {
             const expression = 'SUM(price) > ?';
             const bindings = [2500];
 

@@ -3,7 +3,7 @@ import WhereBetweenColumns from "../../../../src/builder/statement/where/WhereBe
 
 describe('Statement: WhereBetweenColumns', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'price';
            const columns = ['low', 'high'];
            const expectedResult = "price >= low AND price <= high"
@@ -25,7 +25,7 @@ describe('Statement: WhereBetweenColumns', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'price';
             const columns = ['low', 'high'];
             const expectedResult = "price >= low AND price <= high"
@@ -36,7 +36,7 @@ describe('Statement: WhereBetweenColumns', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const column = 'price';
             const columns = ['low', 'high'];
             const expectedResult = "AND price >= low AND price <= high"

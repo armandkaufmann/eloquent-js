@@ -3,7 +3,7 @@ import WhereRaw from "../../../../src/builder/statement/where/WhereRaw.js";
 
 describe('Statement: WhereRaw', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const expression = 'price > IF(state = "TX", 200, 100)';
 
            const result = new WhereRaw(expression).toString();
@@ -20,7 +20,7 @@ describe('Statement: WhereRaw', () => {
             expect(result).toEqual(expectedQuery);
         });
 
-        test("It builds where partial statement with bindings", () => {
+        test("It builds a partial statement with bindings", () => {
             const expression = 'price > IF(state = "TX", ?, 100)';
             const bindings = [200];
 

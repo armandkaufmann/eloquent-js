@@ -3,7 +3,7 @@ import WhereColumn from "../../../../src/builder/statement/where/WhereColumn.js"
 
 describe('Statement: WhereColumn', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'first_name';
            const operator = '=';
            const value = 'last_name';
@@ -14,7 +14,7 @@ describe('Statement: WhereColumn', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';
@@ -27,7 +27,7 @@ describe('Statement: WhereColumn', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds prepared partial statement", () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';
@@ -39,7 +39,7 @@ describe('Statement: WhereColumn', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';

@@ -4,7 +4,7 @@ import WhereBetween from "../../../../src/builder/statement/where/WhereBetween.j
 
 describe('Statement: OrWhereBetween', () => {
     describe('toString', () => {
-        test("It builds where partial statement", () => {
+        test("It builds a partial statement", () => {
             const column = 'age';
             const values = [20, 55];
             const expectedResult = "age BETWEEN 20 AND 55";
@@ -26,7 +26,7 @@ describe('Statement: OrWhereBetween', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'age';
             const values = [20, 55];
             const expectedQuery = "age BETWEEN ? AND ?";

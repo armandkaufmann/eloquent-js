@@ -3,7 +3,7 @@ import OrWhereColumn from "../../../../src/builder/statement/where/OrWhereColumn
 
 describe('Statement: OrWhereColumn', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'first_name';
            const operator = '=';
            const value = 'last_name';
@@ -27,7 +27,7 @@ describe('Statement: OrWhereColumn', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';
@@ -39,7 +39,7 @@ describe('Statement: OrWhereColumn', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';

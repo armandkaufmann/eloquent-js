@@ -3,7 +3,7 @@ import Where from "../../../../src/builder/statement/where/Where.js";
 
 describe('Statement: Where', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds partial statement", () => {
            const column = 'users';
            const operator = '=';
            const value = 'John';
@@ -14,7 +14,7 @@ describe('Statement: Where', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds with separator", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';
@@ -27,7 +27,7 @@ describe('Statement: Where', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds prepared object partial statement", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';
@@ -41,7 +41,7 @@ describe('Statement: Where', () => {
             expect(result.bindings).toEqual(expectedBindings);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object statement with separator", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';

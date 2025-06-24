@@ -3,7 +3,7 @@ import OrWhereNotBetween from "../../../../src/builder/statement/where/OrWhereNo
 
 describe('Statement: OrWhereNotBetween', () => {
     describe('toString', () => {
-        test("It builds where partial statement", () => {
+        test("It builds a partial statement", () => {
             const column = 'age';
             const values = [20, 55];
             const expectedResult = "age NOT BETWEEN 20 AND 55";
@@ -25,7 +25,7 @@ describe('Statement: OrWhereNotBetween', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'age';
             const values = [20, 55];
             const expectedQuery = "age NOT BETWEEN ? AND ?";

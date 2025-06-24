@@ -3,7 +3,7 @@ import WhereNotNull from "../../../../src/builder/statement/where/WhereNotNull.j
 
 describe('Statement: WhereNotNull', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds partial statement", () => {
            const column = 'users';
            const expectedResult = "users IS NOT NULL";
 
@@ -12,7 +12,7 @@ describe('Statement: WhereNotNull', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds partial statement with separator", () => {
             const column = 'users';
             const expectedResult = "AND users IS NOT NULL";
 
@@ -23,7 +23,7 @@ describe('Statement: WhereNotNull', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds a prepare object with the correct values", () => {
+        test("It builds a prepare object with a partial statement", () => {
             const column = 'users';
             const expectedResult = "users IS NOT NULL";
 
@@ -33,7 +33,7 @@ describe('Statement: WhereNotNull', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test('It builds a prepare object query with "AND"', () => {
+        test('It builds a prepare object with separator', () => {
             const column = 'users';
             const expectedResult = "AND users IS NOT NULL";
 

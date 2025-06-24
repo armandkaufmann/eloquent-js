@@ -27,7 +27,7 @@ describe('Statement: Having', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared object where partial statement", () => {
+        test("It builds prepared object with a partial statement", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';
@@ -41,7 +41,7 @@ describe('Statement: Having', () => {
             expect(result.bindings).toEqual(expectedBindings);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';

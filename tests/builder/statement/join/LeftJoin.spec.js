@@ -3,7 +3,7 @@ import LeftJoin from "../../../../src/builder/statement/join/LeftJoin.js";
 
 describe('Statement: LeftJoin', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id";
 
            const result = new LeftJoin('posts', 'users.id', '=', 'posts.user_id').toString();
@@ -21,7 +21,7 @@ describe('Statement: LeftJoin', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id";
 
             const result = new LeftJoin('posts', 'users.id', '=', 'posts.user_id').prepare();
@@ -30,7 +30,7 @@ describe('Statement: LeftJoin', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id";
 
             const result = new LeftJoin('posts', 'users.id', '=', 'posts.user_id').prepare(true);

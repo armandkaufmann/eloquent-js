@@ -3,7 +3,7 @@ import OrWhereNotIn from "../../../../src/builder/statement/where/OrWhereNotIn.j
 
 describe('Statement: OrWhereNotIn', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'names';
            const values = ['John', 'Armand', 'Alex', 'Ian'];
            const expectedResult = "names NOT IN ('John', 'Armand', 'Alex', 'Ian')";
@@ -13,7 +13,7 @@ describe('Statement: OrWhereNotIn', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedResult = "OR names NOT IN ('John', 'Armand', 'Alex', 'Ian')";
@@ -25,7 +25,7 @@ describe('Statement: OrWhereNotIn', () => {
     });
 
     describe('Prepare', () => {
-        test('It builds a prepare object with the correct values', () => {
+        test('It builds a prepare object', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "names NOT IN (?, ?, ?, ?)";
@@ -36,7 +36,7 @@ describe('Statement: OrWhereNotIn', () => {
             expect(result.bindings).toEqual(values);
         });
 
-        test('It builds a prepare object query with "AND"', () => {
+        test('It builds a prepare object with separator', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "OR names NOT IN (?, ?, ?, ?)";

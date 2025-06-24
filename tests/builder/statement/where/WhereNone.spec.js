@@ -3,7 +3,7 @@ import WhereNone from "../../../../src/builder/statement/where/WhereNone.js";
 
 describe('Statement: WhereNone', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const columns = ['name', 'email', 'phone'];
            const operator = "LIKE";
            const value = 'Example%';
@@ -27,7 +27,7 @@ describe('Statement: WhereNone', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';
@@ -40,7 +40,7 @@ describe('Statement: WhereNone', () => {
             expect(result.bindings).toEqual(expectedBindings);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';

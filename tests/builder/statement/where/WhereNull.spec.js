@@ -3,7 +3,7 @@ import WhereNull from "../../../../src/builder/statement/where/WhereNull.js";
 
 describe('Statement: WhereNull', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'users';
            const expectedResult = "users IS NULL";
 

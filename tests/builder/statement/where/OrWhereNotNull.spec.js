@@ -3,7 +3,7 @@ import OrWhereNotNull from "../../../../src/builder/statement/where/OrWhereNotNu
 
 describe('Statement: OrWhereNotNull', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'users';
            const expectedResult = "users IS NOT NULL";
 
@@ -12,7 +12,7 @@ describe('Statement: OrWhereNotNull', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'users';
             const expectedResult = "OR users IS NOT NULL";
 
@@ -23,7 +23,7 @@ describe('Statement: OrWhereNotNull', () => {
     });
 
     describe("Prepare", () => {
-        test("It builds a prepare object with the correct values", () => {
+        test("It builds a prepare object", () => {
             const column = 'users';
             const expectedQuery = "users IS NOT NULL";
 
@@ -33,7 +33,7 @@ describe('Statement: OrWhereNotNull', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test('It builds a prepare object query with "AND"', () => {
+        test('It builds a prepare object query with separator', () => {
             const column = 'users';
             const expectedResult = "OR users IS NOT NULL";
 

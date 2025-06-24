@@ -3,7 +3,7 @@ import CrossJoin from "../../../../src/builder/statement/join/CrossJoin.js";
 
 describe('Statement: CrossJoin', () => {
     describe('toString', () => {
-       test("It builds where partial statement", () => {
+       test("It builds a partial statement", () => {
            const expectedResult = "CROSS JOIN posts";
 
            const result = new CrossJoin('posts').toString();
@@ -21,7 +21,7 @@ describe('Statement: CrossJoin', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared where partial statement", () => {
+        test("It builds a prepare object", () => {
             const expectedResult = "CROSS JOIN posts";
 
             const result = new CrossJoin('posts').prepare();
@@ -30,7 +30,7 @@ describe('Statement: CrossJoin', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepared object with 'AND' when withSeparator is true", () => {
+        test("It builds prepared object with separator", () => {
             const expectedResult = "CROSS JOIN posts";
 
             const result = new CrossJoin('posts').prepare(true);
