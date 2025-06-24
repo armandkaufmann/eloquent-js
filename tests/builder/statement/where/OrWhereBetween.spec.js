@@ -37,7 +37,7 @@ describe('Statement: OrWhereBetween', () => {
             expect(result.bindings).toEqual(values);
         });
 
-        test("It builds prepared statement with 'AND' when withSeparator is true", () => {
+        test("It builds prepare object with separator", () => {
             const column = 'age';
             const values = [20, 55];
             const expectedQuery = "OR age BETWEEN ? AND ?";
