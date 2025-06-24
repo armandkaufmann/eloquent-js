@@ -11,7 +11,7 @@ describe('Statement: InnerJoin', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'INNER JOIN' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
 
             const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').toString(true);

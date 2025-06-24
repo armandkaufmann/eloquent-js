@@ -3,7 +3,7 @@ import Offset from "../../../../src/builder/statement/offset/Offset.js";
 
 describe('Statement: Offset', () => {
     describe('toString', () => {
-        test("It builds limit partial statement", () => {
+        test("It builds a partial statement", () => {
             const expectedResult = "5";
 
             const result = new Offset(5).toString();
@@ -11,7 +11,7 @@ describe('Statement: Offset', () => {
             expect(result).toEqual(expectedResult);
         });
 
-        test("It builds orderBy partial statement with separator and order", () => {
+        test("It builds a partial statement with separator", () => {
             const expectedResult = "5";
 
             const result = new Offset(5).toString(true);
@@ -21,7 +21,7 @@ describe('Statement: Offset', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepare object orderBy partial statement", () => {
+        test("It builds a prepare object", () => {
             const result = new Offset(5).prepare();
 
             expect(result.query).toEqual("?");

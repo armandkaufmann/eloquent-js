@@ -3,7 +3,7 @@ import Limit from "../../../../src/builder/statement/limit/Limit.js";
 
 describe('Statement: Limit', () => {
     describe('toString', () => {
-        test("It builds limit partial statement", () => {
+        test("It builds a partial statement", () => {
             const expectedResult = "5";
 
             const result = new Limit(5).toString();
@@ -11,7 +11,7 @@ describe('Statement: Limit', () => {
             expect(result).toEqual(expectedResult);
         });
 
-        test("It builds orderBy partial statement with separator and order", () => {
+        test("It builds a partial statement with separator", () => {
             const expectedResult = "5";
 
             const result = new Limit(5).toString(true);
@@ -21,7 +21,7 @@ describe('Statement: Limit', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepare object orderBy partial statement", () => {
+        test("It builds a prepare object", () => {
             const result = new Limit(5).prepare();
 
             expect(result.query).toEqual("?");

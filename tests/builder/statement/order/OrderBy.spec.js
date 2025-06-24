@@ -12,7 +12,7 @@ describe('Statement: Order', () => {
             expect(result).toEqual(expectedResult);
         });
 
-        test("It builds orderBy partial statement with separator and order", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'name';
             const expectedResult = ", name DESC";
 
@@ -23,7 +23,7 @@ describe('Statement: Order', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepare object orderBy partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'name';
             const expectedResult = "name ASC";
 
