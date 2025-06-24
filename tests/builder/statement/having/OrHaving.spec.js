@@ -14,7 +14,7 @@ describe('Statement: OrHaving', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds partial having with 'AND' when withSeparator is true", () => {
+        test("It builds partial statement with separator", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';
