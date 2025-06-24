@@ -289,7 +289,7 @@ describe('Statement: Statement Builder', () => {
                     'name',
                     'email',
                     'phone',
-                ], 'LIKE', 'Example%')
+                ], 'LIKE', 'Example%');
 
                 const expectedResult = [
                     "WHERE name = 'John'",
@@ -298,7 +298,7 @@ describe('Statement: Statement Builder', () => {
                     "OR taco IS NULL",
                     "AND mouse IS NOT NULL",
                     "AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')"
-                ]
+                ];
 
                 const builder = new Builder(STATEMENTS.where);
                 builder.push(first).push(second).push(third).push(fourth).push(fifth).push(sixth);

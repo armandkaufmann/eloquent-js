@@ -42,7 +42,7 @@ describe('Statement: Or Having Raw', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds prepare object query with 'AND' when withSeparator is true", () => {
+        test("It builds prepare object with separator", () => {
             const expression = 'SUM(price) > 2500';
             const expectedQuery = `OR ${expression}`;
 
