@@ -3,7 +3,7 @@ import OrderBy from "../../../../src/builder/statement/order/OrderBy.js";
 
 describe('Statement: Order', () => {
     describe('toString', () => {
-        test("It builds orderBy partial statement", () => {
+        test("It builds a partial statement", () => {
             const column = 'name';
             const expectedResult = "name ASC";
 

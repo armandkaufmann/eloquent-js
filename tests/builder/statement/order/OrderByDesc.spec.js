@@ -3,7 +3,7 @@ import OrderByDesc from "../../../../src/builder/statement/order/OrderByDesc.js"
 
 describe('Statement: OrderByDesc', () => {
     describe('toString', () => {
-        test("It builds orderBy partial statement", () => {
+        test("It builds a partial statement", () => {
             const column = 'name';
             const expectedResult = "name DESC";
 
