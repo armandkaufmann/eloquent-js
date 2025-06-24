@@ -13,7 +13,7 @@ describe('Statement: WhereNotBetweenColumns', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'price';
             const columns = ['low', 'high'];
             const expectedResult = "AND price < low AND price > high";

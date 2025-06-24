@@ -14,7 +14,7 @@ describe('Statement: WhereAny', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';

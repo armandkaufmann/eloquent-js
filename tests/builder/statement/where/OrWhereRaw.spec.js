@@ -11,7 +11,7 @@ describe('Statement: OrWhereRaw', () => {
            expect(result).toEqual(expression);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const expression = 'price > IF(state = "TX", 200, 100)';
             const expectedQuery = `OR ${expression}`;
 

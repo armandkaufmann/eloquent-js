@@ -3,7 +3,7 @@ import OrHavingRaw from "../../../../src/builder/statement/having/OrHavingRaw.js
 
 describe('Statement: Or Having Raw', () => {
     describe('toString', () => {
-       test("It builds having raw partial statement", () => {
+       test("It builds a partial statement", () => {
            const expression = 'SUM(price) > 2500';
 
            const result = new OrHavingRaw(expression).toString();
@@ -11,7 +11,7 @@ describe('Statement: Or Having Raw', () => {
            expect(result).toEqual(expression);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const expression = 'SUM(price) > 2500';
             const expectedQuery = `OR ${expression}`;
 

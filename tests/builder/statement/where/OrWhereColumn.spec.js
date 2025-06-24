@@ -14,7 +14,7 @@ describe('Statement: OrWhereColumn', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';

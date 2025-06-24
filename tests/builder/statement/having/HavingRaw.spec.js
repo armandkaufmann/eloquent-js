@@ -3,7 +3,7 @@ import HavingRaw from "../../../../src/builder/statement/having/HavingRaw.js";
 
 describe('Statement: Having Raw', () => {
     describe('toString', () => {
-       test("It builds having raw partial statement", () => {
+       test("It builds a partial statement", () => {
            const expression = 'SUM(price) > 2500';
 
            const result = new HavingRaw(expression).toString();

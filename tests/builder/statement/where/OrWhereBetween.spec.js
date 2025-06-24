@@ -14,7 +14,7 @@ describe('Statement: OrWhereBetween', () => {
             expect(result).toEqual(expectedResult);
         });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'age';
             const values = [20, 55];
             const expectedResult = "OR age BETWEEN 20 AND 55";

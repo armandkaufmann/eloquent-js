@@ -13,7 +13,7 @@ describe('Statement: OrWhereIn', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'AND' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedResult = "OR names IN ('John', 'Armand', 'Alex', 'Ian')";
