@@ -3,7 +3,7 @@ import Having from "../../../../src/builder/statement/having/Having.js";
 
 describe('Statement: Having', () => {
     describe('toString', () => {
-       test("It builds having partial statement", () => {
+       test("It builds a partial statement", () => {
            const column = 'users';
            const operator = '=';
            const value = 'John';
@@ -27,7 +27,7 @@ describe('Statement: Having', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared object with a partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';

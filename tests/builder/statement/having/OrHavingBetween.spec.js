@@ -25,7 +25,7 @@ describe('Statement: OrHavingBetween', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared object with a partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedQuery = "orders BETWEEN ? AND ?";

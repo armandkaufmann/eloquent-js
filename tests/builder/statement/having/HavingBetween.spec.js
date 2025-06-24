@@ -3,7 +3,7 @@ import HavingBetween from "../../../../src/builder/statement/having/HavingBetwee
 
 describe('Statement: HavingBetween', () => {
     describe('toString', () => {
-        test("It builds having partial statement", () => {
+        test("It builds a partial statement", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedResult = "orders BETWEEN 5 AND 15";
@@ -25,7 +25,7 @@ describe('Statement: HavingBetween', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared object with a partial statement", () => {
+        test("It builds a prepare object", () => {
             const column = 'orders';
             const values = [5, 15];
             const expectedQuery = "orders BETWEEN ? AND ?";

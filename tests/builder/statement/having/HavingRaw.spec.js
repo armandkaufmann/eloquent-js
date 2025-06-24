@@ -33,7 +33,7 @@ describe('Statement: Having Raw', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepared object with a partial statement", () => {
+        test("It builds a prepare object", () => {
             const expression = 'SUM(price) > 2500';
 
             const result = new HavingRaw(expression).prepare();
