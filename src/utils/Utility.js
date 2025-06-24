@@ -1,4 +1,11 @@
+import {InvalidComparisonOperatorError} from "../errors/QueryBuilder/Errors.js";
+
 export class Utility {
+
+    /**
+     * @param {Array<String|Number>} values
+     * @returns String
+     */
     static valuesToString(values) {
         let result = "";
 
@@ -13,6 +20,10 @@ export class Utility {
         return result;
     }
 
+    /**
+     * @param {string} value
+     * @returns String
+     */
     static valueToString(value) {
         if (typeof value === 'string') {
             return "'" + value + "'";

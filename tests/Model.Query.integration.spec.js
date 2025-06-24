@@ -6,16 +6,16 @@ describe('Model Query Builder integration Test', () => {
    describe('Initialization', () => {
 
        test('can initialize query builder with model class name', () => {
-           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "from");
            class TestModel extends Model {}
 
            new TestModel();
 
-           expect(queryBuilderTableSpy).toHaveBeenCalledWith('test_models');
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith('test_models', null);
        });
 
        test('can initialize with table override', () => {
-           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "from");
 
            const table = 'users';
 
@@ -27,11 +27,11 @@ describe('Model Query Builder integration Test', () => {
 
            new TestModel();
 
-           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table);
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table, null);
        });
 
        test('static create on model loads config', () => {
-           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "table");
+           const queryBuilderTableSpy = vi.spyOn(Query.prototype, "from");
 
            const table = 'users';
 
@@ -43,7 +43,7 @@ describe('Model Query Builder integration Test', () => {
 
            TestModel.first();
 
-           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table);
+           expect(queryBuilderTableSpy).toHaveBeenCalledWith(table, null);
        });
 
    });
