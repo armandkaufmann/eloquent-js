@@ -23,7 +23,7 @@ describe('Statement: WhereNull', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds a prepare object with the correct values", () => {
+        test("It builds a prepare object", () => {
             const column = 'users';
             const expectedResult = "users IS NULL";
 
@@ -33,7 +33,7 @@ describe('Statement: WhereNull', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test('It builds a prepare object query with "AND"', () => {
+        test('It builds a prepare object with separator', () => {
             const column = 'users';
             const expectedResult = "AND users IS NULL";
 

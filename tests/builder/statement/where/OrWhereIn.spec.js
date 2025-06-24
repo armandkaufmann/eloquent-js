@@ -25,7 +25,7 @@ describe('Statement: OrWhereIn', () => {
     });
 
     describe('Prepare', () => {
-        test('It builds a prepare object with the correct values', () => {
+        test('It builds a prepare object', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "names IN (?, ?, ?, ?)";
@@ -36,7 +36,7 @@ describe('Statement: OrWhereIn', () => {
             expect(result.bindings).toEqual(values);
         });
 
-        test('It builds a prepare object query with "AND"', () => {
+        test('It builds a prepare object with separator', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
             const expectedQuery = "OR names IN (?, ?, ?, ?)";
