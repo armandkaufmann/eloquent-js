@@ -33,7 +33,7 @@ describe('Statement: Or Having Raw', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds where prepare object", () => {
+        test("It builds a prepare object", () => {
             const expression = 'SUM(price) > 2500';
 
             const result = new OrHavingRaw(expression).prepare();
@@ -52,7 +52,7 @@ describe('Statement: Or Having Raw', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds where prepare object with bindings", () => {
+        test("It builds a prepare object with bindings", () => {
             const expression = 'SUM(price) > ?';
             const bindings = [2500];
 

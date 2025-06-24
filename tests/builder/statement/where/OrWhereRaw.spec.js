@@ -33,7 +33,7 @@ describe('Statement: OrWhereRaw', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds where prepare object", () => {
+        test("It builds a prepare object", () => {
             const expression = 'price > IF(state = "TX", 200, 100)';
 
             const result = new OrWhereRaw(expression).prepare();
@@ -52,7 +52,7 @@ describe('Statement: OrWhereRaw', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds where prepare object with bindings", () => {
+        test("It builds a prepare object with bindings", () => {
             const expression = 'price > IF(state = "TX", ?, 100)';
             const bindings = [200];
 
