@@ -3,7 +3,7 @@ import SelectRaw from "../../../../src/builder/statement/select/SelectRaw.js";
 
 describe('Statement: Select', () => {
     describe('toString', () => {
-        test("It builds select partial statement", () => {
+        test("it builds a partial statement", () => {
             const expression = "count(id) as number_of_orders, customer_id";
 
             const result = new SelectRaw(expression).toString();
@@ -11,7 +11,7 @@ describe('Statement: Select', () => {
             expect(result).toEqual(expression);
         });
 
-        test("It builds select partial statement with separator", () => {
+        test("it builds a partial statement with separator", () => {
             const expression = "count(id) as number_of_orders, customer_id";
 
             const expectedQuery = ", " + expression;
@@ -21,7 +21,7 @@ describe('Statement: Select', () => {
             expect(result).toEqual(expectedQuery);
         });
 
-        test("It builds select partial statement with bindings", () => {
+        test("it builds a partial statement with bindings", () => {
             const expression = "price * ? as price_with_tax";
             const bindings = [1.8025];
 
@@ -54,7 +54,7 @@ describe('Statement: Select', () => {
             expect(result.bindings).toEqual([]);
         });
 
-        test("It builds select partial statement with bindings", () => {
+        test("it builds a partial statement with bindings", () => {
             const expression = "price * ? as price_with_tax";
             const bindings = [1.8025];
 

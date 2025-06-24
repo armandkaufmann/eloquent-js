@@ -3,7 +3,7 @@ import GroupBy from "../../../../src/builder/statement/group/GroupBy.js";
 
 describe('Statement: Group', () => {
     describe('toString', () => {
-        test("It builds select partial statement", () => {
+        test("it builds a partial statement", () => {
             const columns = ['name', 'age', 'sex'];
             const expectedResult = "name, age, sex";
 
@@ -14,7 +14,7 @@ describe('Statement: Group', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepare object select partial statement", () => {
+        test("It builds a prepare object", () => {
             const columns = ['name', 'age', 'sex'];
             const expectedResult = "name, age, sex";
 

@@ -3,7 +3,7 @@ import GroupByRaw from "../../../../src/builder/statement/group/GroupByRaw.js";
 
 describe('Statement: Group', () => {
     describe('toString', () => {
-        test("It builds select partial statement", () => {
+        test("it builds a partial statement", () => {
             const expression = 'name, location, town';
 
             const result = new GroupByRaw(expression).toString();
@@ -13,7 +13,7 @@ describe('Statement: Group', () => {
     });
 
     describe('Prepare', () => {
-        test("It builds prepare object select partial statement", () => {
+        test("It builds a prepare object", () => {
             const expression = 'name, location, town';
 
             const result = new GroupByRaw(expression).prepare();
