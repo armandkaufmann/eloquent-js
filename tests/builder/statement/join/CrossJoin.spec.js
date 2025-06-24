@@ -11,7 +11,7 @@ describe('Statement: CrossJoin', () => {
            expect(result).toEqual(expectedResult);
        });
 
-        test("It builds with 'CROSS JOIN' when withSeparator is true", () => {
+        test("It builds a partial statement with separator", () => {
             const expectedResult = "CROSS JOIN posts";
 
             const result = new CrossJoin('posts').toString(true);
