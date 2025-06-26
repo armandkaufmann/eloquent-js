@@ -31,4 +31,24 @@ export class Utility {
             return value;
         }
     }
+
+    /**
+     * @param {string} string
+     * @returns String
+     */
+    static escapeString(string) {
+        if (string.includes('.')) {
+            string = string.split('.').join("`.`");
+        }
+
+        return `\`${string}\``;
+    }
+
+    /**
+     * @param {Array} strings
+     * @returns Array
+     */
+    static escapeStrings(strings) {
+        return strings.map((string) => Utility.escapeString(string));
+    }
 }

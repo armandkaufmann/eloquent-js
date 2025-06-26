@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class Select extends Base {
 
@@ -7,6 +8,8 @@ export default class Select extends Base {
      * @returns Query
      */
     constructor(columns) {
+        columns = Utility.escapeStrings(columns);
+
         const separator = ',';
         const query = columns.join(`${separator} `);
 
