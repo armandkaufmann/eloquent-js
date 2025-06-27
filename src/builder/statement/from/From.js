@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class From extends Base {
 
@@ -8,10 +9,10 @@ export default class From extends Base {
      * @returns Query
      */
     constructor(table, as = null) {
-        let query = table;
+        let query = Utility.escapeString(table);
 
         if (as) {
-            query += ` AS ${as}`;
+            query += ` AS ${Utility.escapeString(as)}`;
         }
 
         super([], query, null);

@@ -23,7 +23,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM my_table");
+                expect(result).toBe("SELECT * FROM `my_table`");
             });
 
             describe("Throws when table is not set", () => {
@@ -56,7 +56,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT * FROM my_table";
+                const expectedResult = "SELECT * FROM `my_table`";
 
                 expect(result).toBe(expectedResult);
             });
@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT `id`, `name` FROM my_table LEFT JOIN comments ON my_table.id = comments.my_table_id WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN comments ON my_table.id = comments.my_table_id WHERE name = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -89,7 +89,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT * FROM my_table WHERE test_id = 5 AND test_name = 'John'";
+                const expectedResult = "SELECT * FROM `my_table` WHERE test_id = 5 AND test_name = 'John'";
 
                 expect(result).toBe(expectedResult);
             });
@@ -102,7 +102,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT * FROM my_table WHERE test_id = 5 AND test_name = 'John'";
+                const expectedResult = "SELECT * FROM `my_table` WHERE test_id = 5 AND test_name = 'John'";
 
                 expect(result).toBe(expectedResult);
             });
@@ -116,7 +116,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND price > IF(state = 'TX', 200, 100)";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' AND price > IF(state = 'TX', 200, 100)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -129,7 +129,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND price > IF(state = 'TX', 200, 100)";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' AND price > IF(state = 'TX', 200, 100)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -142,7 +142,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR price > IF(state = 'TX', 200, 100)";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' OR price > IF(state = 'TX', 200, 100)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -155,7 +155,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR price > IF(state = 'TX', 200, 100)";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' OR price > IF(state = 'TX', 200, 100)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -170,7 +170,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND test_id IS NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' AND test_id IS NULL";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -183,7 +183,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND test_id IS NOT NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' AND test_id IS NOT NULL";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -198,7 +198,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR test_id IS NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' OR test_id IS NULL";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -211,7 +211,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' OR test_id IS NOT NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' OR test_id IS NOT NULL";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -230,7 +230,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -247,7 +247,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND (name LIKE 'Example%' AND email LIKE 'Example%' AND phone LIKE 'Example%')";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' AND (name LIKE 'Example%' AND email LIKE 'Example%' AND phone LIKE 'Example%')";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -264,7 +264,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_name = 'John' AND NOT (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_name = 'John' AND NOT (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -277,7 +277,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE test_id = 5";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE test_id = 5";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -289,7 +289,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE name = 'John' OR test_id = 5";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE name = 'John' OR test_id = 5";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -301,7 +301,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM my_table WHERE name = 'John' OR test_id = 5";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE name = 'John' OR test_id = 5";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -315,7 +315,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') AND id IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') AND id IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -327,7 +327,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') OR id IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') OR id IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -339,7 +339,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') AND id NOT IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') AND id NOT IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -351,7 +351,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE name IN ('John', 'James', 'Bob') OR id NOT IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') OR id NOT IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -371,7 +371,7 @@ describe("QueryBuilderTest", () => {
                             .where('age', '>', 90)
                             .get();
 
-                        const expectedResult = "SELECT * FROM users WHERE (name = 'John' OR id > 1) AND age > 90";
+                        const expectedResult = "SELECT * FROM `users` WHERE (name = 'John' OR id > 1) AND age > 90";
 
                         expect(result).toBe(expectedResult);
                     });
@@ -389,7 +389,7 @@ describe("QueryBuilderTest", () => {
                             .orWhere('position', '=', 'accountant')
                             .get();
 
-                        const expectedResult = "SELECT * FROM users WHERE age > 90 AND (name = 'John' OR id > 1) OR position = 'accountant'";
+                        const expectedResult = "SELECT * FROM `users` WHERE age > 90 AND (name = 'John' OR id > 1) OR position = 'accountant'";
 
                         expect(result).toBe(expectedResult);
                     });
@@ -408,7 +408,7 @@ describe("QueryBuilderTest", () => {
                             })
                             .get();
 
-                        const expectedResult = "SELECT * FROM users WHERE age > 90 OR (name = 'John' OR id > 1)";
+                        const expectedResult = "SELECT * FROM `users` WHERE age > 90 OR (name = 'John' OR id > 1)";
 
                         expect(result).toBe(expectedResult);
                     });
@@ -424,7 +424,7 @@ describe("QueryBuilderTest", () => {
                             })
                             .get();
 
-                        const expectedResult = "SELECT * FROM users WHERE (name = 'John' OR id > 1)";
+                        const expectedResult = "SELECT * FROM `users` WHERE (name = 'John' OR id > 1)";
 
                         expect(result).toBe(expectedResult);
                     });
@@ -440,7 +440,7 @@ describe("QueryBuilderTest", () => {
                         .whereBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND age BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 AND age BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -452,7 +452,7 @@ describe("QueryBuilderTest", () => {
                         .whereNotBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE age NOT BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE age NOT BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -467,7 +467,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR age BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 OR age BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -479,7 +479,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE age BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE age BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -492,7 +492,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereNotBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR age NOT BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 OR age NOT BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -504,7 +504,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereNotBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE age NOT BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE age NOT BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -519,7 +519,7 @@ describe("QueryBuilderTest", () => {
                         .whereColumn('created_at', 'updated_at')
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND created_at = updated_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 AND created_at = updated_at";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -532,7 +532,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereColumn('created_at', 'updated_at')
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR created_at = updated_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 OR created_at = updated_at";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -545,7 +545,7 @@ describe("QueryBuilderTest", () => {
                         .whereBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND created_at >= updated_at AND created_at <= deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 AND created_at >= updated_at AND created_at <= deleted_at";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -558,7 +558,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR created_at >= updated_at AND created_at <= deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 OR created_at >= updated_at AND created_at <= deleted_at";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -571,7 +571,7 @@ describe("QueryBuilderTest", () => {
                         .whereNotBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 AND created_at < updated_at AND created_at > deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 AND created_at < updated_at AND created_at > deleted_at";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -584,7 +584,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereNotBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM users WHERE id > 1 OR created_at < updated_at AND created_at > deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE id > 1 OR created_at < updated_at AND created_at > deleted_at";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -599,7 +599,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT `test_id`, `test_name` FROM test_models";
+                const expectedResult = "SELECT `test_id`, `test_name` FROM `test_models`";
 
                 expect(result).toBe(expectedResult);
             });
@@ -613,7 +613,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT DISTINCT `test_id`, `test_name` FROM test_models";
+                    const expectedResult = "SELECT DISTINCT `test_id`, `test_name` FROM `test_models`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -625,7 +625,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM test_models";
+                    const expectedResult = "SELECT * FROM `test_models`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -640,7 +640,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT `test_id`, `test_name`, price * 1.0825 as price_with_tax FROM test_models";
+                    const expectedResult = "SELECT `test_id`, `test_name`, price * 1.0825 as price_with_tax FROM `test_models`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -653,7 +653,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT `test_id`, `test_name`, price as price_with_tax FROM test_models";
+                    const expectedResult = "SELECT `test_id`, `test_name`, price as price_with_tax FROM `test_models`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -669,7 +669,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM users INNER JOIN posts ON users.id = posts.user_id";
+                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` INNER JOIN posts ON users.id = posts.user_id";
 
                 expect(result).toBe(expectedResult);
             });
@@ -683,7 +683,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM users INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
 
                 expect(result).toBe(expectedResult);
             });
@@ -697,7 +697,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM users LEFT JOIN posts ON users.id = posts.user_id";
+                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` LEFT JOIN posts ON users.id = posts.user_id";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -712,7 +712,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM users CROSS JOIN comments";
+                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` CROSS JOIN comments";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -729,7 +729,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT * FROM my_table ORDER BY test_id DESC, test_name ASC, name DESC";
+                const expectedResult = "SELECT * FROM `my_table` ORDER BY test_id DESC, test_name ASC, name DESC";
 
                 expect(result).toBe(expectedResult);
             });
@@ -743,7 +743,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM my_table GROUP BY test_id, test_name");
+                expect(result).toBe("SELECT * FROM `my_table` GROUP BY test_id, test_name");
             });
 
             test("Group by raw query string", () => {
@@ -754,7 +754,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM my_table GROUP BY test_id, test_name, role, location");
+                expect(result).toBe("SELECT * FROM `my_table` GROUP BY test_id, test_name, role, location");
             });
         });
 
@@ -767,7 +767,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 AND test_name = 'test'");
+                expect(result).toBe("SELECT * FROM `my_table` HAVING test_id = 5 AND test_name = 'test'");
             });
 
             describe("Having Raw", () => {
@@ -779,7 +779,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND SUM(price) > 2500");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' AND SUM(price) > 2500");
                 });
 
                 test("Having raw query string with multiple values", () => {
@@ -790,7 +790,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND SUM(price) > 2500 AND SUM(price) < 5000 AND description = 'test'");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' AND SUM(price) > 2500 AND SUM(price) < 5000 AND description = 'test'");
                 });
             });
 
@@ -804,7 +804,7 @@ describe("QueryBuilderTest", () => {
                             .toSql()
                             .get();
 
-                        expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 OR test_name = 'test'");
+                        expect(result).toBe("SELECT * FROM `my_table` HAVING test_id = 5 OR test_name = 'test'");
                     });
 
                     test("Doesn't apply Or when no previous having statement", () => {
@@ -814,7 +814,7 @@ describe("QueryBuilderTest", () => {
                             .toSql()
                             .get();
 
-                        expect(result).toBe("SELECT * FROM my_table HAVING test_name = 'test'");
+                        expect(result).toBe("SELECT * FROM `my_table` HAVING test_name = 'test'");
                     });
                 });
 
@@ -827,7 +827,7 @@ describe("QueryBuilderTest", () => {
                             .toSql()
                             .get();
 
-                        expect(result).toBe("SELECT * FROM my_table HAVING test_id = 5 OR SUM(price) > 2500");
+                        expect(result).toBe("SELECT * FROM `my_table` HAVING test_id = 5 OR SUM(price) > 2500");
                     });
 
                     test("Doesn't apply Or when no previous having raw statement", () => {
@@ -837,7 +837,7 @@ describe("QueryBuilderTest", () => {
                             .toSql()
                             .get();
 
-                        expect(result).toBe("SELECT * FROM my_table HAVING SUM(price) > 2500");
+                        expect(result).toBe("SELECT * FROM `my_table` HAVING SUM(price) > 2500");
                     });
                 });
             });
@@ -851,7 +851,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' AND orders BETWEEN 5 AND 15");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' AND orders BETWEEN 5 AND 15");
                 });
 
                 test("Or Having between query string", () => {
@@ -862,7 +862,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM orders HAVING name = 'test' OR orders BETWEEN 5 AND 15");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' OR orders BETWEEN 5 AND 15");
                 });
             });
 
@@ -882,7 +882,7 @@ describe("QueryBuilderTest", () => {
                             .get();
 
                         const expectedResult = [
-                            "SELECT * FROM users",
+                            "SELECT * FROM `users`",
                             "GROUP BY account_id",
                             "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
                         ];
@@ -906,7 +906,7 @@ describe("QueryBuilderTest", () => {
                             .get();
 
                         const expectedResult = [
-                            "SELECT * FROM users",
+                            "SELECT * FROM `users`",
                             "GROUP BY account_id",
                             "HAVING age > 90",
                             "AND (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
@@ -934,7 +934,7 @@ describe("QueryBuilderTest", () => {
                             .get();
 
                         const expectedResult = [
-                            "SELECT * FROM users",
+                            "SELECT * FROM `users`",
                             "GROUP BY account_id",
                             "HAVING age > 90",
                             "OR (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
@@ -958,7 +958,7 @@ describe("QueryBuilderTest", () => {
                             .get();
 
                         const expectedResult = [
-                            "SELECT * FROM users",
+                            "SELECT * FROM `users`",
                             "GROUP BY account_id",
                             "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
                         ];
@@ -977,7 +977,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM my_table LIMIT 1");
+                expect(result).toBe("SELECT * FROM `my_table` LIMIT 1");
             });
         });
 
@@ -988,7 +988,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .first();
 
-                expect(result).toBe("SELECT * FROM my_table LIMIT 1");
+                expect(result).toBe("SELECT * FROM `my_table` LIMIT 1");
             });
         });
 
@@ -1000,7 +1000,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM users OFFSET 5")
+                expect(result).toBe("SELECT * FROM `users` OFFSET 5")
             });
         });
 
