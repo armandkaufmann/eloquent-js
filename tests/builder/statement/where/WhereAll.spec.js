@@ -7,7 +7,7 @@ describe('Statement: WhereAll', () => {
            const columns = ['name', 'email', 'phone'];
            const operator = "LIKE";
            const value = 'Example%';
-           const expectedResult = `(name ${operator} '${value}' AND email ${operator} '${value}' AND phone ${operator} '${value}')`;
+           const expectedResult = `(\`name\` ${operator} '${value}' AND \`email\` ${operator} '${value}' AND \`phone\` ${operator} '${value}')`;
 
            const result = new WhereAll(columns, operator, value).toString();
 
@@ -18,7 +18,7 @@ describe('Statement: WhereAll', () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';
-            const expectedResult = `AND (name ${operator} '${value}' AND email ${operator} '${value}' AND phone ${operator} '${value}')`;
+            const expectedResult = `AND (\`name\` ${operator} '${value}' AND \`email\` ${operator} '${value}' AND \`phone\` ${operator} '${value}')`;
 
             const result = new WhereAll(columns, operator, value).toString(true);
 
@@ -31,7 +31,7 @@ describe('Statement: WhereAll', () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';
-            const expectedResult = `(name ${operator} ? AND email ${operator} ? AND phone ${operator} ?)`;
+            const expectedResult = `(\`name\` ${operator} ? AND \`email\` ${operator} ? AND \`phone\` ${operator} ?)`;
             const expectedBindings = [value, value, value];
 
             const result = new WhereAll(columns, operator, value).prepare();
@@ -44,7 +44,7 @@ describe('Statement: WhereAll', () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';
-            const expectedResult = `AND (name ${operator} ? AND email ${operator} ? AND phone ${operator} ?)`;
+            const expectedResult = `AND (\`name\` ${operator} ? AND \`email\` ${operator} ? AND \`phone\` ${operator} ?)`;
             const expectedBindings = [value, value, value];
 
             const result = new WhereAll(columns, operator, value).prepare(true);

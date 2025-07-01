@@ -7,7 +7,7 @@ describe('Statement: WhereAny', () => {
            const columns = ['name', 'email', 'phone'];
            const operator = "LIKE";
            const value = 'Example%';
-           const expectedResult = `(name ${operator} '${value}' OR email ${operator} '${value}' OR phone ${operator} '${value}')`;
+           const expectedResult = `(\`name\` ${operator} '${value}' OR \`email\` ${operator} '${value}' OR \`phone\` ${operator} '${value}')`;
 
            const result = new WhereAny(columns, operator, value).toString();
 
@@ -18,7 +18,7 @@ describe('Statement: WhereAny', () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';
-            const expectedResult = `AND (name ${operator} '${value}' OR email ${operator} '${value}' OR phone ${operator} '${value}')`;
+            const expectedResult = `AND (\`name\` ${operator} '${value}' OR \`email\` ${operator} '${value}' OR \`phone\` ${operator} '${value}')`;
 
             const result = new WhereAny(columns, operator, value).toString(true);
 
@@ -31,7 +31,7 @@ describe('Statement: WhereAny', () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';
-            const expectedResult = `(name ${operator} ? OR email ${operator} ? OR phone ${operator} ?)`;
+            const expectedResult = `(\`name\` ${operator} ? OR \`email\` ${operator} ? OR \`phone\` ${operator} ?)`;
             const expectedBindings = [value, value, value];
 
             const result = new WhereAny(columns, operator, value).prepare();
@@ -44,7 +44,7 @@ describe('Statement: WhereAny', () => {
             const columns = ['name', 'email', 'phone'];
             const operator = "LIKE";
             const value = 'Example%';
-            const expectedResult = `AND (name ${operator} ? OR email ${operator} ? OR phone ${operator} ?)`;
+            const expectedResult = `AND (\`name\` ${operator} ? OR \`email\` ${operator} ? OR \`phone\` ${operator} ?)`;
             const expectedBindings = [value, value, value];
 
             const result = new WhereAny(columns, operator, value).prepare(true);

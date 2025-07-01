@@ -297,7 +297,7 @@ describe('Statement: Statement Builder', () => {
                     "AND sex IS NULL",
                     "OR taco IS NULL",
                     "AND mouse IS NOT NULL",
-                    "AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')"
+                    "AND (`name` LIKE 'Example%' OR `email` LIKE 'Example%' OR `phone` LIKE 'Example%')"
                 ];
 
                 const builder = new Builder(STATEMENTS.where);

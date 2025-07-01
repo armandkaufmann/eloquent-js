@@ -230,7 +230,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND (`name` LIKE 'Example%' OR `email` LIKE 'Example%' OR `phone` LIKE 'Example%')";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -247,7 +247,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND (name LIKE 'Example%' AND email LIKE 'Example%' AND phone LIKE 'Example%')";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND (`name` LIKE 'Example%' AND `email` LIKE 'Example%' AND `phone` LIKE 'Example%')";
 
                     expect(result).toBe(expectedResult);
                 });
