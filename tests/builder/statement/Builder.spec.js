@@ -292,8 +292,8 @@ describe('Statement: Statement Builder', () => {
                 ], 'LIKE', 'Example%');
 
                 const expectedResult = [
-                    "WHERE name = 'John'",
-                    "OR age > 20",
+                    "WHERE `name` = 'John'",
+                    "OR `age` > 20",
                     "AND sex IS NULL",
                     "OR taco IS NULL",
                     "AND mouse IS NOT NULL",
@@ -325,7 +325,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedQuery = "WHERE name = ? OR age > ? AND sex IS NULL OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedQuery = "WHERE `name` = ? OR `age` > ? AND sex IS NULL OR taco IS NULL AND mouse IS NOT NULL"
                 const expectedBindings = ['John', 20]
 
                 const builder = new Builder(STATEMENTS.where);
@@ -357,7 +357,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE name = 'John' AND (age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE `name` = 'John' AND (`age` > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
@@ -380,7 +380,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE name = 'John' OR (age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE `name` = 'John' OR (`age` > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group('OR');
@@ -401,7 +401,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE name = 'John' OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE `name` = 'John' OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
@@ -422,7 +422,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE (name = 'John' OR age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE (`name` = 'John' OR `age` > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
@@ -447,7 +447,7 @@ describe('Statement: Statement Builder', () => {
                 const fifth = new WhereBetween('hours', [20, 40]);
 
                 const expectedBindings = ['John', 20, 'admin', 20, 40];
-                const expectedQuery = "WHERE name = ? AND (age > ? AND role = ?) OR taco IS NULL AND hours BETWEEN ? AND ?"
+                const expectedQuery = "WHERE `name` = ? AND (`age` > ? AND `role` = ?) OR taco IS NULL AND hours BETWEEN ? AND ?"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();

@@ -7,7 +7,7 @@ describe('Statement: Where', () => {
            const column = 'users';
            const operator = '=';
            const value = 'John';
-           const expectedResult = "users = 'John'";
+           const expectedResult = "`users` = 'John'";
 
            const result = new Where(column, operator, value).toString();
 
@@ -18,7 +18,7 @@ describe('Statement: Where', () => {
             const column = 'users';
             const operator = '=';
             const value = 'John';
-            const expectedResult = "AND users = 'John'";
+            const expectedResult = "AND `users` = 'John'";
 
             const result = new Where(column, operator, value).toString(true);
 
@@ -33,7 +33,7 @@ describe('Statement: Where', () => {
             const value = 'John';
 
             const expectedBindings = [value];
-            const expectedQuery = "users = ?";
+            const expectedQuery = "`users` = ?";
 
             const result = new Where(column, operator, value).prepare();
 
@@ -47,7 +47,7 @@ describe('Statement: Where', () => {
             const value = 'John';
 
             const expectedBindings = [value];
-            const expectedQuery = "AND users = ?";
+            const expectedQuery = "AND `users` = ?";
 
             const result = new Where(column, operator, value).prepare(true);
 

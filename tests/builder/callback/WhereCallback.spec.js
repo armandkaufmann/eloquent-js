@@ -7,7 +7,7 @@ describe("Builder: WhereCallback Test", () => {
         const group = new Group();
         const callback = new WhereCallback(group);
 
-        const expectedResult = "(name = 'John' AND price > IF(state = 'TX', 200, 100) OR name = 'Kyle' OR role LIKE Human%)"
+        const expectedResult = "(`name` = 'John' AND price > IF(state = 'TX', 200, 100) OR `name` = 'Kyle' OR role LIKE Human%)"
 
         callback
             .where('name', 'John')
@@ -24,7 +24,7 @@ describe("Builder: WhereCallback Test", () => {
         const group = new Group();
         const callback = new WhereCallback(group);
 
-        const expectedQuery = "(name = ? AND price > IF(state = 'TX', ?, 100) OR name = ? OR role LIKE Human%)";
+        const expectedQuery = "(`name` = ? AND price > IF(state = 'TX', ?, 100) OR `name` = ? OR role LIKE Human%)";
         const expectedBindings = ['John', 200, 'Kyle'];
 
         callback

@@ -10,7 +10,7 @@ describe('Statement: Group', () => {
             const second = new OrWhere('age', '>', 20);
             const third = new Where('sex', '=', 'M');
 
-            const expectedResult = "(name = 'John' OR age > 20 AND sex = 'M')"
+            const expectedResult = "(`name` = 'John' OR `age` > 20 AND `sex` = 'M')"
 
             const group = new Group();
             group.push(first).push(second).push(third);
@@ -33,7 +33,7 @@ describe('Statement: Group', () => {
             const second = new OrWhere('age', '>', 20);
             const third = new Where('sex', '=', 'M');
 
-            const expectedResult = "AND (name = 'John' OR age > 20 AND sex = 'M')"
+            const expectedResult = "AND (`name` = 'John' OR `age` > 20 AND `sex` = 'M')"
 
             const group = new Group();
             group.push(first).push(second).push(third);
@@ -48,7 +48,7 @@ describe('Statement: Group', () => {
             const second = new OrWhere('age', '>', 20);
             const third = new Where('sex', '=', 'M');
 
-            const expectedResult = "OR (name = 'John' OR age > 20 AND sex = 'M')";
+            const expectedResult = "OR (`name` = 'John' OR `age` > 20 AND `sex` = 'M')";
 
             const group = new Group("OR");
             group.push(first).push(second).push(third);
@@ -66,7 +66,7 @@ describe('Statement: Group', () => {
             const third = new Where('sex', '=', 'M');
 
             const expectedBindings = ['John', 20, 'M'];
-            const expectedQuery = "(name = ? OR age > ? AND sex = ?)";
+            const expectedQuery = "(`name` = ? OR `age` > ? AND `sex` = ?)";
 
             const group = new Group();
             group.push(first).push(second).push(third);
@@ -92,7 +92,7 @@ describe('Statement: Group', () => {
             const third = new Where('sex', '=', 'M');
 
             const expectedBindings = ['John', 20, 'M'];
-            const expectedQuery = "AND (name = ? OR age > ? AND sex = ?)"
+            const expectedQuery = "AND (`name` = ? OR `age` > ? AND `sex` = ?)"
 
             const group = new Group();
             group.push(first).push(second).push(third);
@@ -109,7 +109,7 @@ describe('Statement: Group', () => {
             const third = new Where('sex', '=', 'M');
 
             const expectedBindings = ['John', 20, 'M'];
-            const expectedQuery = "OR (name = ? OR age > ? AND sex = ?)"
+            const expectedQuery = "OR (`name` = ? OR `age` > ? AND `sex` = ?)"
 
             const group = new Group("OR");
             group.push(first).push(second).push(third);

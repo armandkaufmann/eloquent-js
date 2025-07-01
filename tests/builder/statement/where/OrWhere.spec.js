@@ -7,7 +7,7 @@ describe("Statement: OrWhere", () => {
            const column = "users";
            const operator = '=';
            const value = "John";
-           const expectedResult = "users = 'John'";
+           const expectedResult = "`users` = 'John'";
 
            const result = new OrWhere(column, operator, value).toString();
 
@@ -18,7 +18,7 @@ describe("Statement: OrWhere", () => {
            const column = 'users';
            const operator = '=';
            const value = 'John';
-           const expectedResult = "OR users = 'John'";
+           const expectedResult = "OR `users` = 'John'";
 
            const result = new OrWhere(column, operator, value).toString(true);
 
@@ -33,7 +33,7 @@ describe("Statement: OrWhere", () => {
             const value = 'John';
 
             const expectedBindings = [value];
-            const expectedQuery = "users = ?";
+            const expectedQuery = "`users` = ?";
 
             const result = new OrWhere(column, operator, value).prepare();
 
@@ -47,7 +47,7 @@ describe("Statement: OrWhere", () => {
             const value = 'John';
 
             const expectedBindings = [value];
-            const expectedQuery = "OR users = ?";
+            const expectedQuery = "OR `users` = ?";
 
             const result = new OrWhere(column, operator, value).prepare(true);
 
