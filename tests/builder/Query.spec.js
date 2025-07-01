@@ -440,7 +440,7 @@ describe("QueryBuilderTest", () => {
                         .whereBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND age BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND `age` BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -452,7 +452,7 @@ describe("QueryBuilderTest", () => {
                         .whereNotBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE age NOT BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE `age` NOT BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -467,7 +467,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR age BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR `age` BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -479,7 +479,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE age BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE `age` BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -492,7 +492,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereNotBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR age NOT BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR `age` NOT BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -504,7 +504,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereNotBetween('age', [18, 25])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE age NOT BETWEEN 18 AND 25";
+                    const expectedResult = "SELECT * FROM `users` WHERE `age` NOT BETWEEN 18 AND 25";
 
                     expect(result).toBe(expectedResult);
                 });

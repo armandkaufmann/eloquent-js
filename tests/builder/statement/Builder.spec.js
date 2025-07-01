@@ -447,7 +447,7 @@ describe('Statement: Statement Builder', () => {
                 const fifth = new WhereBetween('hours', [20, 40]);
 
                 const expectedBindings = ['John', 20, 'admin', 20, 40];
-                const expectedQuery = "WHERE `name` = ? AND (`age` > ? AND `role` = ?) OR taco IS NULL AND hours BETWEEN ? AND ?"
+                const expectedQuery = "WHERE `name` = ? AND (`age` > ? AND `role` = ?) OR taco IS NULL AND `hours` BETWEEN ? AND ?"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
