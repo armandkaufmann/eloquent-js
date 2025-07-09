@@ -545,7 +545,7 @@ describe("QueryBuilderTest", () => {
                         .whereBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND created_at >= updated_at AND created_at <= deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND `created_at` BETWEEN `updated_at` AND `deleted_at`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -558,7 +558,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR created_at >= updated_at AND created_at <= deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR `created_at` BETWEEN `updated_at` AND `deleted_at`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -571,7 +571,7 @@ describe("QueryBuilderTest", () => {
                         .whereNotBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND created_at < updated_at AND created_at > deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND `created_at` NOT BETWEEN `updated_at` AND `deleted_at`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -584,7 +584,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereNotBetweenColumns('created_at', ['updated_at', 'deleted_at'])
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR created_at < updated_at AND created_at > deleted_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR `created_at` NOT BETWEEN `updated_at` AND `deleted_at`";
 
                     expect(result).toBe(expectedResult);
                 });

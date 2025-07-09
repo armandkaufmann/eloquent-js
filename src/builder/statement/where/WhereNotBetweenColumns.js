@@ -1,6 +1,7 @@
 import {Base} from "../Base.js";
+import WhereBetweenColumns from "./WhereBetweenColumns.js";
 
-export default class WhereNotBetweenColumns extends Base {
+export default class WhereNotBetweenColumns extends WhereBetweenColumns {
 
     /**
      * @param {String} column
@@ -8,8 +9,6 @@ export default class WhereNotBetweenColumns extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, columns, separator = 'AND') {
-        const query = `${column} < ${columns[0]} AND ${column} > ${columns[1]}`;
-
-        super([], query, separator);
+        super(column, columns, separator, 'NOT BETWEEN');
     }
 }
