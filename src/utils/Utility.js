@@ -36,7 +36,7 @@ export class Utility {
      * @param {string} string
      * @returns String
      */
-    static escapeString(string) {
+    static escapeColumnString(string) {
         if (string.includes('.')) {
             string = string.split('.').join("`.`");
         }
@@ -48,7 +48,7 @@ export class Utility {
      * @param {Array} strings
      * @returns Array
      */
-    static escapeStrings(strings) {
-        return strings.map((string) => Utility.escapeString(string));
+    static escapeColumnStrings(strings) {
+        return strings.map((string) => Utility.escapeColumnString(string));
     }
 }

@@ -8,7 +8,7 @@ export default class Select extends Base {
      * @returns Query
      */
     constructor(columns) {
-        columns = Utility.escapeStrings(columns);
+        columns = Utility.escapeColumnStrings(columns);
 
         const separator = ',';
         const query = columns.join(`${separator} `);

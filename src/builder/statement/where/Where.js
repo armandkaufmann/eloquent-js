@@ -10,7 +10,7 @@ export default class Where extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, operator, value, separator = 'AND') {
-        const query = `${Utility.escapeString(column)} ${operator} ?`;
+        const query = `${Utility.escapeColumnString(column)} ${operator} ?`;
         const bindings = [value];
 
         super(bindings, query, separator);

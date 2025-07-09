@@ -15,7 +15,7 @@ export default class WhereAny extends Base {
         let bindings = [];
 
         columns.forEach(function (column) {
-            query.push(`${Utility.escapeString(column)} ${operator} ?`);
+            query.push(`${Utility.escapeColumnString(column)} ${operator} ?`);
             bindings.push(value);
         });
 

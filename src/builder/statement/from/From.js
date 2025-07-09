@@ -9,10 +9,10 @@ export default class From extends Base {
      * @returns Query
      */
     constructor(table, as = null) {
-        let query = Utility.escapeString(table);
+        let query = Utility.escapeColumnString(table);
 
         if (as) {
-            query += ` AS ${Utility.escapeString(as)}`;
+            query += ` AS ${Utility.escapeColumnString(as)}`;
         }
 
         super([], query, null);
