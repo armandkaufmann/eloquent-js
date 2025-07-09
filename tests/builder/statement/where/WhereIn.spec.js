@@ -6,7 +6,7 @@ describe('Statement: WhereIn', () => {
        test("It builds partial statement", () => {
            const column = 'names';
            const values = ['John', 'Armand', 'Alex', 'Ian'];
-           const expectedResult = "names IN ('John', 'Armand', 'Alex', 'Ian')";
+           const expectedResult = "`names` IN ('John', 'Armand', 'Alex', 'Ian')";
 
            const result = new WhereIn(column, values).toString();
 
@@ -16,7 +16,7 @@ describe('Statement: WhereIn', () => {
         test("It builds with partial statement with separator", () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedResult = "AND names IN ('John', 'Armand', 'Alex', 'Ian')";
+            const expectedResult = "AND `names` IN ('John', 'Armand', 'Alex', 'Ian')";
 
             const result = new WhereIn(column, values).toString(true);
 
@@ -28,7 +28,7 @@ describe('Statement: WhereIn', () => {
         test('It builds a prepare object with partial statement', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "names IN (?, ?, ?, ?)";
+            const expectedQuery = "`names` IN (?, ?, ?, ?)";
 
             const result = new WhereIn(column, values).prepare();
 
@@ -39,7 +39,7 @@ describe('Statement: WhereIn', () => {
         test('It builds a prepare object with separator', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "AND names IN (?, ?, ?, ?)";
+            const expectedQuery = "AND `names` IN (?, ?, ?, ?)";
 
             const result = new WhereIn(column, values).prepare(true);
 

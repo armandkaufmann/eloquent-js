@@ -315,7 +315,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') AND id IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE `name` IN ('John', 'James', 'Bob') AND `id` IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -327,7 +327,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') OR id IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE `name` IN ('John', 'James', 'Bob') OR `id` IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -339,7 +339,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') AND id NOT IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE `name` IN ('John', 'James', 'Bob') AND `id` NOT IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -351,7 +351,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE name IN ('John', 'James', 'Bob') OR id NOT IN (1, 5, 7)";
+                    const expectedResult = "SELECT * FROM `users` WHERE `name` IN ('John', 'James', 'Bob') OR `id` NOT IN (1, 5, 7)";
 
                     expect(result).toBe(expectedResult);
                 });
