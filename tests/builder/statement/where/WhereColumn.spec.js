@@ -7,7 +7,7 @@ describe('Statement: WhereColumn', () => {
            const column = 'first_name';
            const operator = '=';
            const value = 'last_name';
-           const expectedResult = "first_name = last_name";
+           const expectedResult = "`first_name` = `last_name`";
 
            const result = new WhereColumn(column, operator, value).toString();
 
@@ -18,7 +18,7 @@ describe('Statement: WhereColumn', () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';
-            const expectedResult = "AND first_name = last_name";
+            const expectedResult = "AND `first_name` = `last_name`";
 
             const result = new WhereColumn(column, operator, value).toString(true);
 
@@ -31,7 +31,7 @@ describe('Statement: WhereColumn', () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';
-            const expectedResult = "first_name = last_name";
+            const expectedResult = "`first_name` = `last_name`";
 
             const result = new WhereColumn(column, operator, value).prepare();
 
@@ -43,7 +43,7 @@ describe('Statement: WhereColumn', () => {
             const column = 'first_name';
             const operator = '=';
             const value = 'last_name';
-            const expectedResult = "AND first_name = last_name";
+            const expectedResult = "AND `first_name` = `last_name`";
 
             const result = new WhereColumn(column, operator, value).prepare(true);
 

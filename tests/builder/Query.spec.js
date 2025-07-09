@@ -519,7 +519,7 @@ describe("QueryBuilderTest", () => {
                         .whereColumn('created_at', 'updated_at')
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND created_at = updated_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 AND `created_at` = `updated_at`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -532,7 +532,7 @@ describe("QueryBuilderTest", () => {
                         .orWhereColumn('created_at', 'updated_at')
                         .get();
 
-                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR created_at = updated_at";
+                    const expectedResult = "SELECT * FROM `users` WHERE `id` > 1 OR `created_at` = `updated_at`";
 
                     expect(result).toBe(expectedResult);
                 });
