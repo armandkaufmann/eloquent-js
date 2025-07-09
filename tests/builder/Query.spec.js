@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN comments ON my_table.id = comments.my_table_id WHERE `name` = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY id DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN comments ON my_table.id = comments.my_table_id WHERE `name` = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -729,7 +729,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT * FROM `my_table` ORDER BY test_id DESC, test_name ASC, name DESC";
+                const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` DESC, `test_name` ASC, `name` DESC";
 
                 expect(result).toBe(expectedResult);
             });
@@ -1047,7 +1047,7 @@ describe("QueryBuilderTest", () => {
                     .offset(1)
                     .delete();
 
-                expect(result).toBe("DELETE FROM users WHERE `name` = 'john' ORDER BY name ASC LIMIT 1 OFFSET 1");
+                expect(result).toBe("DELETE FROM users WHERE `name` = 'john' ORDER BY `name` ASC LIMIT 1 OFFSET 1");
             })
         })
     });

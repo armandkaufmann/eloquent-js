@@ -1,15 +1,12 @@
-import {Base} from "../Base.js";
+import OrderBy from "./OrderBy.js";
 
-export default class OrderByDesc extends Base {
+export default class OrderByDesc extends OrderBy {
 
     /**
      * @param {String} column
      * @returns Query
      */
     constructor(column) {
-        const separator = ',';
-        const query = `${column} DESC`;
-
-        super([], query, separator);
+        super(column, "DESC");
     }
 }

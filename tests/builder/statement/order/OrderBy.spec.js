@@ -5,7 +5,7 @@ describe('Statement: Order', () => {
     describe('toString', () => {
         test("It builds a partial statement", () => {
             const column = 'name';
-            const expectedResult = "name ASC";
+            const expectedResult = "`name` ASC";
 
             const result = new OrderBy(column).toString();
 
@@ -14,7 +14,7 @@ describe('Statement: Order', () => {
 
         test("It builds a partial statement with separator", () => {
             const column = 'name';
-            const expectedResult = ", name DESC";
+            const expectedResult = ", `name` DESC";
 
             const result = new OrderBy(column, "DESC").toString(true);
 
@@ -25,7 +25,7 @@ describe('Statement: Order', () => {
     describe('Prepare', () => {
         test("It builds a prepare object", () => {
             const column = 'name';
-            const expectedResult = "name ASC";
+            const expectedResult = "`name` ASC";
 
             const result = new OrderBy(column).prepare();
 

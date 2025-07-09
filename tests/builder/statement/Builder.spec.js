@@ -529,7 +529,7 @@ describe('Statement: Statement Builder', () => {
                 const orderByStatement = new OrderBy('name');
                 const orderByStatementTwo = new OrderBy('role', "DESC");
                 const orderByDesc = new OrderByDesc('address');
-                const expectedResult = "ORDER BY name ASC, role DESC, address DESC";
+                const expectedResult = "ORDER BY `name` ASC, `role` DESC, `address` DESC";
 
                 const builder = new Builder(STATEMENTS.orderBy);
                 builder.push(orderByStatement).push(orderByStatementTwo).push(orderByDesc);
@@ -544,7 +544,7 @@ describe('Statement: Statement Builder', () => {
             test('it builds complete statement prepare object', () => {
                 const orderByStatement = new OrderBy('name');
                 const orderByStatementTwo = new OrderBy('role', "DESC");
-                const expectedResult = "ORDER BY name ASC, role DESC";
+                const expectedResult = "ORDER BY `name` ASC, `role` DESC";
 
                 const builder = new Builder(STATEMENTS.orderBy);
                 builder.push(orderByStatement).push(orderByStatementTwo);

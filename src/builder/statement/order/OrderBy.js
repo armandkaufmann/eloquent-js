@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class OrderBy extends Base {
 
@@ -9,7 +10,7 @@ export default class OrderBy extends Base {
      */
     constructor(column, order = "ASC") {
         const separator = ',';
-        const query = `${column} ${order}`;
+        const query = `${Utility.escapeColumnString(column)} ${order}`;
 
         super([], query, separator);
     }
