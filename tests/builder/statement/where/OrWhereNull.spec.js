@@ -5,7 +5,7 @@ describe("Statement: OrWhereNull", () => {
     describe("toString", () => {
        test("It builds a partial statement", () => {
            const column = "users";
-           const expectedResult = "users IS NULL";
+           const expectedResult = "`users` IS NULL";
 
            const result = new OrWhereNull(column).toString();
 
@@ -14,7 +14,7 @@ describe("Statement: OrWhereNull", () => {
 
        test("It builds a partial statement with separator", () => {
            const column = "users";
-           const expectedResult = "OR users IS NULL";
+           const expectedResult = "OR `users` IS NULL";
 
            const result = new OrWhereNull(column).toString(true);
 
@@ -25,7 +25,7 @@ describe("Statement: OrWhereNull", () => {
     describe("Prepare", () => {
         test("It builds a prepare object with partial statement", () => {
             const column = "users";
-            const expectedResult = "users IS NULL";
+            const expectedResult = "`users` IS NULL";
 
             const result = new OrWhereNull(column).prepare();
 
@@ -35,7 +35,7 @@ describe("Statement: OrWhereNull", () => {
 
         test("It builds a prepare object with separator", () => {
             const column = "users";
-            const expectedResult = "OR users IS NULL";
+            const expectedResult = "OR `users` IS NULL";
 
             const result = new OrWhereNull(column).prepare(true);
 

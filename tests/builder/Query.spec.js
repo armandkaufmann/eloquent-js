@@ -170,7 +170,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND test_id IS NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND `test_id` IS NULL";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -183,7 +183,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND test_id IS NOT NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' AND `test_id` IS NOT NULL";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -198,7 +198,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' OR test_id IS NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' OR `test_id` IS NULL";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -211,7 +211,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' OR test_id IS NOT NULL";
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_name` = 'John' OR `test_id` IS NOT NULL";
 
                     expect(result).toBe(expectedResult);
                 });
