@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN comments ON my_table.id = comments.my_table_id WHERE `name` = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -669,7 +669,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` INNER JOIN posts ON users.id = posts.user_id";
+                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
                 expect(result).toBe(expectedResult);
             });
@@ -683,7 +683,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+                const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id` INNER JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                 expect(result).toBe(expectedResult);
             });
@@ -697,7 +697,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` LEFT JOIN posts ON users.id = posts.user_id";
+                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
                     expect(result).toBe(expectedResult);
                 });
@@ -712,7 +712,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` CROSS JOIN comments";
+                    const expectedResult = "SELECT `users`.`id`, `users`.`name`, `posts`.`title` FROM `users` CROSS JOIN `comments`";
 
                     expect(result).toBe(expectedResult);
                 });

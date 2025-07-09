@@ -4,7 +4,7 @@ import CrossJoin from "../../../../src/builder/statement/join/CrossJoin.js";
 describe('Statement: CrossJoin', () => {
     describe('toString', () => {
        test("It builds a partial statement", () => {
-           const expectedResult = "CROSS JOIN posts";
+           const expectedResult = "CROSS JOIN `posts`";
 
            const result = new CrossJoin('posts').toString();
 
@@ -12,7 +12,7 @@ describe('Statement: CrossJoin', () => {
        });
 
         test("It builds a partial statement with separator", () => {
-            const expectedResult = "CROSS JOIN posts";
+            const expectedResult = "CROSS JOIN `posts`";
 
             const result = new CrossJoin('posts').toString(true);
 
@@ -22,7 +22,7 @@ describe('Statement: CrossJoin', () => {
 
     describe('Prepare', () => {
         test("It builds a prepare object", () => {
-            const expectedResult = "CROSS JOIN posts";
+            const expectedResult = "CROSS JOIN `posts`";
 
             const result = new CrossJoin('posts').prepare();
 
@@ -31,7 +31,7 @@ describe('Statement: CrossJoin', () => {
         });
 
         test("It builds prepared object with separator", () => {
-            const expectedResult = "CROSS JOIN posts";
+            const expectedResult = "CROSS JOIN `posts`";
 
             const result = new CrossJoin('posts').prepare(true);
 

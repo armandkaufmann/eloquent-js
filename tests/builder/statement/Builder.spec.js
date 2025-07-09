@@ -175,7 +175,7 @@ describe('Statement: Statement Builder', () => {
                 const innerJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                 const leftJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
                 const crossJoin = new CrossJoin('likes');
-                const expectedResult = "INNER JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id CROSS JOIN likes";
+                const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id` LEFT JOIN `comments` ON `users`.`id` = `comments`.`user_id` CROSS JOIN `likes`";
 
                 const builder = new Builder(STATEMENTS.join);
                 builder.push(innerJoin).push(leftJoin).push(crossJoin);
@@ -191,7 +191,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string", () => {
                     const firstJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id` INNER JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -204,7 +204,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id` INNER JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -221,7 +221,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string", () => {
                     const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id` LEFT JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -234,7 +234,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id` LEFT JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -251,7 +251,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string", () => {
                     const firstJoin = new CrossJoin('posts');
                     const secondJoin = new CrossJoin('comments');
-                    const expectedResult = "CROSS JOIN posts CROSS JOIN comments";
+                    const expectedResult = "CROSS JOIN `posts` CROSS JOIN `comments`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -264,7 +264,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new CrossJoin('posts');
                     const secondJoin = new CrossJoin('comments');
-                    const expectedResult = "CROSS JOIN posts CROSS JOIN comments";
+                    const expectedResult = "CROSS JOIN `posts` CROSS JOIN `comments`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
