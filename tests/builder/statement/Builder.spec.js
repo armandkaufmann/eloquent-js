@@ -561,7 +561,7 @@ describe('Statement: Statement Builder', () => {
         describe("toString", () => {
             test('it builds complete statement string', () => {
                 const selectStatement = new GroupBy(['name', 'age', 'sex']);
-                const expectedResult = "GROUP BY name, age, sex";
+                const expectedResult = "GROUP BY `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(selectStatement);
@@ -575,7 +575,7 @@ describe('Statement: Statement Builder', () => {
                 const firstGroupStatement = new GroupBy(['name', 'age', 'sex']);
                 const secondGroupStatement = new GroupBy(['location', 'role', 'preference']);
                 const thirdGroupStatement = new GroupByRaw('price, desk, id');
-                const expectedResult = "GROUP BY name, age, sex, location, role, preference, price, desk, id";
+                const expectedResult = "GROUP BY `name`, `age`, `sex`, `location`, `role`, `preference`, price, desk, id";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(firstGroupStatement).push(secondGroupStatement).push(thirdGroupStatement);
@@ -589,7 +589,7 @@ describe('Statement: Statement Builder', () => {
         describe("prepare", () => {
             test('it builds complete prepareObject', () => {
                 const selectStatement = new GroupBy(['name', 'age', 'sex']);
-                const expectedResult = "GROUP BY name, age, sex";
+                const expectedResult = "GROUP BY `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(selectStatement);
@@ -603,7 +603,7 @@ describe('Statement: Statement Builder', () => {
             test("push: appends select statement if it exists", () => {
                 const firstSelectStatement = new GroupBy(['name', 'age', 'sex']);
                 const secondSelectStatement = new GroupBy(['location', 'role', 'preference']);
-                const expectedResult = "GROUP BY name, age, sex, location, role, preference";
+                const expectedResult = "GROUP BY `name`, `age`, `sex`, `location`, `role`, `preference`";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(firstSelectStatement).push(secondSelectStatement);

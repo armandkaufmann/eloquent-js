@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY class HAVING class LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING class LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -743,7 +743,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM `my_table` GROUP BY test_id, test_name");
+                expect(result).toBe("SELECT * FROM `my_table` GROUP BY `test_id`, `test_name`");
             });
 
             test("Group by raw query string", () => {
@@ -754,7 +754,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM `my_table` GROUP BY test_id, test_name, role, location");
+                expect(result).toBe("SELECT * FROM `my_table` GROUP BY `test_id`, `test_name`, role, location");
             });
         });
 
@@ -883,7 +883,7 @@ describe("QueryBuilderTest", () => {
 
                         const expectedResult = [
                             "SELECT * FROM `users`",
-                            "GROUP BY account_id",
+                            "GROUP BY `account_id`",
                             "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
                         ];
 
@@ -907,7 +907,7 @@ describe("QueryBuilderTest", () => {
 
                         const expectedResult = [
                             "SELECT * FROM `users`",
-                            "GROUP BY account_id",
+                            "GROUP BY `account_id`",
                             "HAVING age > 90",
                             "AND (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
                             "OR size = 'xl'"
@@ -935,7 +935,7 @@ describe("QueryBuilderTest", () => {
 
                         const expectedResult = [
                             "SELECT * FROM `users`",
-                            "GROUP BY account_id",
+                            "GROUP BY `account_id`",
                             "HAVING age > 90",
                             "OR (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
                             "AND size = 'xl'"
@@ -959,7 +959,7 @@ describe("QueryBuilderTest", () => {
 
                         const expectedResult = [
                             "SELECT * FROM `users`",
-                            "GROUP BY account_id",
+                            "GROUP BY `account_id`",
                             "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
                         ];
 

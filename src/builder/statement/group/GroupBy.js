@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class GroupBy extends Base {
 
@@ -8,7 +9,7 @@ export default class GroupBy extends Base {
      */
     constructor(columns) {
         const separator = ',';
-        const query = columns.join(`${separator} `);
+        const query = columns.map(column => Utility.escapeColumnString(column)).join(`${separator} `);
 
         super([], query, separator);
     }
