@@ -6,7 +6,7 @@ describe('Statement: OrHavingBetween', () => {
         test("It builds partial statement", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedResult = "orders BETWEEN 5 AND 15";
+            const expectedResult = "`orders` BETWEEN 5 AND 15";
 
             const result = new OrHavingBetween(column, values).toString();
 
@@ -16,7 +16,7 @@ describe('Statement: OrHavingBetween', () => {
         test("It builds partial statement with separator", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedResult = "OR orders BETWEEN 5 AND 15";
+            const expectedResult = "OR `orders` BETWEEN 5 AND 15";
 
             const result = new OrHavingBetween(column, values).toString(true);
 
@@ -28,7 +28,7 @@ describe('Statement: OrHavingBetween', () => {
         test("It builds a prepare object", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedQuery = "orders BETWEEN ? AND ?";
+            const expectedQuery = "`orders` BETWEEN ? AND ?";
 
             const result = new OrHavingBetween(column, values).prepare();
 
@@ -39,7 +39,7 @@ describe('Statement: OrHavingBetween', () => {
         test("It builds prepared object with separator", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedQuery = "OR orders BETWEEN ? AND ?";
+            const expectedQuery = "OR `orders` BETWEEN ? AND ?";
 
             const result = new OrHavingBetween(column, values).prepare(true);
 

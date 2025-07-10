@@ -6,7 +6,7 @@ describe('Statement: HavingBetween', () => {
         test("It builds a partial statement", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedResult = "orders BETWEEN 5 AND 15";
+            const expectedResult = "`orders` BETWEEN 5 AND 15";
 
             const result = new HavingBetween(column, values).toString();
 
@@ -16,7 +16,7 @@ describe('Statement: HavingBetween', () => {
         test("It builds partial statement with separator", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedResult = "AND orders BETWEEN 5 AND 15";
+            const expectedResult = "AND `orders` BETWEEN 5 AND 15";
 
             const result = new HavingBetween(column, values).toString(true);
 
@@ -28,7 +28,7 @@ describe('Statement: HavingBetween', () => {
         test("It builds a prepare object", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedQuery = "orders BETWEEN ? AND ?";
+            const expectedQuery = "`orders` BETWEEN ? AND ?";
 
             const result = new HavingBetween(column, values).prepare();
 
@@ -39,7 +39,7 @@ describe('Statement: HavingBetween', () => {
         test("It builds prepared object with separator", () => {
             const column = 'orders';
             const values = [5, 15];
-            const expectedQuery = "AND orders BETWEEN ? AND ?";
+            const expectedQuery = "AND `orders` BETWEEN ? AND ?";
 
             const result = new HavingBetween(column, values).prepare(true);
 

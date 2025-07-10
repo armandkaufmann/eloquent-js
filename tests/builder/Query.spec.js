@@ -851,7 +851,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' AND orders BETWEEN 5 AND 15");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' AND `orders` BETWEEN 5 AND 15");
                 });
 
                 test("Or Having between query string", () => {
@@ -862,7 +862,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' OR orders BETWEEN 5 AND 15");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' OR `orders` BETWEEN 5 AND 15");
                 });
             });
 
@@ -884,7 +884,7 @@ describe("QueryBuilderTest", () => {
                         const expectedResult = [
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
-                            "HAVING (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)"
+                            "HAVING (`account_id` > 100 AND `order_count` BETWEEN 5 AND 15 OR `purchase_count` = 5)"
                         ];
 
                         expect(result).toBe(expectedResult.join(" "));
@@ -909,7 +909,7 @@ describe("QueryBuilderTest", () => {
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
                             "HAVING `age` > 90",
-                            "AND (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)",
+                            "AND (`account_id` > 100 AND `order_count` BETWEEN 5 AND 15 OR `purchase_count` = 5)",
                             "OR `size` = 'xl'"
                         ];
 
@@ -937,7 +937,7 @@ describe("QueryBuilderTest", () => {
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
                             "HAVING `age` > 90",
-                            "OR (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)",
+                            "OR (`account_id` > 100 AND `order_count` BETWEEN 5 AND 15 OR `purchase_count` = 5)",
                             "AND `size` = 'xl'"
                         ];
 
@@ -960,7 +960,7 @@ describe("QueryBuilderTest", () => {
                         const expectedResult = [
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
-                            "HAVING (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)"
+                            "HAVING (`account_id` > 100 AND `order_count` BETWEEN 5 AND 15 OR `purchase_count` = 5)"
                         ];
 
                         expect(result).toBe(expectedResult.join(" "));
