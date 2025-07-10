@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING class LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING `class` LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -767,7 +767,7 @@ describe("QueryBuilderTest", () => {
                     .toSql()
                     .get();
 
-                expect(result).toBe("SELECT * FROM `my_table` HAVING test_id = 5 AND test_name = 'test'");
+                expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 AND `test_name` = 'test'");
             });
 
             describe("Having Raw", () => {
@@ -779,7 +779,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' AND SUM(price) > 2500");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' AND SUM(price) > 2500");
                 });
 
                 test("Having raw query string with multiple values", () => {
@@ -790,7 +790,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' AND SUM(price) > 2500 AND SUM(price) < 5000 AND description = 'test'");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' AND SUM(price) > 2500 AND SUM(price) < 5000 AND description = 'test'");
                 });
             });
 
@@ -804,7 +804,7 @@ describe("QueryBuilderTest", () => {
                             .toSql()
                             .get();
 
-                        expect(result).toBe("SELECT * FROM `my_table` HAVING test_id = 5 OR test_name = 'test'");
+                        expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 OR `test_name` = 'test'");
                     });
 
                     test("Doesn't apply Or when no previous having statement", () => {
@@ -814,7 +814,7 @@ describe("QueryBuilderTest", () => {
                             .toSql()
                             .get();
 
-                        expect(result).toBe("SELECT * FROM `my_table` HAVING test_name = 'test'");
+                        expect(result).toBe("SELECT * FROM `my_table` HAVING `test_name` = 'test'");
                     });
                 });
 
@@ -827,7 +827,7 @@ describe("QueryBuilderTest", () => {
                             .toSql()
                             .get();
 
-                        expect(result).toBe("SELECT * FROM `my_table` HAVING test_id = 5 OR SUM(price) > 2500");
+                        expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 OR SUM(price) > 2500");
                     });
 
                     test("Doesn't apply Or when no previous having raw statement", () => {
@@ -851,7 +851,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' AND orders BETWEEN 5 AND 15");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' AND orders BETWEEN 5 AND 15");
                 });
 
                 test("Or Having between query string", () => {
@@ -862,7 +862,7 @@ describe("QueryBuilderTest", () => {
                         .toSql()
                         .get();
 
-                    expect(result).toBe("SELECT * FROM `orders` HAVING name = 'test' OR orders BETWEEN 5 AND 15");
+                    expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' OR orders BETWEEN 5 AND 15");
                 });
             });
 
@@ -884,7 +884,7 @@ describe("QueryBuilderTest", () => {
                         const expectedResult = [
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
-                            "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
+                            "HAVING (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)"
                         ];
 
                         expect(result).toBe(expectedResult.join(" "));
@@ -908,9 +908,9 @@ describe("QueryBuilderTest", () => {
                         const expectedResult = [
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
-                            "HAVING age > 90",
-                            "AND (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
-                            "OR size = 'xl'"
+                            "HAVING `age` > 90",
+                            "AND (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)",
+                            "OR `size` = 'xl'"
                         ];
 
                         expect(result).toBe(expectedResult.join(" "));
@@ -936,9 +936,9 @@ describe("QueryBuilderTest", () => {
                         const expectedResult = [
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
-                            "HAVING age > 90",
-                            "OR (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)",
-                            "AND size = 'xl'"
+                            "HAVING `age` > 90",
+                            "OR (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)",
+                            "AND `size` = 'xl'"
                         ];
 
                         expect(result).toBe(expectedResult.join(" "));
@@ -960,7 +960,7 @@ describe("QueryBuilderTest", () => {
                         const expectedResult = [
                             "SELECT * FROM `users`",
                             "GROUP BY `account_id`",
-                            "HAVING (account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5)"
+                            "HAVING (`account_id` > 100 AND order_count BETWEEN 5 AND 15 OR `purchase_count` = 5)"
                         ];
 
                         expect(result).toBe(expectedResult.join(" "));

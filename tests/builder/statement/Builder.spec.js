@@ -474,7 +474,7 @@ describe('Statement: Statement Builder', () => {
                 const third = new OrHaving('role', '=', 'HR');
                 const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedResult = "HAVING name = 'John' OR team LIKE 'Nippon%' OR role = 'HR' AND SUM(price) > 2500"
+                const expectedResult = "HAVING `name` = 'John' OR team LIKE 'Nippon%' OR `role` = 'HR' AND SUM(price) > 2500"
 
                 const builder = new Builder(STATEMENTS.having);
                 builder.push(first).push(second).push(third).push(fourth);
@@ -500,7 +500,7 @@ describe('Statement: Statement Builder', () => {
                 const third = new OrHaving('role', '=', 'HR');
                 const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedQuery = "HAVING name = ? OR team LIKE ? OR role = ? AND SUM(price) > ?"
+                const expectedQuery = "HAVING `name` = ? OR team LIKE ? OR `role` = ? AND SUM(price) > ?"
                 const expectedBindings = ['John', 'Nippon%', 'HR', 2500]
 
                 const builder = new Builder(STATEMENTS.having);
