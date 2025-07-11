@@ -43,12 +43,4 @@ export class Utility {
 
         return `\`${string}\``;
     }
-
-    /**
-     * @param {Array} strings
-     * @returns Array
-     */
-    static escapeColumnStrings(strings) {
-        return strings.map((string) => Utility.escapeColumnString(string));
-    }
 }
