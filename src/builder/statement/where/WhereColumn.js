@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class WhereColumn extends Base {
 
@@ -9,7 +10,7 @@ export default class WhereColumn extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, operator, comparisonColumn, separator = 'AND') {
-        const query = `${column} ${operator} ${comparisonColumn}`;
+        const query = `${Utility.escapeColumnString(column)} ${operator} ${Utility.escapeColumnString(comparisonColumn)}`;
 
         super([], query, separator);
     }

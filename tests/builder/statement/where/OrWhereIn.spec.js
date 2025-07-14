@@ -6,7 +6,7 @@ describe('Statement: OrWhereIn', () => {
        test("It builds a partial statement", () => {
            const column = 'names';
            const values = ['John', 'Armand', 'Alex', 'Ian'];
-           const expectedResult = "names IN ('John', 'Armand', 'Alex', 'Ian')";
+           const expectedResult = "`names` IN ('John', 'Armand', 'Alex', 'Ian')";
 
            const result = new OrWhereIn(column, values).toString();
 
@@ -16,7 +16,7 @@ describe('Statement: OrWhereIn', () => {
         test("It builds a partial statement with separator", () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedResult = "OR names IN ('John', 'Armand', 'Alex', 'Ian')";
+            const expectedResult = "OR `names` IN ('John', 'Armand', 'Alex', 'Ian')";
 
             const result = new OrWhereIn(column, values).toString(true);
 
@@ -28,7 +28,7 @@ describe('Statement: OrWhereIn', () => {
         test('It builds a prepare object', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "names IN (?, ?, ?, ?)";
+            const expectedQuery = "`names` IN (?, ?, ?, ?)";
 
             const result = new OrWhereIn(column, values).prepare();
 
@@ -39,7 +39,7 @@ describe('Statement: OrWhereIn', () => {
         test('It builds a prepare object with separator', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "OR names IN (?, ?, ?, ?)";
+            const expectedQuery = "OR `names` IN (?, ?, ?, ?)";
 
             const result = new OrWhereIn(column, values).prepare(true);
 

@@ -7,7 +7,7 @@ describe('Statement: OrWhereBetween', () => {
         test("It builds a partial statement", () => {
             const column = 'age';
             const values = [20, 55];
-            const expectedResult = "age BETWEEN 20 AND 55";
+            const expectedResult = "`age` BETWEEN 20 AND 55";
 
             const result = new OrWhereBetween(column, values).toString();
 
@@ -17,7 +17,7 @@ describe('Statement: OrWhereBetween', () => {
         test("It builds a partial statement with separator", () => {
             const column = 'age';
             const values = [20, 55];
-            const expectedResult = "OR age BETWEEN 20 AND 55";
+            const expectedResult = "OR `age` BETWEEN 20 AND 55";
 
             const result = new OrWhereBetween(column, values).toString(true);
 
@@ -29,7 +29,7 @@ describe('Statement: OrWhereBetween', () => {
         test("It builds a prepare object", () => {
             const column = 'age';
             const values = [20, 55];
-            const expectedQuery = "age BETWEEN ? AND ?";
+            const expectedQuery = "`age` BETWEEN ? AND ?";
 
             const result = new OrWhereBetween(column, values).prepare();
 
@@ -40,7 +40,7 @@ describe('Statement: OrWhereBetween', () => {
         test("It builds prepare object with separator", () => {
             const column = 'age';
             const values = [20, 55];
-            const expectedQuery = "OR age BETWEEN ? AND ?";
+            const expectedQuery = "OR `age` BETWEEN ? AND ?";
 
             const result = new OrWhereBetween(column, values).prepare(true);
 

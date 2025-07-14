@@ -31,4 +31,16 @@ export class Utility {
             return value;
         }
     }
+
+    /**
+     * @param {string} string
+     * @returns String
+     */
+    static escapeColumnString(string) {
+        if (string.includes('.')) {
+            string = string.split('.').join("`.`");
+        }
+
+        return `\`${string}\``;
+    }
 }

@@ -5,7 +5,7 @@ describe('Statement: WhereNotNull', () => {
     describe('toString', () => {
        test("It builds partial statement", () => {
            const column = 'users';
-           const expectedResult = "users IS NOT NULL";
+           const expectedResult = "`users` IS NOT NULL";
 
            const result = new WhereNotNull(column).toString();
 
@@ -14,7 +14,7 @@ describe('Statement: WhereNotNull', () => {
 
         test("It builds partial statement with separator", () => {
             const column = 'users';
-            const expectedResult = "AND users IS NOT NULL";
+            const expectedResult = "AND `users` IS NOT NULL";
 
             const result = new WhereNotNull(column).toString(true);
 
@@ -25,7 +25,7 @@ describe('Statement: WhereNotNull', () => {
     describe('Prepare', () => {
         test("It builds a prepare object with a partial statement", () => {
             const column = 'users';
-            const expectedResult = "users IS NOT NULL";
+            const expectedResult = "`users` IS NOT NULL";
 
             const result = new WhereNotNull(column).prepare();
 
@@ -35,7 +35,7 @@ describe('Statement: WhereNotNull', () => {
 
         test('It builds a prepare object with separator', () => {
             const column = 'users';
-            const expectedResult = "AND users IS NOT NULL";
+            const expectedResult = "AND `users` IS NOT NULL";
 
             const result = new WhereNotNull(column).prepare(true);
 

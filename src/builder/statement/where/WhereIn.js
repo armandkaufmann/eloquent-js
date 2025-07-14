@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class WhereIn extends Base {
 
@@ -22,7 +23,7 @@ export default class WhereIn extends Base {
             }
         });
 
-        query = `${column} ${condition} (${query})`;
+        query = `${Utility.escapeColumnString(column)} ${condition} (${query})`;
 
         super(bindings, query, separator);
     }

@@ -6,7 +6,7 @@ describe('Statement: WhereBetweenColumns', () => {
        test("It builds a partial statement", () => {
            const column = 'price';
            const columns = ['low', 'high'];
-           const expectedResult = "price >= low AND price <= high"
+           const expectedResult = "`price` BETWEEN `low` AND `high`"
 
            const result = new OrWhereBetweenColumns(column, columns).toString();
 
@@ -16,7 +16,7 @@ describe('Statement: WhereBetweenColumns', () => {
         test("It builds a partial statement with separator", () => {
             const column = 'price';
             const columns = ['low', 'high'];
-            const expectedResult = "OR price >= low AND price <= high"
+            const expectedResult = "OR `price` BETWEEN `low` AND `high`"
 
             const result = new OrWhereBetweenColumns(column, columns).toString(true);
 
@@ -28,7 +28,7 @@ describe('Statement: WhereBetweenColumns', () => {
         test("It builds a prepare object", () => {
             const column = 'price';
             const columns = ['low', 'high'];
-            const expectedResult = "price >= low AND price <= high"
+            const expectedResult = "`price` BETWEEN `low` AND `high`"
 
             const result = new OrWhereBetweenColumns(column, columns).prepare();
 
@@ -39,7 +39,7 @@ describe('Statement: WhereBetweenColumns', () => {
         test("It builds prepared object with separator", () => {
             const column = 'price';
             const columns = ['low', 'high'];
-            const expectedResult = "OR price >= low AND price <= high"
+            const expectedResult = "OR `price` BETWEEN `low` AND `high`"
 
             const result = new OrWhereBetweenColumns(column, columns).prepare(true);
 

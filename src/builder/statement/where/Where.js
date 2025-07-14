@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class Where extends Base {
 
@@ -9,7 +10,7 @@ export default class Where extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, operator, value, separator = 'AND') {
-        const query = `${column} ${operator} ?`;
+        const query = `${Utility.escapeColumnString(column)} ${operator} ?`;
         const bindings = [value];
 
         super(bindings, query, separator);

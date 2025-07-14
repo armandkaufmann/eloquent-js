@@ -6,7 +6,7 @@ describe('Statement: WhereNotIn', () => {
        test("It builds a partial statement", () => {
            const column = 'names';
            const values = ['John', 'Armand', 'Alex', 'Ian'];
-           const expectedResult = "names NOT IN ('John', 'Armand', 'Alex', 'Ian')";
+           const expectedResult = "`names` NOT IN ('John', 'Armand', 'Alex', 'Ian')";
 
            const result = new WhereNotIn(column, values).toString();
 
@@ -16,7 +16,7 @@ describe('Statement: WhereNotIn', () => {
         test("It builds a partial statement with separator", () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedResult = "AND names NOT IN ('John', 'Armand', 'Alex', 'Ian')";
+            const expectedResult = "AND `names` NOT IN ('John', 'Armand', 'Alex', 'Ian')";
 
             const result = new WhereNotIn(column, values).toString(true);
 
@@ -28,7 +28,7 @@ describe('Statement: WhereNotIn', () => {
         test('It builds a prepare object', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "names NOT IN (?, ?, ?, ?)";
+            const expectedQuery = "`names` NOT IN (?, ?, ?, ?)";
 
             const result = new WhereNotIn(column, values).prepare();
 
@@ -39,7 +39,7 @@ describe('Statement: WhereNotIn', () => {
         test('It builds a prepare object query with separator', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "AND names NOT IN (?, ?, ?, ?)";
+            const expectedQuery = "AND `names` NOT IN (?, ?, ?, ?)";
 
             const result = new WhereNotIn(column, values).prepare(true);
 

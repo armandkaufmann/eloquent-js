@@ -4,7 +4,7 @@ import InnerJoin from "../../../../src/builder/statement/join/InnerJoin.js";
 describe('Statement: InnerJoin', () => {
     describe('toString', () => {
        test("It builds a partial statement", () => {
-           const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
+           const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
            const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').toString();
 
@@ -12,7 +12,7 @@ describe('Statement: InnerJoin', () => {
        });
 
         test("It builds a partial statement with separator", () => {
-            const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
+            const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
             const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').toString(true);
 
@@ -22,7 +22,7 @@ describe('Statement: InnerJoin', () => {
 
     describe('Prepare', () => {
         test("It builds a prepare object", () => {
-            const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
+            const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
             const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').prepare();
 
@@ -31,7 +31,7 @@ describe('Statement: InnerJoin', () => {
         });
 
         test("It builds prepared object with separator", () => {
-            const expectedResult = "INNER JOIN posts ON users.id = posts.user_id";
+            const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
             const result = new InnerJoin('posts', 'users.id', '=', 'posts.user_id').prepare(true);
 

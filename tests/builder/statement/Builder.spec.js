@@ -30,7 +30,7 @@ describe('Statement: Statement Builder', () => {
         describe("toString", () => {
             test("it builds complete 'SELECT' statement string", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
-                const expectedResult = "SELECT name, age, sex";
+                const expectedResult = "SELECT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(selectStatement);
@@ -42,7 +42,7 @@ describe('Statement: Statement Builder', () => {
 
             test("it builds complete 'SELECT DISTINCT' statement string", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
-                const expectedResult = "SELECT DISTINCT name, age, sex";
+                const expectedResult = "SELECT DISTINCT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(selectStatement).setDistinct();
@@ -66,7 +66,7 @@ describe('Statement: Statement Builder', () => {
             test("push: appends select statement if it exists", () => {
                 const firstSelectStatement = new Select(['name', 'age', 'sex']);
                 const secondSelectStatement = new Select(['location', 'role', 'preference']);
-                const expectedResult = "SELECT name, age, sex, location, role, preference";
+                const expectedResult = "SELECT `name`, `age`, `sex`, `location`, `role`, `preference`";
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(firstSelectStatement).push(secondSelectStatement);
@@ -89,7 +89,7 @@ describe('Statement: Statement Builder', () => {
             test("it can build select statement with different select types", () => {
                 const firstSelectStatement = new Select(['name', 'age', 'sex']);
                 const secondSelectStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
-                const expectedResult = "SELECT name, age, sex, price * 1.0825 as price_with_tax";
+                const expectedResult = "SELECT `name`, `age`, `sex`, price * 1.0825 as price_with_tax";
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(firstSelectStatement).push(secondSelectStatement);
@@ -103,7 +103,7 @@ describe('Statement: Statement Builder', () => {
         describe("prepare", () => {
             test("it builds complete prepareObject", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
-                const expectedResult = "SELECT name, age, sex";
+                const expectedResult = "SELECT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(selectStatement);
@@ -116,7 +116,7 @@ describe('Statement: Statement Builder', () => {
 
             test("it builds complete statement prepare object string with distinct", () => {
                 const selectStatement = new Select(['name', 'age', 'sex']);
-                const expectedResult = "SELECT DISTINCT name, age, sex";
+                const expectedResult = "SELECT DISTINCT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(selectStatement).setDistinct();
@@ -130,7 +130,7 @@ describe('Statement: Statement Builder', () => {
             test("push: appends select statement if it exists", () => {
                 const firstSelectStatement = new Select(['name', 'age', 'sex']);
                 const secondSelectStatement = new Select(['location', 'role', 'preference']);
-                const expectedResult = "SELECT name, age, sex, location, role, preference";
+                const expectedResult = "SELECT `name`, `age`, `sex`, `location`, `role`, `preference`";
 
                 const builder = new Builder(STATEMENTS.select);
                 builder.push(firstSelectStatement).push(secondSelectStatement);
@@ -155,7 +155,7 @@ describe('Statement: Statement Builder', () => {
             test("it can build select prepare object with different select types", () => {
                 const firstSelectStatement = new Select(['name', 'age', 'sex']);
                 const secondSelectStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
-                const expectedResult = "SELECT name, age, sex, price * ? as price_with_tax";
+                const expectedResult = "SELECT `name`, `age`, `sex`, price * ? as price_with_tax";
                 const expectedBindings = [1.0825];
 
                 const builder = new Builder(STATEMENTS.select);
@@ -175,7 +175,7 @@ describe('Statement: Statement Builder', () => {
                 const innerJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                 const leftJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
                 const crossJoin = new CrossJoin('likes');
-                const expectedResult = "INNER JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id CROSS JOIN likes";
+                const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id` LEFT JOIN `comments` ON `users`.`id` = `comments`.`user_id` CROSS JOIN `likes`";
 
                 const builder = new Builder(STATEMENTS.join);
                 builder.push(innerJoin).push(leftJoin).push(crossJoin);
@@ -191,7 +191,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string", () => {
                     const firstJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id` INNER JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -204,7 +204,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new InnerJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new InnerJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "INNER JOIN posts ON users.id = posts.user_id INNER JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "INNER JOIN `posts` ON `users`.`id` = `posts`.`user_id` INNER JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -221,7 +221,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string", () => {
                     const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id` LEFT JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -234,7 +234,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new LeftJoin('posts', 'users.id', '=', 'posts.user_id');
                     const secondJoin = new LeftJoin('comments', 'users.id', '=', 'comments.user_id');
-                    const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id LEFT JOIN comments ON users.id = comments.user_id";
+                    const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id` LEFT JOIN `comments` ON `users`.`id` = `comments`.`user_id`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -251,7 +251,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string", () => {
                     const firstJoin = new CrossJoin('posts');
                     const secondJoin = new CrossJoin('comments');
-                    const expectedResult = "CROSS JOIN posts CROSS JOIN comments";
+                    const expectedResult = "CROSS JOIN `posts` CROSS JOIN `comments`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -264,7 +264,7 @@ describe('Statement: Statement Builder', () => {
                 test("It builds complete statement string and ignores argument passed to 'toString'", () => {
                     const firstJoin = new CrossJoin('posts');
                     const secondJoin = new CrossJoin('comments');
-                    const expectedResult = "CROSS JOIN posts CROSS JOIN comments";
+                    const expectedResult = "CROSS JOIN `posts` CROSS JOIN `comments`";
 
                     const builder = new Builder(STATEMENTS.join);
                     builder.push(firstJoin).push(secondJoin);
@@ -292,12 +292,12 @@ describe('Statement: Statement Builder', () => {
                 ], 'LIKE', 'Example%');
 
                 const expectedResult = [
-                    "WHERE name = 'John'",
-                    "OR age > 20",
-                    "AND sex IS NULL",
-                    "OR taco IS NULL",
-                    "AND mouse IS NOT NULL",
-                    "AND (name LIKE 'Example%' OR email LIKE 'Example%' OR phone LIKE 'Example%')"
+                    "WHERE `name` = 'John'",
+                    "OR `age` > 20",
+                    "AND `sex` IS NULL",
+                    "OR `taco` IS NULL",
+                    "AND `mouse` IS NOT NULL",
+                    "AND (`name` LIKE 'Example%' OR `email` LIKE 'Example%' OR `phone` LIKE 'Example%')"
                 ];
 
                 const builder = new Builder(STATEMENTS.where);
@@ -325,7 +325,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedQuery = "WHERE name = ? OR age > ? AND sex IS NULL OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedQuery = "WHERE `name` = ? OR `age` > ? AND `sex` IS NULL OR `taco` IS NULL AND `mouse` IS NOT NULL"
                 const expectedBindings = ['John', 20]
 
                 const builder = new Builder(STATEMENTS.where);
@@ -357,7 +357,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE name = 'John' AND (age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE `name` = 'John' AND (`age` > 20 AND `sex` IS NULL) OR `taco` IS NULL AND `mouse` IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
@@ -380,7 +380,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE name = 'John' OR (age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE `name` = 'John' OR (`age` > 20 AND `sex` IS NULL) OR `taco` IS NULL AND `mouse` IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group('OR');
@@ -401,7 +401,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE name = 'John' OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE `name` = 'John' OR `taco` IS NULL AND `mouse` IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
@@ -422,7 +422,7 @@ describe('Statement: Statement Builder', () => {
                 const fourth = new OrWhereNull('taco');
                 const fifth = new WhereNotNull('mouse');
 
-                const expectedResult = "WHERE (name = 'John' OR age > 20 AND sex IS NULL) OR taco IS NULL AND mouse IS NOT NULL"
+                const expectedResult = "WHERE (`name` = 'John' OR `age` > 20 AND `sex` IS NULL) OR `taco` IS NULL AND `mouse` IS NOT NULL"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
@@ -447,7 +447,7 @@ describe('Statement: Statement Builder', () => {
                 const fifth = new WhereBetween('hours', [20, 40]);
 
                 const expectedBindings = ['John', 20, 'admin', 20, 40];
-                const expectedQuery = "WHERE name = ? AND (age > ? AND role = ?) OR taco IS NULL AND hours BETWEEN ? AND ?"
+                const expectedQuery = "WHERE `name` = ? AND (`age` > ? AND `role` = ?) OR `taco` IS NULL AND `hours` BETWEEN ? AND ?"
 
                 const builder = new Builder(STATEMENTS.where);
                 const group = new Group();
@@ -474,7 +474,7 @@ describe('Statement: Statement Builder', () => {
                 const third = new OrHaving('role', '=', 'HR');
                 const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedResult = "HAVING name = 'John' OR team LIKE 'Nippon%' OR role = 'HR' AND SUM(price) > 2500"
+                const expectedResult = "HAVING `name` = 'John' OR team LIKE 'Nippon%' OR `role` = 'HR' AND SUM(price) > 2500"
 
                 const builder = new Builder(STATEMENTS.having);
                 builder.push(first).push(second).push(third).push(fourth);
@@ -500,7 +500,7 @@ describe('Statement: Statement Builder', () => {
                 const third = new OrHaving('role', '=', 'HR');
                 const fourth = new HavingRaw('SUM(price) > ?', [2500])
 
-                const expectedQuery = "HAVING name = ? OR team LIKE ? OR role = ? AND SUM(price) > ?"
+                const expectedQuery = "HAVING `name` = ? OR team LIKE ? OR `role` = ? AND SUM(price) > ?"
                 const expectedBindings = ['John', 'Nippon%', 'HR', 2500]
 
                 const builder = new Builder(STATEMENTS.having);
@@ -529,7 +529,7 @@ describe('Statement: Statement Builder', () => {
                 const orderByStatement = new OrderBy('name');
                 const orderByStatementTwo = new OrderBy('role', "DESC");
                 const orderByDesc = new OrderByDesc('address');
-                const expectedResult = "ORDER BY name ASC, role DESC, address DESC";
+                const expectedResult = "ORDER BY `name` ASC, `role` DESC, `address` DESC";
 
                 const builder = new Builder(STATEMENTS.orderBy);
                 builder.push(orderByStatement).push(orderByStatementTwo).push(orderByDesc);
@@ -544,7 +544,7 @@ describe('Statement: Statement Builder', () => {
             test('it builds complete statement prepare object', () => {
                 const orderByStatement = new OrderBy('name');
                 const orderByStatementTwo = new OrderBy('role', "DESC");
-                const expectedResult = "ORDER BY name ASC, role DESC";
+                const expectedResult = "ORDER BY `name` ASC, `role` DESC";
 
                 const builder = new Builder(STATEMENTS.orderBy);
                 builder.push(orderByStatement).push(orderByStatementTwo);
@@ -561,7 +561,7 @@ describe('Statement: Statement Builder', () => {
         describe("toString", () => {
             test('it builds complete statement string', () => {
                 const selectStatement = new GroupBy(['name', 'age', 'sex']);
-                const expectedResult = "GROUP BY name, age, sex";
+                const expectedResult = "GROUP BY `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(selectStatement);
@@ -575,7 +575,7 @@ describe('Statement: Statement Builder', () => {
                 const firstGroupStatement = new GroupBy(['name', 'age', 'sex']);
                 const secondGroupStatement = new GroupBy(['location', 'role', 'preference']);
                 const thirdGroupStatement = new GroupByRaw('price, desk, id');
-                const expectedResult = "GROUP BY name, age, sex, location, role, preference, price, desk, id";
+                const expectedResult = "GROUP BY `name`, `age`, `sex`, `location`, `role`, `preference`, price, desk, id";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(firstGroupStatement).push(secondGroupStatement).push(thirdGroupStatement);
@@ -588,8 +588,8 @@ describe('Statement: Statement Builder', () => {
 
         describe("prepare", () => {
             test('it builds complete prepareObject', () => {
-                const selectStatement = new Select(['name', 'age', 'sex']);
-                const expectedResult = "GROUP BY name, age, sex";
+                const selectStatement = new GroupBy(['name', 'age', 'sex']);
+                const expectedResult = "GROUP BY `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(selectStatement);
@@ -603,7 +603,7 @@ describe('Statement: Statement Builder', () => {
             test("push: appends select statement if it exists", () => {
                 const firstSelectStatement = new GroupBy(['name', 'age', 'sex']);
                 const secondSelectStatement = new GroupBy(['location', 'role', 'preference']);
-                const expectedResult = "GROUP BY name, age, sex, location, role, preference";
+                const expectedResult = "GROUP BY `name`, `age`, `sex`, `location`, `role`, `preference`";
 
                 const builder = new Builder(STATEMENTS.group);
                 builder.push(firstSelectStatement).push(secondSelectStatement);

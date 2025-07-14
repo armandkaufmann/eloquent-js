@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class WhereNull extends Base {
 
@@ -8,7 +9,7 @@ export default class WhereNull extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, condition = 'IS NULL', separator = 'AND') {
-        const query = `${column} ${condition}`;
+        const query = `${Utility.escapeColumnString(column)} ${condition}`;
 
         super([], query, separator);
     }

@@ -7,7 +7,7 @@ describe("Builder: HavingCallback Test", () => {
         const group = new Group();
         const callback = new HavingCallback(group);
 
-        const expectedResult = "(account_id > 100 AND order_count BETWEEN 5 AND 15 OR purchase_count = 5 AND SUM(price) > 2500)"
+        const expectedResult = "(`account_id` > 100 AND `order_count` BETWEEN 5 AND 15 OR `purchase_count` = 5 AND SUM(price) > 2500)"
 
         callback
             .having("account_id", '>', 100)
@@ -24,7 +24,7 @@ describe("Builder: HavingCallback Test", () => {
         const group = new Group();
         const callback = new HavingCallback(group);
 
-        const expectedQuery = "(account_id > ? AND order_count BETWEEN ? AND ? OR purchase_count = ? AND SUM(price) > ?)"
+        const expectedQuery = "(`account_id` > ? AND `order_count` BETWEEN ? AND ? OR `purchase_count` = ? AND SUM(price) > ?)"
         const expectedBindings = [100, 5, 15, 5, 2500];
 
         callback

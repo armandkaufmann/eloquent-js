@@ -4,7 +4,7 @@ import LeftJoin from "../../../../src/builder/statement/join/LeftJoin.js";
 describe('Statement: LeftJoin', () => {
     describe('toString', () => {
        test("It builds a partial statement", () => {
-           const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id";
+           const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
            const result = new LeftJoin('posts', 'users.id', '=', 'posts.user_id').toString();
 
@@ -12,7 +12,7 @@ describe('Statement: LeftJoin', () => {
        });
 
         test("It builds with 'LEFT JOIN' when withSeparator is true", () => {
-            const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id";
+            const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
             const result = new LeftJoin('posts', 'users.id', '=', 'posts.user_id').toString(true);
 
@@ -22,7 +22,7 @@ describe('Statement: LeftJoin', () => {
 
     describe('Prepare', () => {
         test("It builds a prepare object", () => {
-            const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id";
+            const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
             const result = new LeftJoin('posts', 'users.id', '=', 'posts.user_id').prepare();
 
@@ -31,7 +31,7 @@ describe('Statement: LeftJoin', () => {
         });
 
         test("It builds prepared object with separator", () => {
-            const expectedResult = "LEFT JOIN posts ON users.id = posts.user_id";
+            const expectedResult = "LEFT JOIN `posts` ON `users`.`id` = `posts`.`user_id`";
 
             const result = new LeftJoin('posts', 'users.id', '=', 'posts.user_id').prepare(true);
 

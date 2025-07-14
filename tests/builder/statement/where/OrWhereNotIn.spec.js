@@ -6,7 +6,7 @@ describe('Statement: OrWhereNotIn', () => {
        test("It builds a partial statement", () => {
            const column = 'names';
            const values = ['John', 'Armand', 'Alex', 'Ian'];
-           const expectedResult = "names NOT IN ('John', 'Armand', 'Alex', 'Ian')";
+           const expectedResult = "`names` NOT IN ('John', 'Armand', 'Alex', 'Ian')";
 
            const result = new OrWhereNotIn(column, values).toString();
 
@@ -16,7 +16,7 @@ describe('Statement: OrWhereNotIn', () => {
         test("It builds a partial statement with separator", () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedResult = "OR names NOT IN ('John', 'Armand', 'Alex', 'Ian')";
+            const expectedResult = "OR `names` NOT IN ('John', 'Armand', 'Alex', 'Ian')";
 
             const result = new OrWhereNotIn(column, values).toString(true);
 
@@ -28,7 +28,7 @@ describe('Statement: OrWhereNotIn', () => {
         test('It builds a prepare object', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "names NOT IN (?, ?, ?, ?)";
+            const expectedQuery = "`names` NOT IN (?, ?, ?, ?)";
 
             const result = new OrWhereNotIn(column, values).prepare();
 
@@ -39,7 +39,7 @@ describe('Statement: OrWhereNotIn', () => {
         test('It builds a prepare object with separator', () => {
             const column = 'names';
             const values = ['John', 'Armand', 'Alex', 'Ian'];
-            const expectedQuery = "OR names NOT IN (?, ?, ?, ?)";
+            const expectedQuery = "OR `names` NOT IN (?, ?, ?, ?)";
 
             const result = new OrWhereNotIn(column, values).prepare(true);
 

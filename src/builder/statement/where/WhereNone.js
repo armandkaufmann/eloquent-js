@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class WhereNone extends Base {
 
@@ -13,7 +14,7 @@ export default class WhereNone extends Base {
         let bindings = [];
 
         columns.forEach(function (column) {
-            query.push(`${column} ${operator} ?`);
+            query.push(`${Utility.escapeColumnString(column)} ${operator} ?`);
             bindings.push(value);
         });
 

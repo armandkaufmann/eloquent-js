@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import {Utility} from "../../../utils/Utility.js";
 
 export default class HavingBetween extends Base {
 
@@ -8,7 +9,7 @@ export default class HavingBetween extends Base {
      * @param {String} [separator='AND']
      */
     constructor(column, values, separator = 'AND') {
-        const query = `${column} BETWEEN ? AND ?`;
+        const query = `${Utility.escapeColumnString(column)} BETWEEN ? AND ?`;
 
         super(values, query, separator);
     }
