@@ -11,6 +11,6 @@ export default class Select extends Base {
     constructor(column) {
         const query = Utility.escapeColumnString(column);
 
-        super([], query, Separator.comma);
+        super([], query, Separator.Comma);
     }
 }

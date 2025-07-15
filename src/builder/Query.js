@@ -240,7 +240,7 @@ export class Query {
     select(...columns) {
         columns.forEach((column) => {
             if (column instanceof Raw) {
-                this.#querySelect.push(column.withSeparator(Separator.comma));
+                this.#querySelect.push(column.withSeparator(Separator.Comma));
             } else {
                 this.#querySelect.push(new Select(column));
             }

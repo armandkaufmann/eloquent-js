@@ -11,6 +11,6 @@ export default class SelectRaw extends Base {
     constructor(expression, bindings = null) {
         const bindingArray = bindings ? bindings : [];
 
-        super(bindingArray, expression, Separator.comma);
+        super(bindingArray, expression, Separator.Comma);
     }
 }

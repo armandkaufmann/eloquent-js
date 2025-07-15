@@ -9,7 +9,7 @@ export default class GroupBy extends Base {
      * @returns Query
      */
     constructor(columns) {
-        const separator = Separator.comma;
+        const separator = Separator.Comma;
         const query = columns.map(column => Utility.escapeColumnString(column)).join(`${separator} `);
 
         super([], query, separator);

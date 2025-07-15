@@ -1,5 +1,6 @@
 const Separator = {
-    comma: ','
+    Comma: ',',
+    And: 'AND'
 }
 
 export default Separator;

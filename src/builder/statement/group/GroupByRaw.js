@@ -8,6 +8,6 @@ export default class GroupByRaw extends Base {
      * @returns Query
      */
     constructor(expression) {
-        super([], expression, Separator.comma);
+        super([], expression, Separator.Comma);
     }
 }

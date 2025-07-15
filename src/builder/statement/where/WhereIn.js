@@ -1,5 +1,6 @@
 import {Base} from "../Base.js";
 import {Utility} from "../../../utils/Utility.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class WhereIn extends Base {
 
@@ -9,7 +10,7 @@ export default class WhereIn extends Base {
      * @param {String} [condition='IN']
      * @param {String} [separator='AND']
      */
-    constructor(column, values, condition = 'IN', separator = 'AND') {
+    constructor(column, values, condition = 'IN', separator = Separator.And) {
         let query = "";
         let bindings = [];
 

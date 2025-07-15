@@ -12,6 +12,6 @@ export default class OrderBy extends Base {
     constructor(column, order = "ASC") {
         const query = `${Utility.escapeColumnString(column)} ${order}`;
 
-        super([], query, Separator.comma);
+        super([], query, Separator.Comma);
     }
 }

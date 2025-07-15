@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class HavingRaw extends Base {
 
@@ -7,7 +8,7 @@ export default class HavingRaw extends Base {
      * @param {Array<String|number>|null} [bindings=null]
      * @param {String} [separator='AND']
      */
-    constructor(expression, bindings = null, separator = 'AND') {
+    constructor(expression, bindings = null, separator = Separator.And) {
         const bindingArray = bindings ? bindings : [];
 
         super(bindingArray, expression, separator);
