@@ -4,10 +4,10 @@ import Select from "../../../../src/builder/statement/select/Select.js";
 describe('Statement: Select', () => {
     describe('toString', () => {
         test("it builds a partial statement", () => {
-            const columns = ['name', 'age', 'sex'];
-            const expectedResult = "`name`, `age`, `sex`";
+            const column = 'name';
+            const expectedResult = "`name`";
 
-            const result = new Select(columns).toString();
+            const result = new Select(column).toString();
 
             expect(result).toEqual(expectedResult);
         });
@@ -15,10 +15,10 @@ describe('Statement: Select', () => {
 
     describe('Prepare', () => {
         test("It builds a prepare object", () => {
-            const columns = ['name', 'age', 'sex'];
-            const expectedResult = "`name`, `age`, `sex`";
+            const column = 'name';
+            const expectedResult = "`name`";
 
-            const result = new Select(columns).prepare();
+            const result = new Select(column).prepare();
 
             expect(result.query).toEqual(expectedResult);
             expect(result.bindings).toEqual([]);

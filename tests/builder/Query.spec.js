@@ -1036,6 +1036,22 @@ describe("QueryBuilderTest", () => {
             })
         });
 
+        describe("Raw", () => {
+            describe("Select", () => {
+                test("Insert raw statement in select", () => {
+                    const result = new Query()
+                        .from('test_models')
+                        .select('test_id', Query.raw('COUNT(*) as count'))
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT `test_id`, COUNT(*) as count FROM `test_models`";
+
+                    expect(result).toBe(expectedResult);
+                })
+            });
+        });
+
         describe("Delete", () => {
             test("Builds full delete query string", () => {
                 const result = Query

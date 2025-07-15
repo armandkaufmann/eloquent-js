@@ -4,12 +4,12 @@ import {Utility} from "../../../utils/Utility.js";
 export default class Select extends Base {
 
     /**
-     * @param {Array<String>} columns
+     * @param {Array<String>} column
      * @returns Query
      */
-    constructor(columns) {
+    constructor(column) {
         const separator = ',';
-        const query = columns.map(column => Utility.escapeColumnString(column)).join(`${separator} `);
+        const query = Utility.escapeColumnString(column);
 
         super([], query, separator);
     }

@@ -54,6 +54,8 @@ import Offset from "./statement/offset/Offset.js";
 import HavingBetween from "./statement/having/HavingBetween.js";
 import OrHavingBetween from "./statement/having/OrHavingBetween.js";
 import HavingCallback from "./callback/HavingCallback.js";
+import Raw from "./statement/raw/Raw.js";
+import Separator from "../enums/Separator.js";
 
 export class Query {
     /** @type {?string} */
@@ -104,6 +106,14 @@ export class Query {
      */
     static castResultTo(model) {
         return new Query().castResultTo(model)
+    }
+
+    /**
+     * @param {string} statement
+     * @returns Raw
+     */
+    static raw(statement) {
+        return new Raw(statement);
     }
 
     /**
@@ -224,11 +234,17 @@ export class Query {
     }
 
     /**
-     * @param {...string} columns
+     * @param {...string|Raw} columns
      * @returns Query
      */
     select(...columns) {
-        this.#querySelect.push(new Select([...columns]));
+        columns.forEach((column) => {
+            if (column instanceof Raw) {
+                this.#querySelect.push(column.withSeparator(Separator.comma));
+            } else {
+                this.#querySelect.push(new Select(column));
+            }
+        });
 
         return this;
     }

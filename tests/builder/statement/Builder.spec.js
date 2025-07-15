@@ -29,11 +29,13 @@ describe('Statement: Statement Builder', () => {
     describe("Select", () => {
         describe("toString", () => {
             test("it builds complete 'SELECT' statement string", () => {
-                const selectStatement = new Select(['name', 'age', 'sex']);
+                const selectStatementOne = new Select('name');
+                const selectStatementTwo = new Select('age');
+                const selectStatementThree = new Select('sex');
                 const expectedResult = "SELECT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(selectStatement);
+                builder.push(selectStatementOne).push(selectStatementTwo).push(selectStatementThree);
 
                 const result = builder.toString();
 
@@ -41,11 +43,13 @@ describe('Statement: Statement Builder', () => {
             });
 
             test("it builds complete 'SELECT DISTINCT' statement string", () => {
-                const selectStatement = new Select(['name', 'age', 'sex']);
+                const selectStatementOne = new Select('name');
+                const selectStatementTwo = new Select('age');
+                const selectStatementThree = new Select('sex');
                 const expectedResult = "SELECT DISTINCT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(selectStatement).setDistinct();
+                builder.push(selectStatementOne).push(selectStatementTwo).push(selectStatementThree).setDistinct();
 
                 const result = builder.toString();
 
@@ -63,19 +67,6 @@ describe('Statement: Statement Builder', () => {
                 expect(result).toEqual(expectedResult);
             });
 
-            test("push: appends select statement if it exists", () => {
-                const firstSelectStatement = new Select(['name', 'age', 'sex']);
-                const secondSelectStatement = new Select(['location', 'role', 'preference']);
-                const expectedResult = "SELECT `name`, `age`, `sex`, `location`, `role`, `preference`";
-
-                const builder = new Builder(STATEMENTS.select);
-                builder.push(firstSelectStatement).push(secondSelectStatement);
-
-                const result = builder.toString();
-
-                expect(result).toEqual(expectedResult);
-            });
-
             test("it defaults to '*' when no select columns provided", () => {
                 const expectedResult = "SELECT *";
 
@@ -87,12 +78,14 @@ describe('Statement: Statement Builder', () => {
             });
 
             test("it can build select statement with different select types", () => {
-                const firstSelectStatement = new Select(['name', 'age', 'sex']);
-                const secondSelectStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
+                const selectStatementOne = new Select('name');
+                const selectStatementTwo = new Select('age');
+                const selectStatementThree = new Select('sex');
+                const rawStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
                 const expectedResult = "SELECT `name`, `age`, `sex`, price * 1.0825 as price_with_tax";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(firstSelectStatement).push(secondSelectStatement);
+                builder.push(selectStatementOne).push(selectStatementTwo).push(selectStatementThree).push(rawStatement);
 
                 const result = builder.toString();
 
@@ -102,11 +95,13 @@ describe('Statement: Statement Builder', () => {
 
         describe("prepare", () => {
             test("it builds complete prepareObject", () => {
-                const selectStatement = new Select(['name', 'age', 'sex']);
+                const selectStatementOne = new Select('name');
+                const selectStatementTwo = new Select('age');
+                const selectStatementThree = new Select('sex');
                 const expectedResult = "SELECT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(selectStatement);
+                builder.push(selectStatementOne).push(selectStatementTwo).push(selectStatementThree);
 
                 const result = builder.prepare();
 
@@ -115,25 +110,13 @@ describe('Statement: Statement Builder', () => {
             });
 
             test("it builds complete statement prepare object string with distinct", () => {
-                const selectStatement = new Select(['name', 'age', 'sex']);
+                const selectStatementOne = new Select('name');
+                const selectStatementTwo = new Select('age');
+                const selectStatementThree = new Select('sex');
                 const expectedResult = "SELECT DISTINCT `name`, `age`, `sex`";
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(selectStatement).setDistinct();
-
-                const result = builder.prepare();
-
-                expect(result.query).toEqual(expectedResult);
-                expect(result.bindings).toEqual([]);
-            });
-
-            test("push: appends select statement if it exists", () => {
-                const firstSelectStatement = new Select(['name', 'age', 'sex']);
-                const secondSelectStatement = new Select(['location', 'role', 'preference']);
-                const expectedResult = "SELECT `name`, `age`, `sex`, `location`, `role`, `preference`";
-
-                const builder = new Builder(STATEMENTS.select);
-                builder.push(firstSelectStatement).push(secondSelectStatement);
+                builder.push(selectStatementOne).push(selectStatementTwo).push(selectStatementThree).setDistinct();
 
                 const result = builder.prepare();
 
@@ -153,13 +136,15 @@ describe('Statement: Statement Builder', () => {
             });
 
             test("it can build select prepare object with different select types", () => {
-                const firstSelectStatement = new Select(['name', 'age', 'sex']);
-                const secondSelectStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
+                const selectStatementOne = new Select('name');
+                const selectStatementTwo = new Select('age');
+                const selectStatementThree = new Select('sex');
+                const rawSelectStatement = new SelectRaw('price * ? as price_with_tax', [1.0825]);
                 const expectedResult = "SELECT `name`, `age`, `sex`, price * ? as price_with_tax";
                 const expectedBindings = [1.0825];
 
                 const builder = new Builder(STATEMENTS.select);
-                builder.push(firstSelectStatement).push(secondSelectStatement);
+                builder.push(selectStatementOne).push(selectStatementTwo).push(selectStatementThree).push(rawSelectStatement);
 
                 const result = builder.prepare();
 
