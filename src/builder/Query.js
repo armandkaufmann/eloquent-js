@@ -56,6 +56,7 @@ import OrHavingBetween from "./statement/having/OrHavingBetween.js";
 import HavingCallback from "./callback/HavingCallback.js";
 import Raw from "./statement/raw/Raw.js";
 import Separator from "../enums/Separator.js";
+import Condition from "../enums/Condition.js";
 
 export class Query {
     /** @type {?string} */
@@ -817,7 +818,7 @@ export class Query {
      * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
-    #handleWhereCallback(callback, condition = "AND") {
+    #handleWhereCallback(callback, condition = Condition.And) {
         const group = new Group(condition);
         const whereCallback = new WhereCallback(group);
 
@@ -831,7 +832,7 @@ export class Query {
      * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
-    #handleHavingCallback(callback, condition = "AND") {
+    #handleHavingCallback(callback, condition = Condition.And) {
         const group = new Group(condition);
         const whereCallback = new HavingCallback(group);
 

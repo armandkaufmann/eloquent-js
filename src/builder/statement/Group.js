@@ -1,15 +1,16 @@
 import "./Base.types.js";
 import Builder from "./Builder.js";
 import {STATEMENTS} from "./Base.js";
+import Condition from "../../enums/Condition.js";
 
 export default class Group extends Builder {
     /** @type {"AND"|"OR"} */
-    #condition = "AND";
+    #condition = Condition.And;
 
     /**
      * @param {"AND"|"OR"} [condition="AND"]
      */
-    constructor(condition = "AND") {
+    constructor(condition = Condition.And) {
         super(STATEMENTS.none);
         this.#condition = condition;
     }

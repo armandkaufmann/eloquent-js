@@ -1,5 +1,6 @@
 import WhereNull from "./WhereNull.js";
 import Separator from "../../../enums/Separator.js";
+import Condition from "../../../enums/Condition.js";
 
 export default class WhereNotNull extends WhereNull {
 
@@ -8,6 +9,6 @@ export default class WhereNotNull extends WhereNull {
      * @param {String} [separator='AND']
      */
     constructor(column, separator = Separator.And) {
-        super(column, 'IS NOT NULL', separator);
+        super(column, Condition.NotNull, separator);
     }
 }

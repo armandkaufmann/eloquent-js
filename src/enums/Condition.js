@@ -1,0 +1,23 @@
+/**
+ * @typedef {Object} Condition
+ * @property {'BETWEEN'} Between
+ * @property {'NOT BETWEEN'} NotBetween
+ * @property {'AND'} And
+ * @property {'OR'} Or
+ * @property {'IS NULL'} Null
+ * @property {'IS NOT NULL'} NotNull
+ * @property {'IN'} In
+ */
+
+/** @type Condition **/
+const Condition = {
+    Between: 'BETWEEN',
+    NotBetween: 'NOT BETWEEN',
+    And: 'AND',
+    Or: 'OR',
+    Null: 'IS NULL',
+    NotNull: 'IS NOT NULL',
+    In: 'IN',
+}
+
+export default Condition;
