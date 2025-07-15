@@ -1,4 +1,5 @@
 import Where from "./Where.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class OrWhere extends Where {
 
@@ -8,6 +9,6 @@ export default class OrWhere extends Where {
      * @param {string|number} value
      */
     constructor(column, operator, value) {
-        super(column, operator, value, 'OR');
+        super(column, operator, value, Separator.Or);
     }
 }

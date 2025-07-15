@@ -1,4 +1,5 @@
 import WhereBetweenColumns from "./WhereBetweenColumns.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class OrWhereBetweenColumns extends WhereBetweenColumns {
 
@@ -7,6 +8,6 @@ export default class OrWhereBetweenColumns extends WhereBetweenColumns {
      * @param {Array<String>} columns
      */
     constructor(column, columns) {
-        super(column, columns, 'OR');
+        super(column, columns, Separator.Or);
     }
 }
