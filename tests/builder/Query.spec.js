@@ -1038,7 +1038,7 @@ describe("QueryBuilderTest", () => {
 
         describe("Raw", () => {
             describe("Select", () => {
-                test("Insert raw statement in select", () => {
+                test("Insert raw statement: Select", () => {
                     const result = new Query()
                         .from('test_models')
                         .select('test_id', Query.raw('COUNT(*) as count'))
@@ -1048,7 +1048,22 @@ describe("QueryBuilderTest", () => {
                     const expectedResult = "SELECT `test_id`, COUNT(*) as count FROM `test_models`";
 
                     expect(result).toBe(expectedResult);
-                })
+                });
+            });
+
+            describe("Where", () => {
+                test("Insert raw statement: Where", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .where('test_id', '=', 5)
+                        .where(Query.raw("nationality LIKE %alien%"))
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_id` = 5 AND nationality LIKE %alien%";
+
+                    expect(result).toBe(expectedResult);
+                });
             });
         });
 

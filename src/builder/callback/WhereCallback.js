@@ -24,6 +24,8 @@ import OrWhereRaw from "../statement/where/OrWhereRaw.js";
 import WhereAny from "../statement/where/WhereAny.js";
 import WhereAll from "../statement/where/WhereAll.js";
 import WhereNone from "../statement/where/WhereNone.js";
+import Raw from "../statement/raw/Raw.js";
+import Separator from "../../enums/Separator.js";
 
 export default class WhereCallback {
     /** @type {Group}  */
@@ -37,7 +39,7 @@ export default class WhereCallback {
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns WhereCallback
@@ -47,6 +49,11 @@ export default class WhereCallback {
         if (!value) {
             value = operator;
             operator = '=';
+        }
+
+        if (column instanceof Raw) {
+            this.#query.push(column.withSeparator(Separator.And));
+            return this;
         }
 
         Validation.validateComparisonOperator(operator);

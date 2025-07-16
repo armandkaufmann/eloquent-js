@@ -1,6 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import Group from "../../../src/builder/statement/Group.js";
 import WhereCallback from "../../../src/builder/callback/WhereCallback.js";
+import {Query} from "../../../src/builder/Query.js";
 
 describe("Builder: WhereCallback Test", () => {
     test("toString: It modifies state of group statement", () => {
@@ -37,5 +38,22 @@ describe("Builder: WhereCallback Test", () => {
 
         expect(result.query).toEqual(expectedQuery);
         expect(result.bindings).toEqual(expectedBindings);
+    });
+
+    describe("Raw", () => {
+        test("Inserts raw statement: Where", () => {
+            const group = new Group();
+            const callback = new WhereCallback(group);
+
+            const expectedResult = "(`name` = 'John' AND role LIKE Human%)"
+
+            callback
+                .where('name', 'John')
+                .where(Query.raw("role LIKE Human%"));
+
+            const result = group.toString();
+
+            expect(result).toEqual(expectedResult);
+        });
     });
 });

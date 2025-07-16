@@ -313,7 +313,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: WhereCallback)}} column
+     * @param {string|{(query: WhereCallback)}|Raw} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -322,6 +322,11 @@ export class Query {
     where(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleWhereCallback(column);
+            return this;
+        }
+
+        if (column instanceof Raw) {
+            this.#queryWhere.push(column.withSeparator(Separator.And));
             return this;
         }
 
