@@ -1,6 +1,8 @@
 import {describe, expect, test} from 'vitest';
 import Group from "../../../src/builder/statement/Group.js";
 import HavingCallback from "../../../src/builder/callback/HavingCallback.js";
+import WhereCallback from "../../../src/builder/callback/WhereCallback.js";
+import {Query} from "../../../src/builder/Query.js";
 
 describe("Builder: HavingCallback Test", () => {
     test("toString: It modifies state of group statement", () => {
@@ -37,5 +39,37 @@ describe("Builder: HavingCallback Test", () => {
 
         expect(result.query).toEqual(expectedQuery);
         expect(result.bindings).toEqual(expectedBindings);
+    });
+
+    describe("Raw", () => {
+        test("Inserts raw statement: Having", () => {
+            const group = new Group();
+            const callback = new HavingCallback(group);
+
+            const expectedResult = "(`name` = 'John' AND role LIKE Human%)"
+
+            callback
+                .having('name', 'John')
+                .having(Query.raw("role LIKE Human%"));
+
+            const result = group.toString();
+
+            expect(result).toEqual(expectedResult);
+        });
+
+        test("Inserts raw statement: orHaving", () => {
+            const group = new Group();
+            const callback = new HavingCallback(group);
+
+            const expectedResult = "(`name` = 'John' OR role LIKE Human%)"
+
+            callback
+                .having('name', 'John')
+                .orHaving(Query.raw("role LIKE Human%"));
+
+            const result = group.toString();
+
+            expect(result).toEqual(expectedResult);
+        });
     });
 });

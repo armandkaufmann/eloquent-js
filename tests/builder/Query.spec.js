@@ -1078,6 +1078,30 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
             });
+
+            describe("Having", () => {
+                test("Insert raw statement: Having", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .having('test_id', 5)
+                        .having(Query.raw('SUM(orders) > 100'))
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 AND SUM(orders) > 100");
+                });
+
+                test("Insert raw statement: OrHaving", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .having('test_id', 5)
+                        .orHaving(Query.raw('SUM(orders) > 100'))
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 OR SUM(orders) > 100");
+                });
+            })
         });
 
         describe("Delete", () => {

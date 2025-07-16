@@ -687,7 +687,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: HavingCallback)}} column
+     * @param {string|{(query: HavingCallback)}|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -696,6 +696,11 @@ export class Query {
     having(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleHavingCallback(column);
+            return this;
+        }
+
+        if (column instanceof Raw) {
+            this.#queryHaving.push(column.withSeparator(Separator.And));
             return this;
         }
 
@@ -712,7 +717,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: HavingCallback)}} column
+     * @param {string|{(query: HavingCallback)}|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -721,6 +726,11 @@ export class Query {
     orHaving(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleHavingCallback(column, "OR");
+            return this;
+        }
+
+        if (column instanceof Raw) {
+            this.#queryHaving.push(column.withSeparator(Separator.Or));
             return this;
         }
 
