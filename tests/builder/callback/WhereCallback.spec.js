@@ -55,5 +55,20 @@ describe("Builder: WhereCallback Test", () => {
 
             expect(result).toEqual(expectedResult);
         });
+
+        test("Inserts raw statement: OrWhere", () => {
+            const group = new Group();
+            const callback = new WhereCallback(group);
+
+            const expectedResult = "(`name` = 'John' OR role LIKE Human%)"
+
+            callback
+                .where('name', 'John')
+                .orWhere(Query.raw("role LIKE Human%"));
+
+            const result = group.toString();
+
+            expect(result).toEqual(expectedResult);
+        });
     });
 });

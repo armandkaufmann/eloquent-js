@@ -1064,6 +1064,19 @@ describe("QueryBuilderTest", () => {
 
                     expect(result).toBe(expectedResult);
                 });
+
+                test("Insert raw statement: OrWhere", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .where('test_id', '=', 5)
+                        .orWhere(Query.raw("nationality LIKE %alien%"))
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_id` = 5 OR nationality LIKE %alien%";
+
+                    expect(result).toBe(expectedResult);
+                });
             });
         });
 

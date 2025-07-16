@@ -46,14 +46,14 @@ export default class WhereCallback {
      * @throws InvalidComparisonOperatorError
      */
     where(column, operator, value = null) {
-        if (!value) {
-            value = operator;
-            operator = '=';
-        }
-
         if (column instanceof Raw) {
             this.#query.push(column.withSeparator(Separator.And));
             return this;
+        }
+
+        if (!value) {
+            value = operator;
+            operator = '=';
         }
 
         Validation.validateComparisonOperator(operator);
@@ -64,13 +64,18 @@ export default class WhereCallback {
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns WhereCallback
      * @throws InvalidComparisonOperatorError
      */
     orWhere(column, operator, value = null) {
+        if (column instanceof Raw) {
+            this.#query.push(column.withSeparator(Separator.Or));
+            return this;
+        }
+
         if (!value) {
             value = operator;
             operator = '=';
