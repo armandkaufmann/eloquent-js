@@ -20,4 +20,14 @@ export default class Raw extends Base {
 
         return this;
     }
+
+    /**
+     * @param {String} string
+     * @returns Raw
+     */
+    appendStatement(string) {
+        this._query += ` ${string}`;
+
+        return this;
+    }
 }

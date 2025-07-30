@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING `class` LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING `class` LIKE '%example%' ORDER BY `id` ASC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -724,12 +724,26 @@ describe("QueryBuilderTest", () => {
                 const result = new Query()
                     .from('my_table')
                     .orderBy('test_id')
-                    .orderBy('test_name', 'ASC')
+                    .orderBy('test_name', 'DESC')
                     .orderByDesc('name')
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` DESC, `test_name` ASC, `name` DESC";
+                const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, `test_name` DESC, `name` DESC";
+
+                expect(result).toBe(expectedResult);
+            });
+
+            test("Order by raw query string", () => {
+                const result = new Query()
+                    .from('my_table')
+                    .orderBy('test_id')
+                    .orderByRaw('length(name) DESC')
+                    .orderByDesc('name')
+                    .toSql()
+                    .get();
+
+                const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, length(name) DESC, `name` DESC";
 
                 expect(result).toBe(expectedResult);
             });
@@ -1101,7 +1115,37 @@ describe("QueryBuilderTest", () => {
 
                     expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 OR SUM(orders) > 100");
                 });
-            })
+            });
+
+            describe("OrderBy", () => {
+                test("Insert raw statement: OrderBy", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .orderBy('test_id')
+                        .orderBy(Query.raw("length(name)"))
+                        .orderBy('date')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, length(name) ASC, `date` ASC";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Insert raw statement: OrderByDesc", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .orderBy('test_id')
+                        .orderByDesc(Query.raw("length(name)"))
+                        .orderBy('date')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, length(name) DESC, `date` ASC";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
         });
 
         describe("Delete", () => {

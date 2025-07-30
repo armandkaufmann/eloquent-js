@@ -797,21 +797,40 @@ export class Query {
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @param {"ASC"|"DESC"} [order=ASC]
      * @returns Query
      */
-    orderBy(column, order = "DESC") {
+    orderBy(column, order = "ASC") {
+        if (column instanceof Raw) {
+            this.#queryOrderBy.push(column.withSeparator(Separator.Comma).appendStatement(order));
+            return this;
+        }
+
         this.#queryOrderBy.push(new OrderBy(column, order));
         return this;
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @returns Query
      */
     orderByDesc(column) {
+        if (column instanceof Raw) {
+            this.#queryOrderBy.push(column.withSeparator(Separator.Comma).appendStatement("DESC"));
+            return this;
+        }
+
         this.#queryOrderBy.push(new OrderByDesc(column));
+        return this;
+    }
+
+    /**
+     * @param {string} expression
+     * @returns Query
+     */
+    orderByRaw(expression) {
+        this.#queryOrderBy.push(new Raw(expression).withSeparator(Separator.Comma));
         return this;
     }
 
