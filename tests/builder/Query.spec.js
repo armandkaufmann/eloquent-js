@@ -1146,6 +1146,18 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
             });
+
+            describe("GroupBy", () => {
+                test("Insert raw statement: GroupBy", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .groupBy('name', Query.raw("DATE(created_at)"), 'order_id')
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM `my_table` GROUP BY `name`, DATE(created_at), `order_id`");
+                });
+            })
         });
 
         describe("Delete", () => {

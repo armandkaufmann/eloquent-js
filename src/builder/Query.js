@@ -667,12 +667,16 @@ export class Query {
     }
 
     /**
-     * @param {...string} columns
+     * @param {...string|Raw} columns
      * @returns Query
      */
     groupBy(...columns) {
         columns.forEach((column) => {
-            this.#queryGroupBy.push(new GroupBy(column));
+            if (column instanceof Raw) {
+                this.#queryGroupBy.push(column.withSeparator(Separator.Comma));
+            } else {
+                this.#queryGroupBy.push(new GroupBy(column));
+            }
         });
 
         return this;
