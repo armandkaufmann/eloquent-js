@@ -671,7 +671,9 @@ export class Query {
      * @returns Query
      */
     groupBy(...columns) {
-        this.#queryGroupBy.push(new GroupBy([...columns]));
+        columns.forEach((column) => {
+            this.#queryGroupBy.push(new GroupBy(column));
+        });
 
         return this;
     }

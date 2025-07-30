@@ -5,13 +5,10 @@ import Separator from "../../../enums/Separator.js";
 export default class GroupBy extends Base {
 
     /**
-     * @param {Array<String>} columns
+     * @param {string} column
      * @returns Query
      */
-    constructor(columns) {
-        const separator = Separator.Comma;
-        const query = columns.map(column => Utility.escapeColumnString(column)).join(`${separator} `);
-
-        super([], query, separator);
+    constructor(column) {
+        super([], Utility.escapeColumnString(column), Separator.Comma);
     }
 }

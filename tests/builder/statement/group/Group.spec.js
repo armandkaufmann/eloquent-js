@@ -4,10 +4,19 @@ import GroupBy from "../../../../src/builder/statement/group/GroupBy.js";
 describe('Statement: Group', () => {
     describe('toString', () => {
         test("it builds a partial statement", () => {
-            const columns = ['name', 'age', 'sex'];
-            const expectedResult = "`name`, `age`, `sex`";
+            const column = 'name';
+            const expectedResult = "`name`";
 
-            const result = new GroupBy(columns).toString();
+            const result = new GroupBy(column).toString();
+
+            expect(result).toEqual(expectedResult);
+        });
+
+        test("it builds a partial statement with separator", () => {
+            const column = 'name';
+            const expectedResult = ", `name`";
+
+            const result = new GroupBy(column).toString(true);
 
             expect(result).toEqual(expectedResult);
         });
@@ -15,10 +24,20 @@ describe('Statement: Group', () => {
 
     describe('Prepare', () => {
         test("It builds a prepare object", () => {
-            const columns = ['name', 'age', 'sex'];
-            const expectedResult = "`name`, `age`, `sex`";
+            const column = 'name';
+            const expectedResult = "`name`";
 
-            const result = new GroupBy(columns).prepare();
+            const result = new GroupBy(column).prepare();
+
+            expect(result.query).toEqual(expectedResult);
+            expect(result.bindings).toEqual([]);
+        });
+
+        test("It builds a prepare object with separator", () => {
+            const column = 'name';
+            const expectedResult = ", `name`";
+
+            const result = new GroupBy(column).prepare(true);
 
             expect(result.query).toEqual(expectedResult);
             expect(result.bindings).toEqual([]);
