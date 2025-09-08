@@ -1,4 +1,5 @@
 import HavingBetween from "./HavingBetween.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class OrHavingBetween extends HavingBetween {
 
@@ -7,6 +8,6 @@ export default class OrHavingBetween extends HavingBetween {
      * @param {Array<String|Number>} values
      */
     constructor(column, values) {
-        super(column, values, 'OR');
+        super(column, values, Separator.Or);
     }
 }

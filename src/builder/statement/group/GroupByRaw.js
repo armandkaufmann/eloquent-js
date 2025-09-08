@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class GroupByRaw extends Base {
 
@@ -7,8 +8,6 @@ export default class GroupByRaw extends Base {
      * @returns Query
      */
     constructor(expression) {
-        const separator = ',';
-
-        super([], expression, separator);
+        super([], expression, Separator.Comma);
     }
 }

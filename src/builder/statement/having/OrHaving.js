@@ -1,4 +1,5 @@
 import Having from "./Having.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class OrHaving extends Having {
 
@@ -8,6 +9,6 @@ export default class OrHaving extends Having {
      * @param {String|number} value
      */
     constructor(column, operator, value) {
-        super(column, operator, value, 'OR');
+        super(column, operator, value, Separator.Or);
     }
 }

@@ -1,4 +1,5 @@
 import WhereRaw from "./WhereRaw.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class OrWhereRaw extends WhereRaw {
 
@@ -7,6 +8,6 @@ export default class OrWhereRaw extends WhereRaw {
      * @param {Array<String|Number>|null} [bindings=null]
      */
     constructor(expression, bindings = null) {
-        super(expression, bindings, 'OR');
+        super(expression, bindings, Separator.Or);
     }
 }

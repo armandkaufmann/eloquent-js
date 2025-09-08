@@ -5,6 +5,8 @@ import HavingRaw from "../statement/having/HavingRaw.js";
 import OrHavingRaw from "../statement/having/OrHavingRaw.js";
 import HavingBetween from "../statement/having/HavingBetween.js";
 import OrHavingBetween from "../statement/having/OrHavingBetween.js";
+import Raw from "../statement/raw/Raw.js";
+import Separator from "../../enums/Separator.js";
 
 export default class HavingCallback {
     /** @type {Group}  */
@@ -18,13 +20,18 @@ export default class HavingCallback {
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns HavingCallback
      * @throws InvalidComparisonOperatorError
      */
     having(column, operator, value = null) {
+        if (column instanceof Raw) {
+            this.#query.push(column.withSeparator(Separator.And));
+            return this;
+        }
+
         if (!value) {
             value = operator;
             operator = '=';
@@ -38,13 +45,18 @@ export default class HavingCallback {
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns HavingCallback
      * @throws InvalidComparisonOperatorError
      */
     orHaving(column, operator, value = null) {
+        if (column instanceof Raw) {
+            this.#query.push(column.withSeparator(Separator.Or));
+            return this;
+        }
+
         if (!value) {
             value = operator;
             operator = '=';

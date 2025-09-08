@@ -1,5 +1,7 @@
 import {Base} from "../Base.js";
 import {Utility} from "../../../utils/Utility.js";
+import Separator from "../../../enums/Separator.js";
+import Condition from "../../../enums/Condition.js";
 
 export default class WhereAny extends Base {
 
@@ -10,7 +12,7 @@ export default class WhereAny extends Base {
      * @param {String} [condition='OR']
      * @param {String} [separator='AND']
      */
-    constructor(columns, operator, value, condition = 'OR', separator = 'AND') {
+    constructor(columns, operator, value, condition = Condition.Or, separator = Separator.And) {
         let query = [];
         let bindings = [];
 

@@ -1,4 +1,6 @@
 import WhereIn from "./WhereIn.js";
+import Separator from "../../../enums/Separator.js";
+import Condition from "../../../enums/Condition.js";
 
 export default class OrWhereIn extends WhereIn {
 
@@ -7,6 +9,6 @@ export default class OrWhereIn extends WhereIn {
      * @param {Array<String|Number>} values
      */
     constructor(column, values) {
-        super(column, values, 'IN', 'OR');
+        super(column, values, Condition.In, Separator.Or);
     }
 }

@@ -1,5 +1,6 @@
 import {Base} from "../Base.js";
 import {Utility} from "../../../utils/Utility.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class WhereNone extends Base {
 
@@ -9,7 +10,7 @@ export default class WhereNone extends Base {
      * @param {String|number} value
      * @param {String} [separator='AND']
      */
-    constructor(columns, operator, value, separator = 'AND') {
+    constructor(columns, operator, value, separator = Separator.And) {
         let query = [];
         let bindings = [];
 

@@ -54,6 +54,9 @@ import Offset from "./statement/offset/Offset.js";
 import HavingBetween from "./statement/having/HavingBetween.js";
 import OrHavingBetween from "./statement/having/OrHavingBetween.js";
 import HavingCallback from "./callback/HavingCallback.js";
+import Raw from "./statement/raw/Raw.js";
+import Separator from "../enums/Separator.js";
+import Condition from "../enums/Condition.js";
 
 export class Query {
     /** @type {?string} */
@@ -104,6 +107,14 @@ export class Query {
      */
     static castResultTo(model) {
         return new Query().castResultTo(model)
+    }
+
+    /**
+     * @param {string} statement
+     * @returns Raw
+     */
+    static raw(statement) {
+        return new Raw(statement);
     }
 
     /**
@@ -224,11 +235,17 @@ export class Query {
     }
 
     /**
-     * @param {...string} columns
+     * @param {...string|Raw} columns
      * @returns Query
      */
     select(...columns) {
-        this.#querySelect.push(new Select([...columns]));
+        columns.forEach((column) => {
+            if (column instanceof Raw) {
+                this.#querySelect.push(column.withSeparator(Separator.Comma));
+            } else {
+                this.#querySelect.push(new Select(column));
+            }
+        });
 
         return this;
     }
@@ -296,7 +313,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: WhereCallback)}} column
+     * @param {string|{(query: WhereCallback)}|Raw} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -305,6 +322,11 @@ export class Query {
     where(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleWhereCallback(column);
+            return this;
+        }
+
+        if (column instanceof Raw) {
+            this.#queryWhere.push(column.withSeparator(Separator.And));
             return this;
         }
 
@@ -321,7 +343,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: WhereCallback)}} column
+     * @param {string|{(query: WhereCallback)}|Raw} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -330,6 +352,11 @@ export class Query {
     orWhere(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleWhereCallback(column, "OR");
+            return this;
+        }
+
+        if (column instanceof Raw) {
+            this.#queryWhere.push(column.withSeparator(Separator.Or));
             return this;
         }
 
@@ -640,11 +667,17 @@ export class Query {
     }
 
     /**
-     * @param {...string} columns
+     * @param {...string|Raw} columns
      * @returns Query
      */
     groupBy(...columns) {
-        this.#queryGroupBy.push(new GroupBy([...columns]));
+        columns.forEach((column) => {
+            if (column instanceof Raw) {
+                this.#queryGroupBy.push(column.withSeparator(Separator.Comma));
+            } else {
+                this.#queryGroupBy.push(new GroupBy(column));
+            }
+        });
 
         return this;
     }
@@ -660,7 +693,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: HavingCallback)}} column
+     * @param {string|{(query: HavingCallback)}|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -669,6 +702,11 @@ export class Query {
     having(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleHavingCallback(column);
+            return this;
+        }
+
+        if (column instanceof Raw) {
+            this.#queryHaving.push(column.withSeparator(Separator.And));
             return this;
         }
 
@@ -685,7 +723,7 @@ export class Query {
     }
 
     /**
-     * @param {string|{(query: HavingCallback)}} column
+     * @param {string|{(query: HavingCallback)}|Raw} column
      * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
@@ -694,6 +732,11 @@ export class Query {
     orHaving(column, operator, value = null) {
         if (typeof column === "function") {
             this.#handleHavingCallback(column, "OR");
+            return this;
+        }
+
+        if (column instanceof Raw) {
+            this.#queryHaving.push(column.withSeparator(Separator.Or));
             return this;
         }
 
@@ -760,21 +803,40 @@ export class Query {
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @param {"ASC"|"DESC"} [order=ASC]
      * @returns Query
      */
-    orderBy(column, order = "DESC") {
+    orderBy(column, order = "ASC") {
+        if (column instanceof Raw) {
+            this.#queryOrderBy.push(column.withSeparator(Separator.Comma).appendStatement(order));
+            return this;
+        }
+
         this.#queryOrderBy.push(new OrderBy(column, order));
         return this;
     }
 
     /**
-     * @param {string} column
+     * @param {string|Raw} column
      * @returns Query
      */
     orderByDesc(column) {
+        if (column instanceof Raw) {
+            this.#queryOrderBy.push(column.withSeparator(Separator.Comma).appendStatement("DESC"));
+            return this;
+        }
+
         this.#queryOrderBy.push(new OrderByDesc(column));
+        return this;
+    }
+
+    /**
+     * @param {string} expression
+     * @returns Query
+     */
+    orderByRaw(expression) {
+        this.#queryOrderBy.push(new Raw(expression).withSeparator(Separator.Comma));
         return this;
     }
 
@@ -801,7 +863,7 @@ export class Query {
      * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
-    #handleWhereCallback(callback, condition = "AND") {
+    #handleWhereCallback(callback, condition = Condition.And) {
         const group = new Group(condition);
         const whereCallback = new WhereCallback(group);
 
@@ -815,7 +877,7 @@ export class Query {
      * @param {"AND"|"OR"} [condition="AND"]
      * @returns void
      */
-    #handleHavingCallback(callback, condition = "AND") {
+    #handleHavingCallback(callback, condition = Condition.And) {
         const group = new Group(condition);
         const whereCallback = new HavingCallback(group);
 

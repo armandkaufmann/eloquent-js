@@ -1,4 +1,5 @@
 import {Base} from "../Base.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class SelectRaw extends Base {
 
@@ -10,6 +11,6 @@ export default class SelectRaw extends Base {
     constructor(expression, bindings = null) {
         const bindingArray = bindings ? bindings : [];
 
-        super(bindingArray, expression, ',');
+        super(bindingArray, expression, Separator.Comma);
     }
 }

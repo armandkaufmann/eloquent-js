@@ -1,5 +1,6 @@
 import {Base} from "../Base.js";
 import {Utility} from "../../../utils/Utility.js";
+import Separator from "../../../enums/Separator.js";
 
 export default class OrderBy extends Base {
 
@@ -9,9 +10,8 @@ export default class OrderBy extends Base {
      * @returns Query
      */
     constructor(column, order = "ASC") {
-        const separator = ',';
         const query = `${Utility.escapeColumnString(column)} ${order}`;
 
-        super([], query, separator);
+        super([], query, Separator.Comma);
     }
 }

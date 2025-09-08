@@ -74,7 +74,7 @@ describe("QueryBuilderTest", () => {
                     .having('class', 'LIKE', '%example%')
                     .get();
 
-                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING `class` LIKE '%example%' ORDER BY `id` DESC LIMIT 2 OFFSET 5"
+                const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING `class` LIKE '%example%' ORDER BY `id` ASC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
             });
@@ -724,12 +724,26 @@ describe("QueryBuilderTest", () => {
                 const result = new Query()
                     .from('my_table')
                     .orderBy('test_id')
-                    .orderBy('test_name', 'ASC')
+                    .orderBy('test_name', 'DESC')
                     .orderByDesc('name')
                     .toSql()
                     .get();
 
-                const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` DESC, `test_name` ASC, `name` DESC";
+                const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, `test_name` DESC, `name` DESC";
+
+                expect(result).toBe(expectedResult);
+            });
+
+            test("Order by raw query string", () => {
+                const result = new Query()
+                    .from('my_table')
+                    .orderBy('test_id')
+                    .orderByRaw('length(name) DESC')
+                    .orderByDesc('name')
+                    .toSql()
+                    .get();
+
+                const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, length(name) DESC, `name` DESC";
 
                 expect(result).toBe(expectedResult);
             });
@@ -1033,6 +1047,116 @@ describe("QueryBuilderTest", () => {
                     .update(fields);
 
                 expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 LIMIT 5 OFFSET 5");
+            })
+        });
+
+        describe("Raw", () => {
+            describe("Select", () => {
+                test("Insert raw statement: Select", () => {
+                    const result = new Query()
+                        .from('test_models')
+                        .select('test_id', Query.raw('COUNT(*) as count'))
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT `test_id`, COUNT(*) as count FROM `test_models`";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
+
+            describe("Where", () => {
+                test("Insert raw statement: Where", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .where('test_id', '=', 5)
+                        .where(Query.raw("nationality LIKE %alien%"))
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_id` = 5 AND nationality LIKE %alien%";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Insert raw statement: OrWhere", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .where('test_id', '=', 5)
+                        .orWhere(Query.raw("nationality LIKE %alien%"))
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` WHERE `test_id` = 5 OR nationality LIKE %alien%";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
+
+            describe("Having", () => {
+                test("Insert raw statement: Having", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .having('test_id', 5)
+                        .having(Query.raw('SUM(orders) > 100'))
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 AND SUM(orders) > 100");
+                });
+
+                test("Insert raw statement: OrHaving", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .having('test_id', 5)
+                        .orHaving(Query.raw('SUM(orders) > 100'))
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 OR SUM(orders) > 100");
+                });
+            });
+
+            describe("OrderBy", () => {
+                test("Insert raw statement: OrderBy", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .orderBy('test_id')
+                        .orderBy(Query.raw("length(name)"))
+                        .orderBy('date')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, length(name) ASC, `date` ASC";
+
+                    expect(result).toBe(expectedResult);
+                });
+
+                test("Insert raw statement: OrderByDesc", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .orderBy('test_id')
+                        .orderByDesc(Query.raw("length(name)"))
+                        .orderBy('date')
+                        .toSql()
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `my_table` ORDER BY `test_id` ASC, length(name) DESC, `date` ASC";
+
+                    expect(result).toBe(expectedResult);
+                });
+            });
+
+            describe("GroupBy", () => {
+                test("Insert raw statement: GroupBy", () => {
+                    const result = new Query()
+                        .from('my_table')
+                        .groupBy('name', Query.raw("DATE(created_at)"), 'order_id')
+                        .toSql()
+                        .get();
+
+                    expect(result).toBe("SELECT * FROM `my_table` GROUP BY `name`, DATE(created_at), `order_id`");
+                });
             })
         });
 
