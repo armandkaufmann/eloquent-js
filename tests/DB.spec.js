@@ -130,5 +130,7 @@ describe('DB Test', () => {
 
             expect(dbMock.run).not.toHaveBeenCalled();
         });
+
+        //TODO: Write a test for catching an error and return false
     });
 })
