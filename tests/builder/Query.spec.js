@@ -12,6 +12,7 @@ vi.mock("../../src/DB.js", () => {
     DB.prototype.insert = vi.fn();
     DB.prototype.all = vi.fn();
     DB.prototype.get = vi.fn();
+    DB.prototype.updateOrDelete = vi.fn();
 
     return {DB}
 });
@@ -47,8 +48,8 @@ describe("QueryBuilderTest", () => {
                     await expect(async () => await query.insert({taco: 'tuesday'})).rejects.toThrowError(TableNotSetError);
                 });
 
-                test("Update", () => {
-                    expect(() => query.update({taco: 'tuesday'})).toThrow(TableNotSetError);
+                test("Update", async () => {
+                    await expect(async () => await query.update({taco: 'tuesday'})).rejects.toThrow(TableNotSetError);
                 });
             })
 
@@ -1034,21 +1035,22 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Update", () => {
-            test("Builds full update query string", () => {
+            test("Builds full update query string", async () => {
                 const fields = {
                     name: 'john',
                     address: '123 Taco Lane Ave St'
                 }
 
-                const result = Query
+                const result = await Query
                     .toSql()
                     .from('users')
                     .where('id', '=', 5)
                     .limit(5)
                     .offset(5)
+                    .orderBy('name')
                     .update(fields);
 
-                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 LIMIT 5");
+                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 ORDER BY `name` ASC LIMIT 5");
             })
         });
 
@@ -1262,7 +1264,7 @@ describe("QueryBuilderTest", () => {
     describe("Execute Queries", () => {
         describe("Insert", () => {
             test("It binds and executes query", async () => {
-                DB.prototype.insert.mockResolvedValue(true);
+                DB.prototype.insert.mockResolvedValueOnce(true);
 
                 const table = "users";
                 const expectedQuery = "INSERT INTO users (name, age, sex) VALUES (?, ?, ?)";
@@ -1285,7 +1287,7 @@ describe("QueryBuilderTest", () => {
         describe("Get", () => {
             test("It binds and executes query", async () => {
                 const mockGetReturn = [{foo: 'bar'}];
-                DB.prototype.all.mockResolvedValue(mockGetReturn);
+                DB.prototype.all.mockResolvedValueOnce(mockGetReturn);
 
                 const result = await Query
                     .from('my_table')
@@ -1311,7 +1313,7 @@ describe("QueryBuilderTest", () => {
         describe("First", () => {
             test("It binds and executes query", async () => {
                 const mockGetReturn = {foo: 'bar'};
-                DB.prototype.get.mockResolvedValue(mockGetReturn);
+                DB.prototype.get.mockResolvedValueOnce(mockGetReturn);
 
                 const result = await Query
                     .from('my_table')
@@ -1331,6 +1333,33 @@ describe("QueryBuilderTest", () => {
                 expect(DB.prototype.get).toHaveBeenCalledOnce();
                 expect(DB.prototype.get).toHaveBeenCalledWith(preparedQuery, preparedBindings);
             });
+        });
+
+        describe("Update", () => {
+            test("It binds and executes query", async () => {
+                const mockUpdateReturn = 1;
+                DB.prototype.updateOrDelete.mockResolvedValueOnce(mockUpdateReturn);
+
+                const fields = {
+                    name: 'john',
+                    address: '123 Taco Lane Ave St'
+                }
+
+                const result = await Query
+                    .from('users')
+                    .where('id', '=', 5)
+                    .limit(5)
+                    .offset(5)
+                    .orderBy('name')
+                    .update(fields);
+
+                const preparedQuery ="UPDATE users SET name = ?, address = ? WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+                const preparedBindings = ['john', '123 Taco Lane Ave St', 5, 5]
+
+                expect(result).toEqual(mockUpdateReturn);
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledOnce();
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledWith(preparedQuery, preparedBindings);
+            })
         });
     })
 });

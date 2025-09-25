@@ -202,22 +202,23 @@ export class Query {
     }
 
     /**
+     * @async
      * @param {Record<string, any>} fields
-     * @returns {string|Model|Record<string, any>|null}
+     * @returns {string|Promise<number|null>}
      */
-    update(fields) {
+    async update(fields) {
         this.#validateTableSet();
 
         if (this.#toSql) {
             return this.#buildFullUpdateSqlQuery(fields);
         }
 
-        //TODO: use DBConn to execute statement
-        return this;
+        const statement = this.#buildFullUpdatePrepareObject(fields);
+        return await this.#database.updateOrDelete(statement.query, statement.bindings);
     }
 
     /**
-     * @returns {boolean|string} - returns true if the record was successfully deleted, false if not.
+     * @returns {string|Promise<number|null>} - returns number of records deleted.
      */
     delete() {
         this.#validateTableSet();
@@ -933,6 +934,40 @@ export class Query {
         return this.#joinQueryStrings(queries)
     }
 
+    /**
+     * @returns PrepareObject
+     */
+    #buildFullUpdatePrepareObject(fields) {
+        const queries = [
+            this.#buildPartialUpdatePrepareObject(fields), this.#queryWhere.prepare(),
+            this.#queryOrderBy.prepare(), this.#limit.prepare(),
+        ];
+
+        return this.#joinPrepareObjects(queries)
+    }
+
+    /**
+     * @returns PrepareObject
+     */
+    #buildPartialUpdatePrepareObject(fields) {
+        let pairs = [];
+        let bindings = [];
+
+        for (const [column, value] of Object.entries(fields)) {
+            pairs.push(`${column} = ?`);
+            bindings.push(value);
+        }
+
+        const query = "UPDATE " + this.#table + " SET " + pairs.join(', ');
+
+        return {
+            query, bindings
+        };
+    }
+
+    /**
+     * @returns string
+     */
     #buildPartialUpdateSqlQuery(fields) {
         let pairs = [];
 

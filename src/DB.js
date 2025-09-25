@@ -141,4 +141,23 @@ export class DB {
         return this.#execute(callback);
     }
 
+    /**
+     * @async
+     * @param {string} query
+     * @param {Array<string>} [bindings=[]]
+     * @returns {Promise<Boolean|null>}
+     */
+    async updateOrDelete(query, bindings = []) {
+        const callback = async () => {
+            try {
+                return await this.#db.run(query, bindings).then((stmt) => stmt.changes);
+            } catch (e) {
+                console.error(e.message, new Error().stack);
+                return null;
+            }
+        }
+
+        return this.#execute(callback);
+    }
+
 }
