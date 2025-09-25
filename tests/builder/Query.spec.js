@@ -1360,7 +1360,7 @@ describe("QueryBuilderTest", () => {
                     .orderBy('name')
                     .update(fields);
 
-                const preparedQuery ="UPDATE users SET name = ?, address = ? WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+                const preparedQuery ="UPDATE `users` SET name = ?, address = ? WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
                 const preparedBindings = ['john', '123 Taco Lane Ave St', 5, 5]
 
                 expect(result).toEqual(mockUpdateReturn);

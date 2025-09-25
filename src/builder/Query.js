@@ -960,7 +960,8 @@ export class Query {
             bindings.push(value);
         }
 
-        const query = "UPDATE " + this.#table + " SET " + pairs.join(', ');
+        const query = "UPDATE " + this.#queryFrom.toggleWithStatement(false).toString()
+            + " SET " + pairs.join(', ');
 
         return {
             query, bindings
