@@ -1050,7 +1050,7 @@ describe("QueryBuilderTest", () => {
                     .orderBy('name')
                     .update(fields);
 
-                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 ORDER BY `name` ASC LIMIT 5");
+                expect(result).toBe("UPDATE `users` SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 ORDER BY `name` ASC LIMIT 5");
             })
         });
 

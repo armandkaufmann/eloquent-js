@@ -976,7 +976,8 @@ export class Query {
             pairs.push(`${column} = ${Utility.valuesToString([value])}`)
         }
 
-        return "UPDATE " + this.#table + " SET " + pairs.join(', ');
+        return "UPDATE " + this.#queryFrom.toggleWithStatement(false).toString()
+            + " SET " + pairs.join(', ');
     }
 
     /**
