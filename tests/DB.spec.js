@@ -120,7 +120,7 @@ describe('DB Test', () => {
 
             expect(dbMock.run).toHaveBeenCalledWith(query, bindings);
 
-            expect(result).toEqual({});
+            expect(result).toEqual(true);
         });
 
         test("it does not prepare and bind if there is no db", async () => {

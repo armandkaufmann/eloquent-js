@@ -114,7 +114,7 @@ export class DB {
      */
     async insert(query, bindings = []) {
         const callback = async () => {
-            return await this.#db.run(query, bindings);
+            return await this.#db.run(query, bindings).then((stmt) => true);
         }
 
         return this.#execute(callback);
