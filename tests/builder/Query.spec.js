@@ -1165,8 +1165,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Delete", () => {
-            test("Builds full delete query string", () => {
-                const result = Query
+            test("Builds full delete query string", async () => {
+                const result = await Query
                     .toSql()
                     .from('users')
                     .orderBy('name', "ASC")
@@ -1262,6 +1262,13 @@ describe("QueryBuilderTest", () => {
     });
 
     describe("Execute Queries", () => {
+        beforeEach(() => {
+            DB.prototype.insert.mockClear();
+            DB.prototype.all.mockClear();
+            DB.prototype.get.mockClear();
+            DB.prototype.updateOrDelete.mockClear();
+        })
+
         describe("Insert", () => {
             test("It binds and executes query", async () => {
                 DB.prototype.insert.mockResolvedValueOnce(true);
@@ -1357,6 +1364,28 @@ describe("QueryBuilderTest", () => {
                 const preparedBindings = ['john', '123 Taco Lane Ave St', 5, 5]
 
                 expect(result).toEqual(mockUpdateReturn);
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledOnce();
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledWith(preparedQuery, preparedBindings);
+            })
+        });
+
+        describe("Delete", () => {
+            test("It binds and executes query", async () => {
+                const mockDeleteReturn = 1;
+                DB.prototype.updateOrDelete.mockResolvedValueOnce(mockDeleteReturn);
+
+                const result = await Query
+                    .from('users')
+                    .where('id', '=', 5)
+                    .limit(5)
+                    .offset(5)
+                    .orderBy('name')
+                    .delete();
+
+                const preparedQuery ="DELETE FROM `users` WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+                const preparedBindings = [5, 5]
+
+                expect(result).toEqual(mockDeleteReturn);
                 expect(DB.prototype.updateOrDelete).toHaveBeenCalledOnce();
                 expect(DB.prototype.updateOrDelete).toHaveBeenCalledWith(preparedQuery, preparedBindings);
             })

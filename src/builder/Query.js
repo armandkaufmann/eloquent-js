@@ -218,17 +218,18 @@ export class Query {
     }
 
     /**
+     * @async
      * @returns {string|Promise<number|null>} - returns number of records deleted.
      */
-    delete() {
+    async delete() {
         this.#validateTableSet();
 
         if (this.#toSql) {
             return this.#buildFullDeleteSqlQuery();
         }
 
-        //TODO: use DBConn to execute statement
-        return true;
+        const statement = this.#buildFullDeletePrepareObject();
+        return await this.#database.updateOrDelete(statement.query, statement.bindings);
     }
 
     /**
@@ -990,6 +991,28 @@ export class Query {
         ];
 
         return this.#joinQueryStrings(queries)
+    }
+
+    /**
+     * @returns PrepareObject
+     */
+    #buildFullDeletePrepareObject() {
+        const queries = [
+            this.#buildPartialDeletePrepareObject(), this.#queryWhere.prepare(),
+            this.#queryOrderBy.prepare(), this.#limit.prepare(),
+        ];
+
+        return this.#joinPrepareObjects(queries)
+    }
+
+    #buildPartialDeletePrepareObject() {
+        const query = "DELETE FROM " + this.#queryFrom
+            .toggleWithStatement(false)
+            .toString();
+
+        const bindings = [];
+
+        return { query, bindings};
     }
 
     #buildPartialDeleteSqlQuery() {

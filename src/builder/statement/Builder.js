@@ -98,6 +98,12 @@ export default class Builder {
         this.#withDistinct = true;
     }
 
+    toggleWithStatement(withStatement) {
+        this.#withStatement = withStatement;
+
+        return this;
+    }
+
     #isNotAppendable() {
         return this.#type === STATEMENTS.limit || this.#type === STATEMENTS.offset;
     }
