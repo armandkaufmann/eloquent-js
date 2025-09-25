@@ -77,7 +77,7 @@ export class Query {
     #queryGroupBy = new Builder(STATEMENTS.group);
     /** @type Builder  */
     #queryHaving = new Builder(STATEMENTS.having);
-    /** @type {Array<string>}  */
+    /** @type Builder  */
     #queryOrderBy = new Builder(STATEMENTS.orderBy);
     /** @type Builder  */
     #limit = new Builder(STATEMENTS.limit);
@@ -148,21 +148,26 @@ export class Query {
     }
 
     /**
+     * @async
      * @throws TableNotSetError
-     * @returns {string|Model[]|Record<string, any>[]|null}
+     * @returns {string|Promise<(Object|Model)[]>|[]}
      * @description Execute and return the result of the current select query. If the ```QueryBuilder``` has a reference to a model
      * then it will return the result cast into the referencing ```Model```. If ```toSql()``` is called beforehand, this will return the full query string.
      * Otherwise, this will
      */
-    get() {
+    async get() {
         this.#validateTableSet();
 
         if (this.#toSql) {
             return this.#buildFullSelectSqlQuery();
         }
 
-        //TODO: use DBConn to execute statement
-        return null;
+        try {
+            const prepareObject = this.#buildFullPrepareObjectQuery();
+            return await this.#database.all(prepareObject.query, prepareObject.bindings);
+        } catch (e) {
+            return [];
+        }
     }
 
     /**
@@ -185,7 +190,7 @@ export class Query {
     /**
      * @async
      * @param {Record<string, any>} fields
-     * @returns {Boolean}
+     * @returns {Promise<Boolean>}
      * @description Executes the query and returns the newly created record
      */
     async insert(fields) {
@@ -195,14 +200,8 @@ export class Query {
             return this.#buildInsertSqlQuery(fields);
         }
 
-        try {
-            const statement = this.#buildPreparedInsertSqlQuery(fields);
-            await this.#database.insert(statement.query, statement.bindings);
-        } catch (e) {
-            return false;
-        }
-
-        return true;
+        const statement = this.#buildPreparedInsertSqlQuery(fields);
+        return await this.#database.insert(statement.query, statement.bindings);
     }
 
     /**
@@ -982,6 +981,35 @@ export class Query {
         ];
 
         return this.#joinQueryStrings(queries);
+    }
+
+    /**
+     * @returns PrepareObject
+     */
+    #buildFullPrepareObjectQuery() {
+        const queries = [
+            this.#querySelect.prepare(), this.#queryFrom.prepare(),
+            this.#queryJoin.prepare(), this.#queryWhere.prepare(),
+            this.#queryGroupBy.prepare(), this.#queryHaving.prepare(),
+            this.#queryOrderBy.prepare(), this.#limit.prepare(),
+            this.#offset.prepare(),
+        ];
+
+        return this.#joinPrepareObjects(queries);
+    }
+
+    /**
+     * @param {Array<PrepareObject>} queries
+     * @returns PrepareObject
+     */
+    #joinPrepareObjects(queries) {
+        const query = this.#joinQueryStrings(queries.map(query => query.query));
+
+        const bindings = queries.reduce((accumulator, query) => {
+            return [...accumulator, ...query.bindings];
+        }, []);
+
+        return {query, bindings};
     }
 
     /**
