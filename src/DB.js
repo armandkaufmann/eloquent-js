@@ -126,15 +126,17 @@ export class DB {
      * @async
      * @param {string} query
      * @param {Array<string>} [bindings=[]]
-     * @returns {Promise<Boolean>}
+     * @param {boolean} [withId=false]
+     * @returns {Promise<boolean|number|null>}
      */
-    async insert(query, bindings = []) {
+    async insert(query, bindings = [], withId = false) {
         const callback = async () => {
             try {
-                return await this.#db.run(query, bindings).then((stmt) => true);
+                return await this.#db.run(query, bindings)
+                    .then((stmt) => withId ? stmt.lastID : true);
             } catch (e) {
                 console.error(e.message, new Error().stack);
-                return false;
+                return withId ? null : false;
             }
         }
 

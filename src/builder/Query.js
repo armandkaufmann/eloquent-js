@@ -188,7 +188,7 @@ export class Query {
      * @async
      * @param {Record<string, any>} fields
      * @returns {Promise<Boolean>}
-     * @description Executes the query and returns the newly created record
+     * @description Executes the query and returns true if record was successfully inserted, false if not
      */
     async insert(fields) {
         this.#validateTableSet();
@@ -199,6 +199,23 @@ export class Query {
 
         const statement = this.#buildPreparedInsertSqlQuery(fields);
         return await this.#database.insert(statement.query, statement.bindings);
+    }
+
+    /**
+     * @async
+     * @param {Record<string, any>} fields
+     * @returns {Promise<number|null>}
+     * @description Executes the query and returns the ID of the newly inserted record
+     */
+    async insertGetId(fields) {
+        this.#validateTableSet();
+
+        if (this.#toSql) {
+            return this.#buildInsertSqlQuery(fields);
+        }
+
+        const statement = this.#buildPreparedInsertSqlQuery(fields);
+        return await this.#database.insert(statement.query, statement.bindings, true);
     }
 
     /**

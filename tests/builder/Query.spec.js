@@ -1289,6 +1289,26 @@ describe("QueryBuilderTest", () => {
                 expect(DB.prototype.insert).toHaveBeenCalledOnce();
                 expect(DB.prototype.insert).toHaveBeenCalledWith(expectedQuery, expectedBindings);
             });
+
+            test("InsertGetID: It binds and executes query", async () => {
+                DB.prototype.insert.mockResolvedValueOnce(1);
+
+                const table = "users";
+                const expectedQuery = "INSERT INTO `users` (name, age, sex) VALUES (?, ?, ?)";
+                const expectedBindings = ['John', 20, 'M'];
+
+                const query = await Query
+                    .from(table)
+                    .insertGetId({
+                        'name': 'John',
+                        'age': 20,
+                        'sex': 'M',
+                    });
+
+                expect(query).toEqual(1);
+                expect(DB.prototype.insert).toHaveBeenCalledOnce();
+                expect(DB.prototype.insert).toHaveBeenCalledWith(expectedQuery, expectedBindings, true);
+            })
         });
 
         describe("Get", () => {
