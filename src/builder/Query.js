@@ -987,7 +987,6 @@ export class Query {
         const queries = [
             queryDelete, this.#queryWhere.toString(),
             this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#offset.toString(),
         ];
 
         return this.#joinQueryStrings(queries)

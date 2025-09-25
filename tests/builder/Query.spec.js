@@ -1175,7 +1175,7 @@ describe("QueryBuilderTest", () => {
                     .offset(1)
                     .delete();
 
-                expect(result).toBe("DELETE FROM users WHERE `name` = 'john' ORDER BY `name` ASC LIMIT 1 OFFSET 1");
+                expect(result).toBe("DELETE FROM users WHERE `name` = 'john' ORDER BY `name` ASC LIMIT 1");
             })
         })
     });
