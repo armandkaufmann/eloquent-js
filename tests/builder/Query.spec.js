@@ -1274,7 +1274,7 @@ describe("QueryBuilderTest", () => {
                 DB.prototype.insert.mockResolvedValueOnce(true);
 
                 const table = "users";
-                const expectedQuery = "INSERT INTO users (name, age, sex) VALUES (?, ?, ?)";
+                const expectedQuery = "INSERT INTO `users` (name, age, sex) VALUES (?, ?, ?)";
                 const expectedBindings = ['John', 20, 'M'];
 
                 const query = await Query

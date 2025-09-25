@@ -914,7 +914,8 @@ export class Query {
             values.push(value);
         }
 
-        const query = "INSERT INTO " + this.#table + " (" + columns.join(', ') +
+        const query = "INSERT INTO " + this.#queryFrom.toggleWithStatement(false).toString()
+            + " (" + columns.join(', ') +
             ") VALUES (" + Array(values.length).fill('?').join(', ') + ")";
 
         return {
