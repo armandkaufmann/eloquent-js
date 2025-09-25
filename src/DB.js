@@ -70,11 +70,16 @@ export class DB {
      * @async
      * @param {string} query
      * @param {Array<String>} [bindings=[]]
-     * @returns {Promise<(Object)[]>}
+     * @returns {Promise<(Object)[]|[]>}
      */
     async all(query, bindings = []) {
         const callback = async () => {
-            return await this.#db.all(query, bindings);
+            try {
+                return await this.#db.all(query, bindings);
+            }  catch (e) {
+                console.error(e.message, new Error().stack);
+                return [];
+            }
         }
 
         return this.#execute(callback);
@@ -84,11 +89,22 @@ export class DB {
      * @async
      * @param {string} query
      * @param {Array<String>} [bindings=[]]
-     * @returns {Promise<Undefined|Object>}
+     * @returns {Promise<null|Object>}
      */
     async get(query, bindings = []) {
         const callback = async () => {
-            return await this.#db.get(query, bindings);
+            try {
+                const result = await this.#db.get(query, bindings);
+
+                if (typeof result === 'undefined') {
+                    return null;
+                }
+
+                return result;
+            } catch (e) {
+                console.error(e.message, new Error().stack);
+                return null;
+            }
         }
 
         return this.#execute(callback);
@@ -117,6 +133,7 @@ export class DB {
             try {
                 return await this.#db.run(query, bindings).then((stmt) => true);
             } catch (e) {
+                console.error(e.message, new Error().stack);
                 return false;
             }
         }

@@ -11,6 +11,7 @@ vi.mock("../../src/DB.js", () => {
     const DB = vi.fn();
     DB.prototype.insert = vi.fn();
     DB.prototype.all = vi.fn();
+    DB.prototype.get = vi.fn();
 
     return {DB}
 });
@@ -38,8 +39,8 @@ describe("QueryBuilderTest", () => {
                     await expect(async () => await query.get()).rejects.toThrow(TableNotSetError);
                 });
 
-                test("First", () => {
-                    expect(() => new Query().first()).toThrow(TableNotSetError);
+                test("First", async () => {
+                    await expect(async () => await new Query().first()).rejects.toThrow(TableNotSetError);
                 });
 
                 test("Insert", async () => {
@@ -997,8 +998,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("First", () => {
-            test("First query string", () => {
-                const result = new Query()
+            test("First query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .toSql()
                     .first();
@@ -1305,6 +1306,31 @@ describe("QueryBuilderTest", () => {
                 expect(DB.prototype.all).toHaveBeenCalledOnce();
                 expect(DB.prototype.all).toHaveBeenCalledWith(preparedQuery, preparedBindings);
             });
-        })
+        });
+
+        describe("First", () => {
+            test("It binds and executes query", async () => {
+                const mockGetReturn = {foo: 'bar'};
+                DB.prototype.get.mockResolvedValue(mockGetReturn);
+
+                const result = await Query
+                    .from('my_table')
+                    .where('name', '=', 'John')
+                    .select('id', 'name')
+                    .groupBy('class')
+                    .offset(5)
+                    .leftJoin('comments', 'my_table.id', '=', 'comments.my_table_id')
+                    .orderBy('id')
+                    .having('class', 'LIKE', '%example%')
+                    .first();
+
+                const preparedQuery = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = ? GROUP BY `class` HAVING `class` LIKE ? ORDER BY `id` ASC LIMIT ? OFFSET ?"
+                const preparedBindings = ['John', '%example%', 1, 5];
+
+                expect(result).toEqual(mockGetReturn);
+                expect(DB.prototype.get).toHaveBeenCalledOnce();
+                expect(DB.prototype.get).toHaveBeenCalledWith(preparedQuery, preparedBindings);
+            });
+        });
     })
 });

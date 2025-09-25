@@ -162,19 +162,16 @@ export class Query {
             return this.#buildFullSelectSqlQuery();
         }
 
-        try {
-            const prepareObject = this.#buildFullPrepareObjectQuery();
-            return await this.#database.all(prepareObject.query, prepareObject.bindings);
-        } catch (e) {
-            return [];
-        }
+        const prepareObject = this.#buildFullPrepareObjectQuery();
+        return await this.#database.all(prepareObject.query, prepareObject.bindings);
     }
 
     /**
-     * @returns {string|Model|Record<string, any>|null}
+     * @async
+     * @returns {string|Promise<Object|Model|null>|null}
      * @description Executes the query and retrieves the first result
      */
-    first() {
+    async first() {
         this.#validateTableSet();
 
         this.limit(1);
@@ -183,8 +180,8 @@ export class Query {
             return this.#buildFullSelectSqlQuery();
         }
 
-        //TODO: use DBConn to execute statement
-        return null;
+        const prepareObject = this.#buildFullPrepareObjectQuery();
+        return await this.#database.get(prepareObject.query, prepareObject.bindings);
     }
 
     /**
