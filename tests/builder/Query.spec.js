@@ -1048,7 +1048,7 @@ describe("QueryBuilderTest", () => {
                     .offset(5)
                     .update(fields);
 
-                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 LIMIT 5 OFFSET 5");
+                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 LIMIT 5");
             })
         });
 

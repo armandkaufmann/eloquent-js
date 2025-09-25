@@ -925,12 +925,9 @@ export class Query {
      * @returns string
      */
     #buildFullUpdateSqlQuery(fields) {
-        const queryUpdate = this.#buildPartialUpdateSqlQuery(fields);
-
         const queries = [
-            queryUpdate, this.#queryWhere.toString(),
+            this.#buildPartialUpdateSqlQuery(fields), this.#queryWhere.toString(),
             this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#offset.toString(),
         ];
 
         return this.#joinQueryStrings(queries)
