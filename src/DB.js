@@ -70,16 +70,16 @@ export class DB {
      * @async
      * @param {string} query
      * @param {Array<String>} [bindings=[]]
-     * @returns {Array<Object>|Array}
+     * @returns {Promise<(Object)[]|[]>}
      */
     async all(query, bindings = []) {
         const callback = async () => {
-            const statement = await this.#db.prepare(query);
-            const result = await statement.all(bindings);
-
-            await statement.finalize();
-
-            return result;
+            try {
+                return await this.#db.all(query, bindings);
+            }  catch (e) {
+                console.error(e.message, new Error().stack);
+                return [];
+            }
         }
 
         return this.#execute(callback);
@@ -89,16 +89,22 @@ export class DB {
      * @async
      * @param {string} query
      * @param {Array<String>} [bindings=[]]
-     * @returns {Undefined|Object}
+     * @returns {Promise<null|Object>}
      */
     async get(query, bindings = []) {
         const callback = async () => {
-            const statement = await this.#db.prepare(query);
-            const result = statement.get(bindings);
+            try {
+                const result = await this.#db.get(query, bindings);
 
-            await statement.finalize();
+                if (typeof result === 'undefined') {
+                    return null;
+                }
 
-            return result;
+                return result;
+            } catch (e) {
+                console.error(e.message, new Error().stack);
+                return null;
+            }
         }
 
         return this.#execute(callback);
@@ -120,11 +126,37 @@ export class DB {
      * @async
      * @param {string} query
      * @param {Array<string>} [bindings=[]]
-     * @returns {null|Object}
+     * @param {boolean} [withId=false]
+     * @returns {Promise<boolean|number|null>}
      */
-    async insert(query, bindings = []) {
+    async insert(query, bindings = [], withId = false) {
         const callback = async () => {
-            return await this.#db.run(query, bindings);
+            try {
+                return await this.#db.run(query, bindings)
+                    .then((stmt) => withId ? stmt.lastID : true);
+            } catch (e) {
+                console.error(e.message, new Error().stack);
+                return withId ? null : false;
+            }
+        }
+
+        return this.#execute(callback);
+    }
+
+    /**
+     * @async
+     * @param {string} query
+     * @param {Array<string>} [bindings=[]]
+     * @returns {Promise<Boolean|null>}
+     */
+    async updateOrDelete(query, bindings = []) {
+        const callback = async () => {
+            try {
+                return await this.#db.run(query, bindings).then((stmt) => stmt.changes);
+            } catch (e) {
+                console.error(e.message, new Error().stack);
+                return null;
+            }
         }
 
         return this.#execute(callback);

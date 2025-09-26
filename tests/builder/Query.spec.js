@@ -9,7 +9,10 @@ import {DB} from "../../src/DB.js";
 
 vi.mock("../../src/DB.js", () => {
     const DB = vi.fn();
-    DB.prototype.insert = vi.fn()
+    DB.prototype.insert = vi.fn();
+    DB.prototype.all = vi.fn();
+    DB.prototype.get = vi.fn();
+    DB.prototype.updateOrDelete = vi.fn();
 
     return {DB}
 });
@@ -17,8 +20,8 @@ vi.mock("../../src/DB.js", () => {
 describe("QueryBuilderTest", () => {
     describe("Building Query Strings", () => {
         describe("To Sql", () => {
-            test("Base query string", () => {
-                const result = new Query()
+            test("Base query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .toSql()
                     .get();
@@ -33,25 +36,25 @@ describe("QueryBuilderTest", () => {
                     query = new Query();
                 });
 
-                test("Get", () => {
-                    expect(() => query.get()).toThrow(TableNotSetError);
+                test("Get", async () => {
+                    await expect(async () => await query.get()).rejects.toThrow(TableNotSetError);
                 });
 
-                test("First", () => {
-                    expect(() => new Query().first()).toThrow(TableNotSetError);
+                test("First", async () => {
+                    await expect(async () => await new Query().first()).rejects.toThrow(TableNotSetError);
                 });
 
                 test("Insert", async () => {
                     await expect(async () => await query.insert({taco: 'tuesday'})).rejects.toThrowError(TableNotSetError);
                 });
 
-                test("Update", () => {
-                    expect(() => query.update({taco: 'tuesday'})).toThrow(TableNotSetError);
+                test("Update", async () => {
+                    await expect(async () => await query.update({taco: 'tuesday'})).rejects.toThrow(TableNotSetError);
                 });
             })
 
-            test("Select", () => {
-                const result = Query
+            test("Select", async () => {
+                const result = await Query
                     .from('my_table')
                     .toSql()
                     .get();
@@ -61,8 +64,8 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe(expectedResult);
             });
 
-            test("builds full query in correct order", () => {
-                const result = Query.toSql()
+            test("builds full query in correct order", async () => {
+                const result = await Query.toSql()
                     .from('my_table')
                     .where('name', '=', 'John')
                     .select('id', 'name')
@@ -81,8 +84,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Where", () => {
-            test("Query String", () => {
-                const result = new Query()
+            test("Query String", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .where('test_id', '=', 5)
                     .where('test_name', '=', 'John')
@@ -94,8 +97,8 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe(expectedResult);
             });
 
-            test("Operator defaults to equals when omitted", () => {
-                const result = new Query()
+            test("Operator defaults to equals when omitted", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .where('test_id', 5)
                     .where('test_name', 'John')
@@ -108,8 +111,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where Raw/Or Where Raw", () => {
-                test("WhereRaw: Builds query string without bindings", () => {
-                    const result = new Query()
+                test("WhereRaw: Builds query string without bindings", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .whereRaw("price > IF(state = 'TX', 200, 100)")
@@ -121,8 +124,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("WhereRaw: Builds query string with bindings", () => {
-                    const result = new Query()
+                test("WhereRaw: Builds query string with bindings", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .whereRaw("price > IF(state = 'TX', ?, 100)", [200])
@@ -134,8 +137,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("OrWhereRaw: Builds query string without bindings", () => {
-                    const result = new Query()
+                test("OrWhereRaw: Builds query string without bindings", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .orWhereRaw("price > IF(state = 'TX', 200, 100)")
@@ -147,8 +150,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("OrWhereRaw: Builds query string with bindings", () => {
-                    const result = new Query()
+                test("OrWhereRaw: Builds query string with bindings", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .orWhereRaw("price > IF(state = 'TX', ?, 100)", [200])
@@ -162,8 +165,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where null/not null", () => {
-                test("Builds where null query string", () => {
-                    const result = new Query()
+                test("Builds where null query string", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .whereNull('test_id')
@@ -175,8 +178,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Builds where null query string", () => {
-                    const result = new Query()
+                test("Builds where null query string", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .whereNotNull('test_id')
@@ -190,8 +193,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Or Where null/Or not null", () => {
-                test("orWhereNull: Builds where null query string", () => {
-                    const result = new Query()
+                test("orWhereNull: Builds where null query string", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .orWhereNull('test_id')
@@ -203,8 +206,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("orWhereNotNull: Builds where null query string", () => {
-                    const result = new Query()
+                test("orWhereNotNull: Builds where null query string", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .orWhereNotNull('test_id')
@@ -218,8 +221,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where Any/Where All", () => {
-                test("whereAny: Builds where query string", () => {
-                    const result = new Query()
+                test("whereAny: Builds where query string", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .whereAny([
@@ -235,8 +238,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("whereAll: Builds where query string", () => {
-                    const result = new Query()
+                test("whereAll: Builds where query string", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .whereAll([
@@ -252,8 +255,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("whereNone: Builds where query string", () => {
-                    const result = new Query()
+                test("whereNone: Builds where query string", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_name', '=', 'John')
                         .whereNone([
@@ -271,8 +274,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Or Where", () => {
-                test("Does not add or if orWhere is called without an existing where", () => {
-                    const result = Query.from('my_table')
+                test("Does not add or if orWhere is called without an existing where", async () => {
+                    const result = await Query.from('my_table')
                         .orWhere('test_id', '=', 5)
                         .toSql()
                         .get();
@@ -282,8 +285,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Adds or in query with where before", () => {
-                    const result = Query.from('my_table')
+                test("Adds or in query with where before", async () => {
+                    const result = await Query.from('my_table')
                         .where('name', '=', 'John')
                         .orWhere('test_id', '=', 5)
                         .toSql()
@@ -294,8 +297,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Operator defaults to equals when omitted", () => {
-                    const result = Query.from('my_table')
+                test("Operator defaults to equals when omitted", async () => {
+                    const result = await Query.from('my_table')
                         .where('name', '=', 'John')
                         .orWhere('test_id', 5)
                         .toSql()
@@ -308,8 +311,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where in/not in", () => {
-                test("Builds where in query string", () => {
-                    const result = Query.from('users')
+                test("Builds where in query string", async () => {
+                    const result = await Query.from('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .whereIn('id', [1, 5, 7])
                         .toSql()
@@ -320,8 +323,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Builds or where in query string", () => {
-                    const result = Query.from('users')
+                test("Builds or where in query string", async () => {
+                    const result = await Query.from('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .orWhereIn('id', [1, 5, 7])
                         .toSql()
@@ -332,8 +335,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Builds where not in query string", () => {
-                    const result = Query.from('users')
+                test("Builds where not in query string", async () => {
+                    const result = await Query.from('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .whereNotIn('id', [1, 5, 7])
                         .toSql()
@@ -344,8 +347,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Builds or where not in query string", () => {
-                    const result = Query.from('users')
+                test("Builds or where not in query string", async () => {
+                    const result = await Query.from('users')
                         .whereIn('name', ['John', 'James', 'Bob'])
                         .orWhereNotIn('id', [1, 5, 7])
                         .toSql()
@@ -359,8 +362,8 @@ describe("QueryBuilderTest", () => {
 
             describe("Where callback", () => {
                 describe("Where", () => {
-                    test("It groups where statement with callback", () => {
-                        const result = Query
+                    test("It groups where statement with callback", async () => {
+                        const result = await Query
                             .from('users')
                             .toSql()
                             .where(($query) => {
@@ -376,8 +379,8 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe(expectedResult);
                     });
 
-                    test("It can correctly add grouped where with an existing where", () => {
-                        const result = Query
+                    test("It can correctly add grouped where with an existing where", async () => {
+                        const result = await Query
                             .from('users')
                             .toSql()
                             .where('age', '>', 90)
@@ -396,8 +399,8 @@ describe("QueryBuilderTest", () => {
                 });
 
                 describe("Or Where", () => {
-                    test("It groups or where statement with callback in typical use case", () => {
-                        const result = Query
+                    test("It groups or where statement with callback in typical use case", async () => {
+                        const result = await Query
                             .from('users')
                             .toSql()
                             .where('age', '>', 90)
@@ -413,8 +416,8 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe(expectedResult);
                     });
 
-                    test("It groups or where statement with callback when only single where statement", () => {
-                        const result = Query
+                    test("It groups or where statement with callback when only single where statement", async () => {
+                        const result = await Query
                             .from('users')
                             .toSql()
                             .orWhere(($query) => {
@@ -432,8 +435,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where between/not between", () => {
-                test("It groups or where statement with callback in typical use case", () => {
-                    const result = Query
+                test("It groups or where statement with callback in typical use case", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -445,8 +448,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("It groups or where statement with callback in typical use case", () => {
-                    const result = Query
+                test("It groups or where statement with callback in typical use case", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .whereNotBetween('age', [18, 25])
@@ -459,8 +462,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where or between/or not between", () => {
-                test("orWhereBetween: It groups or where statement with callback in typical use case", () => {
-                    const result = Query
+                test("orWhereBetween: It groups or where statement with callback in typical use case", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -472,8 +475,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("orWhereBetween: It does not add the OR if there is no previous where query", () => {
-                    const result = Query
+                test("orWhereBetween: It does not add the OR if there is no previous where query", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .orWhereBetween('age', [18, 25])
@@ -484,8 +487,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("orWhereNotBetween: It groups or where statement with callback in typical use case", () => {
-                    const result = Query
+                test("orWhereNotBetween: It groups or where statement with callback in typical use case", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -497,8 +500,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("orWhereNotBetween: It does not add the OR if there is no previous where query", () => {
-                    const result = Query
+                test("orWhereNotBetween: It does not add the OR if there is no previous where query", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .orWhereNotBetween('age', [18, 25])
@@ -511,8 +514,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where column/where between columns/where not between columns", () => {
-                test("whereColumn", () => {
-                    const result = Query
+                test("whereColumn", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -524,8 +527,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("orWhereColumn", () => {
-                    const result = Query
+                test("orWhereColumn", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -537,8 +540,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("whereBetweenColumns", () => {
-                    const result = Query
+                test("whereBetweenColumns", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -550,8 +553,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("orWhereBetweenColumns", () => {
-                    const result = Query
+                test("orWhereBetweenColumns", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -563,8 +566,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("WhereNotBetweenColumns", () => {
-                    const result = Query
+                test("WhereNotBetweenColumns", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -576,8 +579,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("OrWhereNotBetweenColumns", () => {
-                    const result = Query
+                test("OrWhereNotBetweenColumns", async () => {
+                    const result = await Query
                         .from('users')
                         .toSql()
                         .where('id', '>', 1)
@@ -592,8 +595,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Select", () => {
-            test("Select query string", () => {
-                const result = new Query()
+            test("Select query string", async () => {
+                const result = await new Query()
                     .from('test_models')
                     .select('test_id', 'test_name')
                     .toSql()
@@ -605,8 +608,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Distinct:", () => {
-                test("it builds select statement with distinct", () => {
-                    const result = new Query()
+                test("it builds select statement with distinct", async () => {
+                    const result = await new Query()
                         .from('test_models')
                         .distinct()
                         .select('test_id', 'test_name')
@@ -618,8 +621,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("it does not DISTINCT when there is no specified select", () => {
-                    const result = new Query()
+                test("it does not DISTINCT when there is no specified select", async () => {
+                    const result = await new Query()
                         .from('test_models')
                         .distinct()
                         .toSql()
@@ -632,8 +635,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Select Raw:", () => {
-                test("Builds query string with binding", () => {
-                    const result = new Query()
+                test("Builds query string with binding", async () => {
+                    const result = await new Query()
                         .from('test_models')
                         .select('test_id', 'test_name')
                         .selectRaw('price * ? as price_with_tax', [1.0825])
@@ -645,8 +648,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Builds query string without binding", () => {
-                    const result = new Query()
+                test("Builds query string without binding", async () => {
+                    const result = await new Query()
                         .from('test_models')
                         .select('test_id', 'test_name')
                         .selectRaw('price as price_with_tax')
@@ -661,8 +664,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Join", () => {
-            test('builds query to join a table', () => {
-                const result = new Query()
+            test('builds query to join a table', async () => {
+                const result = await new Query()
                     .from('users')
                     .select('users.id', 'users.name', 'posts.title')
                     .join('posts', 'users.id', '=', 'posts.user_id')
@@ -674,8 +677,8 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe(expectedResult);
             });
 
-            test('builds query with multiple joins', () => {
-                const result = new Query()
+            test('builds query with multiple joins', async () => {
+                const result = await new Query()
                     .from('users')
                     .select('users.id', 'users.name', 'posts.title')
                     .join('posts', 'users.id', '=', 'posts.user_id')
@@ -689,8 +692,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe('Left Join', () => {
-                test('builds query to left join a table', () => {
-                    const result = new Query()
+                test('builds query to left join a table', async () => {
+                    const result = await new Query()
                         .from('users')
                         .select('users.id', 'users.name', 'posts.title')
                         .leftJoin('posts', 'users.id', '=', 'posts.user_id')
@@ -704,8 +707,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe('Cross Join', () => {
-                test('builds query to cross join a table', () => {
-                    const result = new Query()
+                test('builds query to cross join a table', async () => {
+                    const result = await new Query()
                         .from('users')
                         .select('users.id', 'users.name', 'posts.title')
                         .crossJoin('comments')
@@ -720,8 +723,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Order by", () => {
-            test("Order by query string", () => {
-                const result = new Query()
+            test("Order by query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .orderBy('test_id')
                     .orderBy('test_name', 'DESC')
@@ -734,8 +737,8 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe(expectedResult);
             });
 
-            test("Order by raw query string", () => {
-                const result = new Query()
+            test("Order by raw query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .orderBy('test_id')
                     .orderByRaw('length(name) DESC')
@@ -750,8 +753,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Group by", () => {
-            test("Group by query string", () => {
-                const result = new Query()
+            test("Group by query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .groupBy('test_id', 'test_name')
                     .toSql()
@@ -760,8 +763,8 @@ describe("QueryBuilderTest", () => {
                 expect(result).toBe("SELECT * FROM `my_table` GROUP BY `test_id`, `test_name`");
             });
 
-            test("Group by raw query string", () => {
-                const result = new Query()
+            test("Group by raw query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .groupBy('test_id', 'test_name')
                     .groupByRaw('role, location')
@@ -773,8 +776,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Having", () => {
-            test("Having query string", () => {
-                const result = new Query()
+            test("Having query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .having('test_id', 5)
                     .having('test_name', '=', 'test')
@@ -785,8 +788,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Having Raw", () => {
-                test("Having raw query string", () => {
-                    const result = new Query()
+                test("Having raw query string", async () => {
+                    const result = await new Query()
                         .from('orders')
                         .having('name', '=', 'test')
                         .havingRaw('SUM(price) > ?', [2500])
@@ -796,8 +799,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' AND SUM(price) > 2500");
                 });
 
-                test("Having raw query string with multiple values", () => {
-                    const result = new Query()
+                test("Having raw query string with multiple values", async () => {
+                    const result = await new Query()
                         .from('orders')
                         .having('name', '=', 'test')
                         .havingRaw('SUM(price) > ? AND SUM(price) < ? AND description = ?', [2500, 5000, "test"])
@@ -810,8 +813,8 @@ describe("QueryBuilderTest", () => {
 
             describe("orHaving/orHavingRaw", () => {
                 describe("OrHaving", () => {
-                    test("Or Having with a previous statement statement", () => {
-                        const result = new Query()
+                    test("Or Having with a previous statement statement", async () => {
+                        const result = await new Query()
                             .from('my_table')
                             .having('test_id', '=', 5)
                             .orHaving('test_name', 'test')
@@ -821,8 +824,8 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 OR `test_name` = 'test'");
                     });
 
-                    test("Doesn't apply Or when no previous having statement", () => {
-                        const result = new Query()
+                    test("Doesn't apply Or when no previous having statement", async () => {
+                        const result = await new Query()
                             .from('my_table')
                             .orHaving('test_name', '=', 'test')
                             .toSql()
@@ -833,8 +836,8 @@ describe("QueryBuilderTest", () => {
                 });
 
                 describe("OrHavingRaw", () => {
-                    test("Or Having Raw with a previous statement", () => {
-                        const result = new Query()
+                    test("Or Having Raw with a previous statement", async () => {
+                        const result = await new Query()
                             .from('my_table')
                             .having('test_id', '=', 5)
                             .orHavingRaw('SUM(price) > ?', [2500])
@@ -844,8 +847,8 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 OR SUM(price) > 2500");
                     });
 
-                    test("Doesn't apply Or when no previous having raw statement", () => {
-                        const result = new Query()
+                    test("Doesn't apply Or when no previous having raw statement", async () => {
+                        const result = await new Query()
                             .from('my_table')
                             .orHavingRaw('SUM(price) > ?', [2500])
                             .toSql()
@@ -857,8 +860,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("HavingBetween/OrHavingBetween", () => {
-                test("Having between query string", () => {
-                    const result = new Query()
+                test("Having between query string", async () => {
+                    const result = await new Query()
                         .from('orders')
                         .having('name', '=', 'test')
                         .havingBetween('orders', [5, 15])
@@ -868,8 +871,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe("SELECT * FROM `orders` HAVING `name` = 'test' AND `orders` BETWEEN 5 AND 15");
                 });
 
-                test("Or Having between query string", () => {
-                    const result = new Query()
+                test("Or Having between query string", async () => {
+                    const result = await new Query()
                         .from('orders')
                         .having('name', '=', 'test')
                         .orHavingBetween('orders', [5, 15])
@@ -882,8 +885,8 @@ describe("QueryBuilderTest", () => {
 
             describe("Having callback", () => {
                 describe("Having", () => {
-                    test("It groups 'HAVING' statement with callback", () => {
-                        const result = Query
+                    test("It groups 'HAVING' statement with callback", async () => {
+                        const result = await Query
                             .from('users')
                             .toSql()
                             .groupBy('account_id')
@@ -904,8 +907,8 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe(expectedResult.join(" "));
                     });
 
-                    test("It can correctly add grouped 'HAVING' with an existing 'HAVING'", () => {
-                        const result = Query
+                    test("It can correctly add grouped 'HAVING' with an existing 'HAVING'", async () => {
+                        const result = await Query
                             .from("users")
                             .toSql()
                             .groupBy("account_id")
@@ -932,8 +935,8 @@ describe("QueryBuilderTest", () => {
                 });
 
                 describe("Or Having", () => {
-                    test("It groups 'OR HAVING' statement with callback in typical use case", () => {
-                        const result = Query
+                    test("It groups 'OR HAVING' statement with callback in typical use case", async () => {
+                        const result = await Query
                             .from("users")
                             .toSql()
                             .groupBy("account_id")
@@ -958,8 +961,8 @@ describe("QueryBuilderTest", () => {
                         expect(result).toBe(expectedResult.join(" "));
                     });
 
-                    test("It groups 'OR HAVING' statement with callback when only single 'HAVING' statement", () => {
-                        const result = Query
+                    test("It groups 'OR HAVING' statement with callback when only single 'HAVING' statement", async () => {
+                        const result = await Query
                             .from('users')
                             .toSql()
                             .groupBy('account_id')
@@ -984,8 +987,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Limit", () => {
-            test("Limit query string", () => {
-                const result = new Query()
+            test("Limit query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .limit(1)
                     .toSql()
@@ -996,8 +999,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("First", () => {
-            test("First query string", () => {
-                const result = new Query()
+            test("First query string", async () => {
+                const result = await new Query()
                     .from('my_table')
                     .toSql()
                     .first();
@@ -1007,8 +1010,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Offset", () => {
-            test("Offset query string", () => {
-                const result = Query
+            test("Offset query string", async () => {
+                const result = await Query
                     .from("users")
                     .offset(5)
                     .toSql()
@@ -1032,28 +1035,29 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Update", () => {
-            test("Builds full update query string", () => {
+            test("Builds full update query string", async () => {
                 const fields = {
                     name: 'john',
                     address: '123 Taco Lane Ave St'
                 }
 
-                const result = Query
+                const result = await Query
                     .toSql()
                     .from('users')
                     .where('id', '=', 5)
                     .limit(5)
                     .offset(5)
+                    .orderBy('name')
                     .update(fields);
 
-                expect(result).toBe("UPDATE users SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 LIMIT 5 OFFSET 5");
+                expect(result).toBe("UPDATE `users` SET name = 'john', address = '123 Taco Lane Ave St' WHERE `id` = 5 ORDER BY `name` ASC LIMIT 5");
             })
         });
 
         describe("Raw", () => {
             describe("Select", () => {
-                test("Insert raw statement: Select", () => {
-                    const result = new Query()
+                test("Insert raw statement: Select", async () => {
+                    const result = await new Query()
                         .from('test_models')
                         .select('test_id', Query.raw('COUNT(*) as count'))
                         .toSql()
@@ -1066,8 +1070,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Where", () => {
-                test("Insert raw statement: Where", () => {
-                    const result = new Query()
+                test("Insert raw statement: Where", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_id', '=', 5)
                         .where(Query.raw("nationality LIKE %alien%"))
@@ -1079,8 +1083,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Insert raw statement: OrWhere", () => {
-                    const result = new Query()
+                test("Insert raw statement: OrWhere", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .where('test_id', '=', 5)
                         .orWhere(Query.raw("nationality LIKE %alien%"))
@@ -1094,8 +1098,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("Having", () => {
-                test("Insert raw statement: Having", () => {
-                    const result = new Query()
+                test("Insert raw statement: Having", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .having('test_id', 5)
                         .having(Query.raw('SUM(orders) > 100'))
@@ -1105,8 +1109,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe("SELECT * FROM `my_table` HAVING `test_id` = 5 AND SUM(orders) > 100");
                 });
 
-                test("Insert raw statement: OrHaving", () => {
-                    const result = new Query()
+                test("Insert raw statement: OrHaving", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .having('test_id', 5)
                         .orHaving(Query.raw('SUM(orders) > 100'))
@@ -1118,8 +1122,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("OrderBy", () => {
-                test("Insert raw statement: OrderBy", () => {
-                    const result = new Query()
+                test("Insert raw statement: OrderBy", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .orderBy('test_id')
                         .orderBy(Query.raw("length(name)"))
@@ -1132,8 +1136,8 @@ describe("QueryBuilderTest", () => {
                     expect(result).toBe(expectedResult);
                 });
 
-                test("Insert raw statement: OrderByDesc", () => {
-                    const result = new Query()
+                test("Insert raw statement: OrderByDesc", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .orderBy('test_id')
                         .orderByDesc(Query.raw("length(name)"))
@@ -1148,8 +1152,8 @@ describe("QueryBuilderTest", () => {
             });
 
             describe("GroupBy", () => {
-                test("Insert raw statement: GroupBy", () => {
-                    const result = new Query()
+                test("Insert raw statement: GroupBy", async () => {
+                    const result = await new Query()
                         .from('my_table')
                         .groupBy('name', Query.raw("DATE(created_at)"), 'order_id')
                         .toSql()
@@ -1161,8 +1165,8 @@ describe("QueryBuilderTest", () => {
         });
 
         describe("Delete", () => {
-            test("Builds full delete query string", () => {
-                const result = Query
+            test("Builds full delete query string", async () => {
+                const result = await Query
                     .toSql()
                     .from('users')
                     .orderBy('name', "ASC")
@@ -1171,7 +1175,7 @@ describe("QueryBuilderTest", () => {
                     .offset(1)
                     .delete();
 
-                expect(result).toBe("DELETE FROM users WHERE `name` = 'john' ORDER BY `name` ASC LIMIT 1 OFFSET 1");
+                expect(result).toBe("DELETE FROM users WHERE `name` = 'john' ORDER BY `name` ASC LIMIT 1");
             })
         })
     });
@@ -1258,14 +1262,19 @@ describe("QueryBuilderTest", () => {
     });
 
     describe("Execute Queries", () => {
+        beforeEach(() => {
+            DB.prototype.insert.mockClear();
+            DB.prototype.all.mockClear();
+            DB.prototype.get.mockClear();
+            DB.prototype.updateOrDelete.mockClear();
+        })
+
         describe("Insert", () => {
             test("It binds and executes query", async () => {
-                //DB.insert returns { stmt: Statement { stmt: undefined }, lastID: 17, changes: 1 }
-                const insertReturn = {lastID: 17, changes: 1};
-                DB.prototype.insert.mockResolvedValue(insertReturn);
+                DB.prototype.insert.mockResolvedValueOnce(true);
 
                 const table = "users";
-                const expectedQuery = "INSERT INTO users (name, age, sex) VALUES (?, ?, ?)";
+                const expectedQuery = "INSERT INTO `users` (name, age, sex) VALUES (?, ?, ?)";
                 const expectedBindings = ['John', 20, 'M'];
 
                 const query = await Query
@@ -1280,6 +1289,126 @@ describe("QueryBuilderTest", () => {
                 expect(DB.prototype.insert).toHaveBeenCalledOnce();
                 expect(DB.prototype.insert).toHaveBeenCalledWith(expectedQuery, expectedBindings);
             });
+
+            test("InsertGetID: It binds and executes query", async () => {
+                DB.prototype.insert.mockResolvedValueOnce(1);
+
+                const table = "users";
+                const expectedQuery = "INSERT INTO `users` (name, age, sex) VALUES (?, ?, ?)";
+                const expectedBindings = ['John', 20, 'M'];
+
+                const query = await Query
+                    .from(table)
+                    .insertGetId({
+                        'name': 'John',
+                        'age': 20,
+                        'sex': 'M',
+                    });
+
+                expect(query).toEqual(1);
+                expect(DB.prototype.insert).toHaveBeenCalledOnce();
+                expect(DB.prototype.insert).toHaveBeenCalledWith(expectedQuery, expectedBindings, true);
+            })
+        });
+
+        describe("Get", () => {
+            test("It binds and executes query", async () => {
+                const mockGetReturn = [{foo: 'bar'}];
+                DB.prototype.all.mockResolvedValueOnce(mockGetReturn);
+
+                const result = await Query
+                    .from('my_table')
+                    .where('name', '=', 'John')
+                    .select('id', 'name')
+                    .limit(2)
+                    .groupBy('class')
+                    .offset(5)
+                    .leftJoin('comments', 'my_table.id', '=', 'comments.my_table_id')
+                    .orderBy('id')
+                    .having('class', 'LIKE', '%example%')
+                    .get();
+
+                const preparedQuery = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = ? GROUP BY `class` HAVING `class` LIKE ? ORDER BY `id` ASC LIMIT ? OFFSET ?"
+                const preparedBindings = ['John', '%example%', 2, 5];
+
+                expect(result).toEqual(mockGetReturn);
+                expect(DB.prototype.all).toHaveBeenCalledOnce();
+                expect(DB.prototype.all).toHaveBeenCalledWith(preparedQuery, preparedBindings);
+            });
+        });
+
+        describe("First", () => {
+            test("It binds and executes query", async () => {
+                const mockGetReturn = {foo: 'bar'};
+                DB.prototype.get.mockResolvedValueOnce(mockGetReturn);
+
+                const result = await Query
+                    .from('my_table')
+                    .where('name', '=', 'John')
+                    .select('id', 'name')
+                    .groupBy('class')
+                    .offset(5)
+                    .leftJoin('comments', 'my_table.id', '=', 'comments.my_table_id')
+                    .orderBy('id')
+                    .having('class', 'LIKE', '%example%')
+                    .first();
+
+                const preparedQuery = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = ? GROUP BY `class` HAVING `class` LIKE ? ORDER BY `id` ASC LIMIT ? OFFSET ?"
+                const preparedBindings = ['John', '%example%', 1, 5];
+
+                expect(result).toEqual(mockGetReturn);
+                expect(DB.prototype.get).toHaveBeenCalledOnce();
+                expect(DB.prototype.get).toHaveBeenCalledWith(preparedQuery, preparedBindings);
+            });
+        });
+
+        describe("Update", () => {
+            test("It binds and executes query", async () => {
+                const mockUpdateReturn = 1;
+                DB.prototype.updateOrDelete.mockResolvedValueOnce(mockUpdateReturn);
+
+                const fields = {
+                    name: 'john',
+                    address: '123 Taco Lane Ave St'
+                }
+
+                const result = await Query
+                    .from('users')
+                    .where('id', '=', 5)
+                    .limit(5)
+                    .offset(5)
+                    .orderBy('name')
+                    .update(fields);
+
+                const preparedQuery ="UPDATE `users` SET name = ?, address = ? WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+                const preparedBindings = ['john', '123 Taco Lane Ave St', 5, 5]
+
+                expect(result).toEqual(mockUpdateReturn);
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledOnce();
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledWith(preparedQuery, preparedBindings);
+            })
+        });
+
+        describe("Delete", () => {
+            test("It binds and executes query", async () => {
+                const mockDeleteReturn = 1;
+                DB.prototype.updateOrDelete.mockResolvedValueOnce(mockDeleteReturn);
+
+                const result = await Query
+                    .from('users')
+                    .where('id', '=', 5)
+                    .limit(5)
+                    .offset(5)
+                    .orderBy('name')
+                    .delete();
+
+                const preparedQuery ="DELETE FROM `users` WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+                const preparedBindings = [5, 5]
+
+                expect(result).toEqual(mockDeleteReturn);
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledOnce();
+                expect(DB.prototype.updateOrDelete).toHaveBeenCalledWith(preparedQuery, preparedBindings);
+            })
         });
     })
 });

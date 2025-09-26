@@ -15,6 +15,8 @@ vi.mock('sqlite', () => {
     const sqliteMock = {
         prepare: vi.fn().mockResolvedValue(statementMock),
         run: vi.fn().mockResolvedValue({}),
+        all: vi.fn().mockResolvedValue([{}]),
+        get: vi.fn().mockResolvedValue({}),
         close: vi.fn().mockResolvedValue(),
     }
 
@@ -52,21 +54,17 @@ describe('DB Test', () => {
         test("It prepares and runs the query", async () => {
             const result = await db.all(query, bindings);
 
-            expect(dbMock.prepare).toHaveBeenCalledWith(query);
-            expect(statementMock.all).toHaveBeenCalledWith(bindings);
-            expect(statementMock.finalize).toHaveBeenCalledOnce();
+            expect(dbMock.all).toHaveBeenCalledWith(query, bindings);
 
-            expect(result).toEqual([{'name': 'test'}]);
+            expect(result).toEqual([{}]);
         });
 
-        test("it does not prepare and bind if there is no db", async () => {
+        test("it does not run if there is no db", async () => {
             open.mockImplementationOnce(async () => null);
 
             await expect(async () => await db.all()).rejects.toThrowError(DatabaseNotFoundError);
 
-            expect(dbMock.prepare).not.toHaveBeenCalled();
-            expect(statementMock.all).not.toHaveBeenCalled();
-            expect(statementMock.finalize).not.toHaveBeenCalled();
+            expect(dbMock.all).not.toHaveBeenCalled();
         });
     });
 
@@ -88,21 +86,17 @@ describe('DB Test', () => {
         test("It prepares and runs the query", async () => {
             const result = await db.get(query, bindings);
 
-            expect(dbMock.prepare).toHaveBeenCalledWith(query);
-            expect(statementMock.get).toHaveBeenCalledWith(bindings);
-            expect(statementMock.finalize).toHaveBeenCalledOnce();
+            expect(dbMock.get).toHaveBeenCalledWith(query, bindings);
 
-            expect(result).toEqual({'name': 'test'});
+            expect(result).toEqual({});
         });
 
-        test("it does not prepare and bind if there is no db", async () => {
+        test("it does not run if there is no db", async () => {
             open.mockImplementationOnce(async () => null);
 
             await expect(async () => await db.get()).rejects.toThrowError(DatabaseNotFoundError);
 
-            expect(dbMock.prepare).not.toHaveBeenCalled();
-            expect(statementMock.get).not.toHaveBeenCalled();
-            expect(statementMock.finalize).not.toHaveBeenCalled();
+            expect(dbMock.get).not.toHaveBeenCalled();
         });
     });
 
@@ -126,7 +120,7 @@ describe('DB Test', () => {
 
             expect(dbMock.run).toHaveBeenCalledWith(query, bindings);
 
-            expect(result).toEqual({});
+            expect(result).toEqual(true);
         });
 
         test("it does not prepare and bind if there is no db", async () => {
@@ -136,5 +130,7 @@ describe('DB Test', () => {
 
             expect(dbMock.run).not.toHaveBeenCalled();
         });
+
+        //TODO: Write a test for catching an error and return false
     });
 })

@@ -77,7 +77,7 @@ export class Query {
     #queryGroupBy = new Builder(STATEMENTS.group);
     /** @type Builder  */
     #queryHaving = new Builder(STATEMENTS.having);
-    /** @type {Array<string>}  */
+    /** @type Builder  */
     #queryOrderBy = new Builder(STATEMENTS.orderBy);
     /** @type Builder  */
     #limit = new Builder(STATEMENTS.limit);
@@ -148,28 +148,30 @@ export class Query {
     }
 
     /**
+     * @async
      * @throws TableNotSetError
-     * @returns {string|Model[]|Record<string, any>[]|null}
+     * @returns {string|Promise<(Object|Model)[]>|[]}
      * @description Execute and return the result of the current select query. If the ```QueryBuilder``` has a reference to a model
      * then it will return the result cast into the referencing ```Model```. If ```toSql()``` is called beforehand, this will return the full query string.
      * Otherwise, this will
      */
-    get() {
+    async get() {
         this.#validateTableSet();
 
         if (this.#toSql) {
             return this.#buildFullSelectSqlQuery();
         }
 
-        //TODO: use DBConn to execute statement
-        return null;
+        const prepareObject = this.#buildFullPrepareObjectQuery();
+        return await this.#database.all(prepareObject.query, prepareObject.bindings);
     }
 
     /**
-     * @returns {string|Model|Record<string, any>|null}
+     * @async
+     * @returns {string|Promise<Object|Model|null>|null}
      * @description Executes the query and retrieves the first result
      */
-    first() {
+    async first() {
         this.#validateTableSet();
 
         this.limit(1);
@@ -178,15 +180,15 @@ export class Query {
             return this.#buildFullSelectSqlQuery();
         }
 
-        //TODO: use DBConn to execute statement
-        return null;
+        const prepareObject = this.#buildFullPrepareObjectQuery();
+        return await this.#database.get(prepareObject.query, prepareObject.bindings);
     }
 
     /**
      * @async
      * @param {Record<string, any>} fields
-     * @returns {Boolean}
-     * @description Executes the query and returns the newly created record
+     * @returns {Promise<Boolean>}
+     * @description Executes the query and returns true if record was successfully inserted, false if not
      */
     async insert(fields) {
         this.#validateTableSet();
@@ -195,43 +197,56 @@ export class Query {
             return this.#buildInsertSqlQuery(fields);
         }
 
-        try {
-            const statement = this.#buildPreparedInsertSqlQuery(fields);
-            await this.#database.insert(statement.query, statement.bindings);
-        } catch (e) {
-            return false;
-        }
-
-        return true;
+        const statement = this.#buildPreparedInsertSqlQuery(fields);
+        return await this.#database.insert(statement.query, statement.bindings);
     }
 
     /**
+     * @async
      * @param {Record<string, any>} fields
-     * @returns {string|Model|Record<string, any>|null}
+     * @returns {Promise<number|null>}
+     * @description Executes the query and returns the ID of the newly inserted record
      */
-    update(fields) {
+    async insertGetId(fields) {
+        this.#validateTableSet();
+
+        if (this.#toSql) {
+            return this.#buildInsertSqlQuery(fields);
+        }
+
+        const statement = this.#buildPreparedInsertSqlQuery(fields);
+        return await this.#database.insert(statement.query, statement.bindings, true);
+    }
+
+    /**
+     * @async
+     * @param {Record<string, any>} fields
+     * @returns {string|Promise<number|null>}
+     */
+    async update(fields) {
         this.#validateTableSet();
 
         if (this.#toSql) {
             return this.#buildFullUpdateSqlQuery(fields);
         }
 
-        //TODO: use DBConn to execute statement
-        return this;
+        const statement = this.#buildFullUpdatePrepareObject(fields);
+        return await this.#database.updateOrDelete(statement.query, statement.bindings);
     }
 
     /**
-     * @returns {boolean|string} - returns true if the record was successfully deleted, false if not.
+     * @async
+     * @returns {string|Promise<number|null>} - returns number of records deleted.
      */
-    delete() {
+    async delete() {
         this.#validateTableSet();
 
         if (this.#toSql) {
             return this.#buildFullDeleteSqlQuery();
         }
 
-        //TODO: use DBConn to execute statement
-        return true;
+        const statement = this.#buildFullDeletePrepareObject();
+        return await this.#database.updateOrDelete(statement.query, statement.bindings);
     }
 
     /**
@@ -916,7 +931,8 @@ export class Query {
             values.push(value);
         }
 
-        const query = "INSERT INTO " + this.#table + " (" + columns.join(', ') +
+        const query = "INSERT INTO " + this.#queryFrom.toggleWithStatement(false).toString()
+            + " (" + columns.join(', ') +
             ") VALUES (" + Array(values.length).fill('?').join(', ') + ")";
 
         return {
@@ -929,17 +945,49 @@ export class Query {
      * @returns string
      */
     #buildFullUpdateSqlQuery(fields) {
-        const queryUpdate = this.#buildPartialUpdateSqlQuery(fields);
-
         const queries = [
-            queryUpdate, this.#queryWhere.toString(),
+            this.#buildPartialUpdateSqlQuery(fields), this.#queryWhere.toString(),
             this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#offset.toString(),
         ];
 
         return this.#joinQueryStrings(queries)
     }
 
+    /**
+     * @returns PrepareObject
+     */
+    #buildFullUpdatePrepareObject(fields) {
+        const queries = [
+            this.#buildPartialUpdatePrepareObject(fields), this.#queryWhere.prepare(),
+            this.#queryOrderBy.prepare(), this.#limit.prepare(),
+        ];
+
+        return this.#joinPrepareObjects(queries)
+    }
+
+    /**
+     * @returns PrepareObject
+     */
+    #buildPartialUpdatePrepareObject(fields) {
+        let pairs = [];
+        let bindings = [];
+
+        for (const [column, value] of Object.entries(fields)) {
+            pairs.push(`${column} = ?`);
+            bindings.push(value);
+        }
+
+        const query = "UPDATE " + this.#queryFrom.toggleWithStatement(false).toString()
+            + " SET " + pairs.join(', ');
+
+        return {
+            query, bindings
+        };
+    }
+
+    /**
+     * @returns string
+     */
     #buildPartialUpdateSqlQuery(fields) {
         let pairs = [];
 
@@ -947,7 +995,8 @@ export class Query {
             pairs.push(`${column} = ${Utility.valuesToString([value])}`)
         }
 
-        return "UPDATE " + this.#table + " SET " + pairs.join(', ');
+        return "UPDATE " + this.#queryFrom.toggleWithStatement(false).toString()
+            + " SET " + pairs.join(', ');
     }
 
     /**
@@ -959,10 +1008,31 @@ export class Query {
         const queries = [
             queryDelete, this.#queryWhere.toString(),
             this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#offset.toString(),
         ];
 
         return this.#joinQueryStrings(queries)
+    }
+
+    /**
+     * @returns PrepareObject
+     */
+    #buildFullDeletePrepareObject() {
+        const queries = [
+            this.#buildPartialDeletePrepareObject(), this.#queryWhere.prepare(),
+            this.#queryOrderBy.prepare(), this.#limit.prepare(),
+        ];
+
+        return this.#joinPrepareObjects(queries)
+    }
+
+    #buildPartialDeletePrepareObject() {
+        const query = "DELETE FROM " + this.#queryFrom
+            .toggleWithStatement(false)
+            .toString();
+
+        const bindings = [];
+
+        return { query, bindings};
     }
 
     #buildPartialDeleteSqlQuery() {
@@ -982,6 +1052,35 @@ export class Query {
         ];
 
         return this.#joinQueryStrings(queries);
+    }
+
+    /**
+     * @returns PrepareObject
+     */
+    #buildFullPrepareObjectQuery() {
+        const queries = [
+            this.#querySelect.prepare(), this.#queryFrom.prepare(),
+            this.#queryJoin.prepare(), this.#queryWhere.prepare(),
+            this.#queryGroupBy.prepare(), this.#queryHaving.prepare(),
+            this.#queryOrderBy.prepare(), this.#limit.prepare(),
+            this.#offset.prepare(),
+        ];
+
+        return this.#joinPrepareObjects(queries);
+    }
+
+    /**
+     * @param {Array<PrepareObject>} queries
+     * @returns PrepareObject
+     */
+    #joinPrepareObjects(queries) {
+        const query = this.#joinQueryStrings(queries.map(query => query.query));
+
+        const bindings = queries.reduce((accumulator, query) => {
+            return [...accumulator, ...query.bindings];
+        }, []);
+
+        return {query, bindings};
     }
 
     /**
