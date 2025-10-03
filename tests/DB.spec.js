@@ -14,7 +14,11 @@ vi.mock('sqlite', () => {
 
     const sqliteMock = {
         prepare: vi.fn().mockResolvedValue(statementMock),
-        run: vi.fn().mockResolvedValue({}),
+        run: vi.fn().mockResolvedValue({
+            stmt: {},
+            lastID: 1,
+            changes: 2
+        }),
         all: vi.fn().mockResolvedValue([{}]),
         get: vi.fn().mockResolvedValue({}),
         close: vi.fn().mockResolvedValue(),
@@ -27,6 +31,7 @@ vi.mock('sqlite', () => {
 
 describe('DB Test', () => {
     let db = null;
+    const consoleMock = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     beforeEach(() => {
         db = new DB();
@@ -37,8 +42,8 @@ describe('DB Test', () => {
     });
 
     describe("All", () => {
-        const query = 'SELECT * FROM users WHERE name=1';
-        const bindings = {1: 'John'};
+        const query = 'SELECT * FROM users WHERE name=?';
+        const bindings = ['John'];
 
         test("it connects and disconnects when running the query", async () => {
             await db.all(query, bindings);
@@ -59,12 +64,23 @@ describe('DB Test', () => {
             expect(result).toEqual([{}]);
         });
 
-        test("it does not run if there is no db", async () => {
+        test("It does not run if there is no db", async () => {
             open.mockImplementationOnce(async () => null);
 
             await expect(async () => await db.all()).rejects.toThrowError(DatabaseNotFoundError);
 
             expect(dbMock.all).not.toHaveBeenCalled();
+        });
+
+        test("It can gracefully recover after an error", async () => {
+            dbMock.all.mockImplementationOnce(() => {
+                throw new Error();
+            });
+
+            const result = await db.all(query, bindings);
+
+            expect(result).toEqual([]);
+            expect(consoleMock).toHaveBeenCalledOnce();
         });
     });
 
@@ -98,6 +114,27 @@ describe('DB Test', () => {
 
             expect(dbMock.get).not.toHaveBeenCalled();
         });
+
+        test("It casts undefined to null", async () => {
+            dbMock.get.mockResolvedValueOnce(undefined);
+
+            const result = await db.get(query, bindings);
+
+            expect(dbMock.get).toHaveBeenCalledWith(query, bindings);
+
+            expect(result).toEqual(null);
+        });
+
+        test("It can gracefully recover after an error", async () => {
+            dbMock.get.mockImplementationOnce(() => {
+                throw new Error();
+            });
+
+            const result = await db.get(query, bindings);
+
+            expect(result).toEqual(null);
+            expect(consoleMock).toHaveBeenCalledOnce();
+        });
     });
 
     describe("Insert", () => {
@@ -123,7 +160,7 @@ describe('DB Test', () => {
             expect(result).toEqual(true);
         });
 
-        test("it does not prepare and bind if there is no db", async () => {
+        test("It does not prepare and bind if there is no db", async () => {
             open.mockImplementationOnce(async () => null);
 
             await expect(async () => await db.insert()).rejects.toThrowError(DatabaseNotFoundError);
@@ -131,6 +168,77 @@ describe('DB Test', () => {
             expect(dbMock.run).not.toHaveBeenCalled();
         });
 
-        //TODO: Write a test for catching an error and return false
+        test("It can gracefully recover after an error", async () => {
+            dbMock.run.mockImplementationOnce(() => {
+                throw new Error();
+            });
+
+            const result = await db.insert(query, bindings);
+
+            expect(result).toEqual(false);
+            expect(consoleMock).toHaveBeenCalledOnce();
+        });
+
+        test("Insert (withID = true): It can gracefully recover after an error", async () => {
+            dbMock.run.mockImplementationOnce(() => {
+                throw new Error();
+            });
+
+            const result = await db.insert(query, bindings, true);
+
+            expect(result).toEqual(null);
+            expect(consoleMock).toHaveBeenCalledOnce();
+        });
+
+        test("Insert (withID = true): It can return the last ID of the recently inserted record",  async () => {
+            const result = await db.insert(query, bindings, true);
+
+            expect(dbMock.run).toHaveBeenCalledWith(query, bindings);
+
+            expect(result).toEqual(1);
+        });
+    });
+
+    describe("Update or Delete", () => {
+        const query ="UPDATE `users` SET name = ?, address = ? WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+        const bindings = ['john', '123 Taco Lane Ave St', 5, 5]
+
+        test("it connects and disconnects when running the query", async () => {
+            await db.updateOrDelete(query, bindings);
+
+            expect(open).toHaveBeenCalledWith({
+                filename: defaultConfig.database.file,
+                driver: sqlite3.Database
+            });
+
+            expect(dbMock.close).toHaveBeenCalledOnce();
+        });
+
+        test("It prepares and runs the query", async () => {
+            const result = await db.updateOrDelete(query, bindings);
+
+            expect(dbMock.run).toHaveBeenCalledWith(query, bindings);
+
+            expect(result).toEqual(2);
+        });
+
+        test("It does not prepare and bind if there is no db", async () => {
+            open.mockImplementationOnce(async () => null);
+
+            await expect(async () => await db.updateOrDelete()).rejects.toThrowError(DatabaseNotFoundError);
+
+            expect(dbMock.run).not.toHaveBeenCalled();
+        });
+
+        test("It can gracefully recover after an error", async () => {
+            dbMock.run.mockImplementationOnce(() => {
+                throw new Error();
+            });
+
+            const result = await db.updateOrDelete(query, bindings);
+
+            expect(result).toEqual(null);
+            expect(consoleMock).toHaveBeenCalledOnce();
+        });
     });
 })
