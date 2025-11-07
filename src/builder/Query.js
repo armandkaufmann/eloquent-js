@@ -328,7 +328,7 @@ export class Query {
     }
 
     /**
-     * @param {{():boolean}|boolean|string|null|undefined|object|[]|Array<any>} value
+     * @param {{():boolean|string|null|undefined|object|[]|Array<any>}|boolean|string|null|undefined|object|[]|Array<any>} value
      * @param {{(query: Query, value: any)}} callback
      * @param {{(query: Query, value: any)}} [defaultCallback=null]
      * @returns Query

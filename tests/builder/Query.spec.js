@@ -213,6 +213,29 @@ describe("QueryBuilderTest", () => {
 
                     expect(result).toBe(expectedResult);
                 });
+
+                test.each(types)('Smart type casting expression callback: %s', async (test, value, isTruthy) => {
+                    let callbackCallCount = 0;
+                    const callback = () => {
+                        callbackCallCount += 1;
+                    }
+
+                    const defaultCallback = (query, callbackValue) => {
+                        expect(callbackValue).toEqual(value);
+                    }
+
+                    const expression = () => {
+                        return value;
+                    }
+
+                    await new Query()
+                        .from('my_table')
+                        .when(expression, callback, defaultCallback)
+                        .toSql()
+                        .get();
+
+                    expect(callbackCallCount).toEqual(isTruthy ? 1 : 0);
+                });
             });
         });
 
