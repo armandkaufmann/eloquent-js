@@ -186,6 +186,7 @@ describe("QueryBuilderTest", () => {
                     ["String NOT truthy", "", false],
                     ["Null NOT truthy", null, false],
                     ["Undefined NOT truthy", undefined, false],
+                    ["Number NOT truthy", 1, false],
                 ];
 
                 test.each(types)('Smart type casting: %s', async (test, value, isTruthy) => {
