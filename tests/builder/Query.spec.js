@@ -6,6 +6,7 @@ import {
     TableNotSetError
 } from "../../src/errors/QueryBuilder/Errors.js";
 import {DB} from "../../src/DB.js";
+import {defaultConfig} from "../../src/config/Default.js";
 
 vi.mock("../../src/DB.js", () => {
     const DB = vi.fn();
@@ -80,6 +81,138 @@ describe("QueryBuilderTest", () => {
                 const expectedResult = "SELECT `id`, `name` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING `class` LIKE '%example%' ORDER BY `id` ASC LIMIT 2 OFFSET 5"
 
                 expect(result).toBe(expectedResult);
+            });
+        });
+
+        describe("When", () => {
+            test("Only calls callback when condition is true", async () => {
+                let callbackCallCount = 0;
+                const callback = () => {
+                    callbackCallCount += 1;
+                }
+
+                await new Query()
+                    .from('my_table')
+                    .when(true, callback)
+                    .toSql()
+                    .get();
+
+                expect(callbackCallCount).toEqual(1);
+            });
+
+            test("Only calls callback when expression is true", async () => {
+                let callbackCallCount = 0;
+                const callback = () => {
+                    callbackCallCount += 1;
+                }
+
+                const expression = () => {
+                    return true;
+                }
+
+                await new Query()
+                    .from('my_table')
+                    .when(expression, callback)
+                    .toSql()
+                    .get();
+
+                expect(callbackCallCount).toEqual(1);
+            });
+
+            test("Does not call callback when value expression returns false", async () => {
+                let callbackCallCount = 0;
+                const callback = () => {
+                    callbackCallCount += 1;
+                }
+
+                const expression = () => {
+                    return false;
+                }
+
+                await new Query()
+                    .from('my_table')
+                    .when(expression, callback)
+                    .toSql()
+                    .get();
+
+                expect(callbackCallCount).toEqual(0);
+            });
+
+            test("Does not call callback when condition is false", async () => {
+                await new Query()
+                    .from('my_table')
+                    .when(false, () => {
+                        expect(false).toEqual(true)
+                    })
+                    .toSql()
+                    .get();
+            });
+
+            test("Query object is passed to the callback", async () => {
+                await new Query()
+                    .from('my_table')
+                    .when(true, (object) => {
+                        const isQueryObject = object instanceof Query;
+                        expect(isQueryObject).toBe(true);
+                    })
+                    .toSql()
+                    .get();
+
+                expect.hasAssertions();
+            });
+
+            test("Can build query when condition is met", async () => {
+                const result = await new Query()
+                    .from('my_table')
+                    .when(true, (query) => {
+                        query.where('test_id', '=', 5);
+                    })
+                    .where('test_name', '=', 'John')
+                    .toSql()
+                    .get();
+
+                const expectedResult = "SELECT * FROM `my_table` WHERE `test_id` = 5 AND `test_name` = 'John'";
+
+                expect(result).toBe(expectedResult);
+            });
+
+            describe("Smart type casting", async () => {
+                const types = [
+                    ["Array truthy", ['waldo'], true],
+                    ["Array NOT truthy", [], false],
+                    ["Object truthy", {taco: "man"}, true],
+                    ["Object NOT truthy", {}, false],
+                    ["String truthy", "I'm a string Morty", true],
+                    ["String NOT truthy", "", false],
+                    ["Null NOT truthy", null, false],
+                    ["Undefined NOT truthy", undefined, false],
+                ];
+
+                test.each(types)('Smart type casting: %s', async (test, value, isTruthy) => {
+                    const result = await new Query()
+                        .toSql()
+                        .from('my_table')
+                        .when(value,
+                            (query) => {
+                                query.where('test_id', '=', 5);
+                            },
+                            (query) => {
+                                query.where('test_id', '=', 10);
+                            }
+                        )
+                        .where('test_name', '=', 'John')
+                        .get();
+
+                    let expectedResult;
+
+                    if (isTruthy) {
+                        expectedResult = "SELECT * FROM `my_table` WHERE `test_id` = 5 AND `test_name` = 'John'";
+                    } else {
+                        expectedResult = "SELECT * FROM `my_table` WHERE `test_id` = 10 AND `test_name` = 'John'";
+                    }
+
+                    expect(result).toBe(expectedResult);
+                });
             });
         });
 
@@ -1380,7 +1513,7 @@ describe("QueryBuilderTest", () => {
                     .orderBy('name')
                     .update(fields);
 
-                const preparedQuery ="UPDATE `users` SET name = ?, address = ? WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+                const preparedQuery = "UPDATE `users` SET name = ?, address = ? WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
                 const preparedBindings = ['john', '123 Taco Lane Ave St', 5, 5]
 
                 expect(result).toEqual(mockUpdateReturn);
@@ -1402,7 +1535,7 @@ describe("QueryBuilderTest", () => {
                     .orderBy('name')
                     .delete();
 
-                const preparedQuery ="DELETE FROM `users` WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
+                const preparedQuery = "DELETE FROM `users` WHERE `id` = ? ORDER BY `name` ASC LIMIT ?";
                 const preparedBindings = [5, 5]
 
                 expect(result).toEqual(mockDeleteReturn);

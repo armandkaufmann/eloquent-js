@@ -328,6 +328,54 @@ export class Query {
     }
 
     /**
+     * @param {{():boolean}|boolean|string|null|undefined|object|[]|Array<any>} value
+     * @param {{(query: Query, value: any)}} callback
+     * @param {{(query: Query, value: any)}} [defaultCallback=null]
+     * @returns Query
+     */
+    when(value, callback, defaultCallback = null) {
+        if (typeof value === "function") {
+            value = value();
+        }
+
+        if (this.#isValueTruthy(value)) {
+            callback(this, value);
+        } else {
+            defaultCallback ? defaultCallback(this, value) : null;
+        }
+
+        return this;
+    }
+
+    /**
+     * @param {boolean|string|null|undefined|object|[]|Array<any>} value
+     * @returns boolean
+     */
+    #isValueTruthy(value) {
+        if (value === null || value === undefined){
+            return false;
+        }
+
+        if (typeof value === "boolean") {
+            return value;
+        }
+
+        if (typeof value === "string") {
+            return value.length > 0;
+        }
+
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        }
+
+        if (typeof value === "object") {
+            return Object.keys(value).length > 0;
+        }
+
+        return false;
+    }
+
+    /**
      * @param {string|{(query: WhereCallback)}|Raw} column
      * @param {string} operator
      * @param {string|number|null} [value=null]
