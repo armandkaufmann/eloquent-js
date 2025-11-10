@@ -185,6 +185,13 @@ export class Query {
     }
 
     /**
+     * @returns PrepareObject
+     */
+    prepare() {
+        return this.#buildFullPrepareObjectQuery();
+    }
+
+    /**
      * @async
      * @param {Record<string, any>} fields
      * @returns {Promise<Boolean>}
