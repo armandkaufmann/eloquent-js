@@ -788,6 +788,23 @@ describe("QueryBuilderTest", () => {
 
                     expect(result).toEqual(expectedResult)
                 });
+
+                test("OrWhereExists Callback: Builds query string", async () => {
+                    const result = await Query.from('taco_truck')
+                        .toSql()
+                        .where('item', 'Burrito')
+                        .orWhereExists((query) => {
+                            return query
+                                .from('stock')
+                                .select(Query.raw(1))
+                                .where('item', 'Burrito');
+                        })
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `taco_truck` WHERE `item` = 'Burrito' OR EXISTS (SELECT 1 FROM `stock` WHERE `item` = 'Burrito')"
+
+                    expect(result).toEqual(expectedResult)
+                });
             });
         });
 

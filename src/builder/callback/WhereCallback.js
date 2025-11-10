@@ -28,6 +28,7 @@ import Raw from "../statement/raw/Raw.js";
 import Separator from "../../enums/Separator.js";
 import WhereExists from "../statement/where/WhereExists.js";
 import {Query} from "../Query.js";
+import OrWhereExists from "../statement/where/OrWhereExists.js";
 
 export default class WhereCallback {
     /** @type {Group}  */
@@ -102,6 +103,22 @@ export default class WhereCallback {
         }
 
         this.#query.push(new WhereExists(builder));
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns WhereCallback
+     */
+    orWhereExists(query) {
+        let builder = query;
+
+        if (typeof query === "function") {
+            builder = query(new Query());
+        }
+
+        this.#query.push(new OrWhereExists(builder));
 
         return this;
     }
