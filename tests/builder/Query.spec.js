@@ -755,8 +755,8 @@ describe("QueryBuilderTest", () => {
                 });
             });
 
-            describe("Where Exists", () => {
-                test("Callback: Builds query string", async () => {
+            describe("Where Exists/Where Not Exists", () => {
+                test("WhereExists Callback: Builds query string", async () => {
                     const result = await Query.from('taco_truck')
                         .toSql()
                         .where('item', 'Burrito')
@@ -773,7 +773,7 @@ describe("QueryBuilderTest", () => {
                     expect(result).toEqual(expectedResult)
                 });
 
-                test("Query Arg: Builds query string", async () => {
+                test("WhereExists Query Arg: Builds query string", async () => {
                     const query = Query.from('stock')
                         .select(Query.raw(1))
                         .where('item', 'Burrito');
@@ -802,6 +802,55 @@ describe("QueryBuilderTest", () => {
                         .get();
 
                     const expectedResult = "SELECT * FROM `taco_truck` WHERE `item` = 'Burrito' OR EXISTS (SELECT 1 FROM `stock` WHERE `item` = 'Burrito')"
+
+                    expect(result).toEqual(expectedResult)
+                });
+
+                test("OrWhereExists Query Arg: Builds query string", async () => {
+                    const query = Query.from('stock')
+                        .select(Query.raw(1))
+                        .where('item', 'Burrito');
+
+                    const result = await Query.from('taco_truck')
+                        .toSql()
+                        .where('item', 'Burrito')
+                        .orWhereExists(query)
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `taco_truck` WHERE `item` = 'Burrito' OR EXISTS (SELECT 1 FROM `stock` WHERE `item` = 'Burrito')"
+
+                    expect(result).toEqual(expectedResult)
+                });
+
+                test("WhereNotExists Callback: Builds query string", async () => {
+                    const result = await Query.from('taco_truck')
+                        .toSql()
+                        .where('item', 'Burrito')
+                        .whereNotExists((query) => {
+                            return query
+                                .from('stock')
+                                .select(Query.raw(1))
+                                .where('item', 'Burrito');
+                        })
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `taco_truck` WHERE `item` = 'Burrito' AND NOT EXISTS (SELECT 1 FROM `stock` WHERE `item` = 'Burrito')"
+
+                    expect(result).toEqual(expectedResult)
+                });
+
+                test("WhereNotExists Query Arg: Builds query string", async () => {
+                    const query = Query.from('stock')
+                        .select(Query.raw(1))
+                        .where('item', 'Burrito');
+
+                    const result = await Query.from('taco_truck')
+                        .toSql()
+                        .where('item', 'Burrito')
+                        .whereNotExists(query)
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `taco_truck` WHERE `item` = 'Burrito' AND NOT EXISTS (SELECT 1 FROM `stock` WHERE `item` = 'Burrito')"
 
                     expect(result).toEqual(expectedResult)
                 });

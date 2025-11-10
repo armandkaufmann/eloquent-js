@@ -59,6 +59,7 @@ import Separator from "../enums/Separator.js";
 import Condition from "../enums/Condition.js";
 import WhereExists from "./statement/where/WhereExists.js";
 import OrWhereExists from "./statement/where/OrWhereExists.js";
+import WhereNotExists from "./statement/where/WhereNotExists.js";
 
 export class Query {
     /** @type {?string} */
@@ -456,6 +457,22 @@ export class Query {
         }
 
         this.#queryWhere.push(new WhereExists(builder));
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    whereNotExists(query) {
+        let builder = query;
+
+        if (typeof query === "function") {
+            builder = query(new Query());
+        }
+
+        this.#queryWhere.push(new WhereNotExists(builder));
 
         return this;
     }
