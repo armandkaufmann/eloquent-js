@@ -57,6 +57,7 @@ import HavingCallback from "./callback/HavingCallback.js";
 import Raw from "./statement/raw/Raw.js";
 import Separator from "../enums/Separator.js";
 import Condition from "../enums/Condition.js";
+import WhereExists from "./statement/where/WhereExists.js";
 
 export class Query {
     /** @type {?string} */
@@ -421,7 +422,7 @@ export class Query {
      */
     orWhere(column, operator, value = null) {
         if (typeof column === "function") {
-            this.#handleWhereCallback(column, "OR");
+            this.#handleWhereCallback(column, Separator.Or);
             return this;
         }
 
@@ -438,6 +439,22 @@ export class Query {
         Validation.validateComparisonOperator(operator);
 
         this.#queryWhere.push(new OrWhere(column, operator, value));
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    whereExists(query) {
+        let builder = query;
+
+        if (typeof query === "function") {
+            builder = query(new Query());
+        }
+
+        this.#queryWhere.push(new WhereExists(builder));
 
         return this;
     }

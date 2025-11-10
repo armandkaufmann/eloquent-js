@@ -26,6 +26,8 @@ import WhereAll from "../statement/where/WhereAll.js";
 import WhereNone from "../statement/where/WhereNone.js";
 import Raw from "../statement/raw/Raw.js";
 import Separator from "../../enums/Separator.js";
+import WhereExists from "../statement/where/WhereExists.js";
+import {Query} from "../Query.js";
 
 export default class WhereCallback {
     /** @type {Group}  */
@@ -84,6 +86,22 @@ export default class WhereCallback {
         Validation.validateComparisonOperator(operator);
 
         this.#query.push(new OrWhere(column, operator, value));
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns WhereCallback
+     */
+    whereExists(query) {
+        let builder = query;
+
+        if (typeof query === "function") {
+            builder = query(new Query());
+        }
+
+        this.#query.push(new WhereExists(builder));
 
         return this;
     }
