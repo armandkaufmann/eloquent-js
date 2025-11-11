@@ -489,7 +489,6 @@ export class Query {
     /**
      * @param {{(query: Query)}|Query} query
      * @param {Base} baseClass
-     * @returns Query
      */
     #whereExistsBuilder(query, baseClass) {
         let builder = query;
