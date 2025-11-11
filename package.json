@@ -14,6 +14,11 @@
     "./errors/db": "./src/errors/DB/Errors.js",
     "./errors/query-builder": "./src/errors/QueryBuilder/Errors.js"
   },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE.txt"
+  ],
   "scripts": {
     "test": "vitest --watch=false"
   },
