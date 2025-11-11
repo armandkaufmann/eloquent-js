@@ -26,6 +26,11 @@ import WhereAll from "../statement/where/WhereAll.js";
 import WhereNone from "../statement/where/WhereNone.js";
 import Raw from "../statement/raw/Raw.js";
 import Separator from "../../enums/Separator.js";
+import WhereExists from "../statement/where/WhereExists.js";
+import {Query} from "../Query.js";
+import OrWhereExists from "../statement/where/OrWhereExists.js";
+import WhereNotExists from "../statement/where/WhereNotExists.js";
+import OrWhereNotExists from "../statement/where/OrWhereNotExists.js";
 
 export default class WhereCallback {
     /** @type {Group}  */
@@ -86,6 +91,60 @@ export default class WhereCallback {
         this.#query.push(new OrWhere(column, operator, value));
 
         return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns WhereCallback
+     */
+    whereExists(query) {
+        this.#whereExistsBuilder(query, WhereExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns WhereCallback
+     */
+    orWhereExists(query) {
+        this.#whereExistsBuilder(query, OrWhereExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns WhereCallback
+     */
+    whereNotExists(query) {
+        this.#whereExistsBuilder(query, WhereNotExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns WhereCallback
+     */
+    orWhereNotExists(query) {
+        this.#whereExistsBuilder(query, OrWhereNotExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @param {Base} baseClass
+     */
+    #whereExistsBuilder(query, baseClass) {
+        let builder = query;
+
+        if (typeof query === "function") {
+            builder = query(new Query());
+        }
+
+        this.#query.push(new baseClass(builder));
     }
 
     /**

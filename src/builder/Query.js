@@ -57,6 +57,10 @@ import HavingCallback from "./callback/HavingCallback.js";
 import Raw from "./statement/raw/Raw.js";
 import Separator from "../enums/Separator.js";
 import Condition from "../enums/Condition.js";
+import WhereExists from "./statement/where/WhereExists.js";
+import OrWhereExists from "./statement/where/OrWhereExists.js";
+import WhereNotExists from "./statement/where/WhereNotExists.js";
+import OrWhereNotExists from "./statement/where/OrWhereNotExists.js";
 
 export class Query {
     /** @type {?string} */
@@ -182,6 +186,13 @@ export class Query {
 
         const prepareObject = this.#buildFullPrepareObjectQuery();
         return await this.#database.get(prepareObject.query, prepareObject.bindings);
+    }
+
+    /**
+     * @returns PrepareObject
+     */
+    prepare() {
+        return this.#buildFullPrepareObjectQuery();
     }
 
     /**
@@ -414,7 +425,7 @@ export class Query {
      */
     orWhere(column, operator, value = null) {
         if (typeof column === "function") {
-            this.#handleWhereCallback(column, "OR");
+            this.#handleWhereCallback(column, Separator.Or);
             return this;
         }
 
@@ -433,6 +444,60 @@ export class Query {
         this.#queryWhere.push(new OrWhere(column, operator, value));
 
         return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    whereExists(query) {
+        this.#whereExistsBuilder(query, WhereExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    orWhereExists(query) {
+        this.#whereExistsBuilder(query, OrWhereExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    whereNotExists(query) {
+        this.#whereExistsBuilder(query, WhereNotExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    orWhereNotExists(query) {
+        this.#whereExistsBuilder(query, OrWhereNotExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @param {Base} baseClass
+     */
+    #whereExistsBuilder(query, baseClass) {
+        let builder = query;
+
+        if (typeof query === "function") {
+            builder = query(new Query());
+        }
+
+        this.#queryWhere.push(new baseClass(builder));
     }
 
     /**
