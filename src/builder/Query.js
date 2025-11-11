@@ -451,45 +451,7 @@ export class Query {
      * @returns Query
      */
     whereExists(query) {
-        let builder = query;
-
-        if (typeof query === "function") {
-            builder = query(new Query());
-        }
-
-        this.#queryWhere.push(new WhereExists(builder));
-
-        return this;
-    }
-
-    /**
-     * @param {{(query: Query)}|Query} query
-     * @returns Query
-     */
-    whereNotExists(query) {
-        let builder = query;
-
-        if (typeof query === "function") {
-            builder = query(new Query());
-        }
-
-        this.#queryWhere.push(new WhereNotExists(builder));
-
-        return this;
-    }
-
-    /**
-     * @param {{(query: Query)}|Query} query
-     * @returns Query
-     */
-    orWhereNotExists(query) {
-        let builder = query;
-
-        if (typeof query === "function") {
-            builder = query(new Query());
-        }
-
-        this.#queryWhere.push(new OrWhereNotExists(builder));
+        this.#whereExistsBuilder(query, WhereExists);
 
         return this;
     }
@@ -499,15 +461,44 @@ export class Query {
      * @returns Query
      */
     orWhereExists(query) {
+        this.#whereExistsBuilder(query, OrWhereExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    whereNotExists(query) {
+        this.#whereExistsBuilder(query, WhereNotExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    orWhereNotExists(query) {
+        this.#whereExistsBuilder(query, OrWhereNotExists);
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @param {Base} baseClass
+     * @returns Query
+     */
+    #whereExistsBuilder(query, baseClass) {
         let builder = query;
 
         if (typeof query === "function") {
             builder = query(new Query());
         }
 
-        this.#queryWhere.push(new OrWhereExists(builder));
-
-        return this;
+        this.#queryWhere.push(new baseClass(builder));
     }
 
     /**
