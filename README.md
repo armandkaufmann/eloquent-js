@@ -1,4 +1,4 @@
-# Eloquent JS
+# Eloquentify
 
 A JavaScript ORM inspired by Laravel's Eloquent, providing an intuitive and fluent interface for interacting with SQLite databases.
 
