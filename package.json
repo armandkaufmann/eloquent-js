@@ -4,6 +4,10 @@
   "description": "A lightweight, fluent Object-Relational Mapping (ORM) library for JavaScript that brings Laravel Eloquent's elegant syntax to Node.js applications. Built specifically for SQLite databases, this package provides an intuitive query builder and active record pattern implementation.",
   "type": "module",
   "main": "./src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/armandkaufmann/eloquentify.git"
+  },
   "exports": {
     ".": "./src/index.js",
     "./db": "./src/DB.js",
@@ -19,11 +23,24 @@
     "README.md",
     "LICENSE.txt"
   ],
+  "keywords": [
+    "orm",
+    "sqlite",
+    "javascript",
+    "query-builder",
+    "eloquent",
+    "active-record",
+    "nodejs"
+  ],
   "scripts": {
-    "test": "vitest --watch=false"
+    "test": "vitest --watch=false",
+    "prepublishOnly": "npm run test"
   },
   "author": "Armand Kaufmann",
   "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "change-case": "^5.4.4",
     "lodash": "^4.17.21",
