@@ -854,6 +854,39 @@ describe("QueryBuilderTest", () => {
 
                     expect(result).toEqual(expectedResult)
                 });
+
+                test("OrWhereNotExists Callback: Builds query string", async () => {
+                    const result = await Query.from('taco_truck')
+                        .toSql()
+                        .where('item', 'Burrito')
+                        .orWhereNotExists((query) => {
+                            return query
+                                .from('stock')
+                                .select(Query.raw(1))
+                                .where('item', 'Burrito');
+                        })
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `taco_truck` WHERE `item` = 'Burrito' OR NOT EXISTS (SELECT 1 FROM `stock` WHERE `item` = 'Burrito')"
+
+                    expect(result).toEqual(expectedResult)
+                });
+
+                test("OrWhereNotExists Query Arg: Builds query string", async () => {
+                    const query = Query.from('stock')
+                        .select(Query.raw(1))
+                        .where('item', 'Burrito');
+
+                    const result = await Query.from('taco_truck')
+                        .toSql()
+                        .where('item', 'Burrito')
+                        .orWhereNotExists(query)
+                        .get();
+
+                    const expectedResult = "SELECT * FROM `taco_truck` WHERE `item` = 'Burrito' OR NOT EXISTS (SELECT 1 FROM `stock` WHERE `item` = 'Burrito')"
+
+                    expect(result).toEqual(expectedResult)
+                });
             });
         });
 

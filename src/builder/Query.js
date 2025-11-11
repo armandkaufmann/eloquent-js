@@ -60,6 +60,7 @@ import Condition from "../enums/Condition.js";
 import WhereExists from "./statement/where/WhereExists.js";
 import OrWhereExists from "./statement/where/OrWhereExists.js";
 import WhereNotExists from "./statement/where/WhereNotExists.js";
+import OrWhereNotExists from "./statement/where/OrWhereNotExists.js";
 
 export class Query {
     /** @type {?string} */
@@ -473,6 +474,22 @@ export class Query {
         }
 
         this.#queryWhere.push(new WhereNotExists(builder));
+
+        return this;
+    }
+
+    /**
+     * @param {{(query: Query)}|Query} query
+     * @returns Query
+     */
+    orWhereNotExists(query) {
+        let builder = query;
+
+        if (typeof query === "function") {
+            builder = query(new Query());
+        }
+
+        this.#queryWhere.push(new OrWhereNotExists(builder));
 
         return this;
     }
