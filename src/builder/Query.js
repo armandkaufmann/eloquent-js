@@ -388,7 +388,7 @@ export class Query {
 
     /**
      * @param {string|{(query: WhereCallback)}|Raw} column
-     * @param {string} operator
+     * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
      * @throws InvalidComparisonOperatorError
@@ -418,7 +418,7 @@ export class Query {
 
     /**
      * @param {string|{(query: WhereCallback)}|Raw} column
-     * @param {string} operator
+     * @param {string|number} operator
      * @param {string|number|null} [value=null]
      * @returns Query
      * @throws InvalidComparisonOperatorError

@@ -52,7 +52,7 @@ export class Config {
 
     /**
      * @param {String} key
-     * @param {String|Array|Object|Number} value
+     * @param {string|array|Object|number|null} value
      * @returns void
      */
     set(key, value) {

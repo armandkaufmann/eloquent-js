@@ -93,6 +93,19 @@ describe("Config Test", () => {
             expect(config.get(key)).toEqual(value);
         });
 
+        test('It can set a value to be null', () => {
+            const key = "beef";
+            const originalValue = "wellington";
+
+            config.set(key, originalValue);
+
+            expect(config.get(key)).toEqual(originalValue);
+
+            config.set(key, null);
+
+            expect(config.get(key)).toBe(null);
+        })
+
         test('it sets a key value pair and does not overwrite the current config', () => {
             const key = "database.file";
             const value = "tacos";
