@@ -6,10 +6,13 @@ A JavaScript ORM inspired by Laravel's Eloquent, providing an intuitive and flue
 
 Eloquent JS is a lightweight Object-Relational Mapping (ORM) library that brings Laravel Eloquent's elegant syntax to JavaScript/Node.js. It features a powerful query builder, automatic table name generation, and a simple configuration system.
 
+## Notes: 
+- ⚠️ Support for Eloquent-style models is still in active development. 🔨  
+
 ## Features
 
 - **Fluent Query Builder**: Build complex SQL queries with an intuitive, chainable API
-- **Eloquent-Style Models**: Define models that automatically map to database tables
+- **Eloquent-Style Models [IN DEVELOPMENT 🔨 ]**: Define models that automatically map to database tables
 - **Automatic Table Naming**: Automatically pluralizes and converts model names to snake_case
 - **SQLite Support**: Built-in support for SQLite with both file-based and in-memory databases
 - **Flexible Configuration**: JSON-based configuration system
@@ -50,7 +53,7 @@ Create an `eloquentconfig.json` file in your project root:
 
 ## Usage
 
-### Defining Models [In Development]
+### Defining Models [IN DEVELOPMENT 🔨]
 
 Models automatically infer table names by pluralizing and converting the class name to snake_case:
 
@@ -68,7 +71,7 @@ class Customer extends Model {
 }
 ```
 
-### Basic Model Operations [In Development]
+### Basic Model Operations [IN DEVELOPMENT 🔨]
 
 ```javascript
 // Create a record
