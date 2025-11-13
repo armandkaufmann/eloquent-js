@@ -227,6 +227,7 @@ export class Query {
 
     /**
      * @returns Query
+     * @description Returns a deep clone of the current Query object
      */
     clone() {
         const clone = new Query();
