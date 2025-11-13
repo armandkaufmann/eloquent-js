@@ -163,10 +163,10 @@ export class Query {
         this.#validateTableSet();
 
         if (this.#toSql) {
-            return this.#buildFullSelectSqlQuery();
+            return this.#buildSelectQuery();
         }
 
-        const prepareObject = this.#buildFullPrepareObjectQuery();
+        const prepareObject = this.#buildSelectQuery();
         return await this.#database.all(prepareObject.query, prepareObject.bindings);
     }
 
@@ -181,10 +181,10 @@ export class Query {
         this.limit(1);
 
         if (this.#toSql) {
-            return this.#buildFullSelectSqlQuery();
+            return this.#buildSelectQuery();
         }
 
-        const prepareObject = this.#buildFullPrepareObjectQuery();
+        const prepareObject = this.#buildSelectQuery();
         return await this.#database.get(prepareObject.query, prepareObject.bindings);
     }
 
@@ -192,7 +192,7 @@ export class Query {
      * @returns PrepareObject
      */
     prepare() {
-        return this.#buildFullPrepareObjectQuery();
+        return this.#buildSelectQuery();
     }
 
     /**
@@ -1198,31 +1198,28 @@ export class Query {
     }
 
     /**
-     * @returns string
+     * @returns PrepareObject|string
      */
-    #buildFullSelectSqlQuery() {
-        const queries = [
-            this.#querySelect.toString(), this.#queryFrom.toString(),
-            this.#queryJoin.toString(), this.#queryWhere.toString(),
-            this.#queryGroupBy.toString(), this.#queryHaving.toString(),
-            this.#queryOrderBy.toString(), this.#limit.toString(),
-            this.#offset.toString(),
+    #buildSelectQuery() {
+        const queryCollection = [
+            this.#querySelect, this.#queryFrom,
+            this.#queryJoin, this.#queryWhere,
+            this.#queryGroupBy, this.#queryHaving,
+            this.#queryOrderBy, this.#limit,
+            this.#offset,
         ];
 
-        return this.#joinQueryStrings(queries);
-    }
+        const queries = queryCollection.map((query) => {
+            if (this.#toSql) {
+                return query.toString();
+            }
 
-    /**
-     * @returns PrepareObject
-     */
-    #buildFullPrepareObjectQuery() {
-        const queries = [
-            this.#querySelect.prepare(), this.#queryFrom.prepare(),
-            this.#queryJoin.prepare(), this.#queryWhere.prepare(),
-            this.#queryGroupBy.prepare(), this.#queryHaving.prepare(),
-            this.#queryOrderBy.prepare(), this.#limit.prepare(),
-            this.#offset.prepare(),
-        ];
+            return query.prepare();
+        });
+
+        if (this.#toSql) {
+            return this.#joinQueryStrings(queries);
+        }
 
         return this.#joinPrepareObjects(queries);
     }
