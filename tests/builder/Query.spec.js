@@ -1473,7 +1473,36 @@ describe("QueryBuilderTest", () => {
 
                 expect(result).toBe("DELETE FROM users WHERE `name` = 'john' ORDER BY `name` ASC LIMIT 1");
             })
-        })
+        });
+    });
+
+    describe("Utility Functions", () => {
+        describe("Clone", () => {
+            let query;
+            const queryResult = "SELECT `id`, `name`, `classes` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' GROUP BY `class` HAVING `classes` > 10 ORDER BY `id` ASC LIMIT 2 OFFSET 5";
+
+            beforeEach(() => {
+                query = Query
+                    .from('my_table')
+                    .where('name', '=', 'John')
+                    .select('id', 'name', 'classes')
+                    .limit(2)
+                    .groupBy('class')
+                    .offset(5)
+                    .leftJoin('comments', 'my_table.id', '=', 'comments.my_table_id')
+                    .orderBy('id')
+                    .having('classes', '>', 10);
+            });
+
+            test("It Can deeply clone a query object", async () => {
+                const queryClone = query.clone();
+                const queryCloneResult = await queryClone.toSql().get();
+                const originalQueryResult = await query.toSql().get();
+
+                expect(originalQueryResult).toEqual(queryResult);
+                expect(originalQueryResult).toEqual(queryCloneResult);
+            });
+        });
     });
 
     describe("Validation", () => {
@@ -1706,5 +1735,5 @@ describe("QueryBuilderTest", () => {
                 expect(DB.prototype.updateOrDelete).toHaveBeenCalledWith(preparedQuery, preparedBindings);
             })
         });
-    })
+    });
 });

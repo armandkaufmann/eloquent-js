@@ -196,6 +196,50 @@ export class Query {
     }
 
     /**
+     * @param {?string} table
+     * @param {?Model} model
+     * @param {boolean} toSql
+     * @param {Builder} querySelect
+     * @param {Builder} queryFrom
+     * @param {Builder} queryJoin
+     * @param {Builder} queryWhere
+     * @param {Builder} queryGroupBy
+     * @param {Builder} queryHaving
+     * @param {Builder} queryOrderBy
+     * @param {Builder} limit
+     * @param {Builder} offset
+     */
+    _hydrate(table, model, toSql, querySelect, queryFrom, queryJoin, queryWhere, queryGroupBy, queryHaving, queryOrderBy, limit, offset) {
+        this.#table = table;
+        this.#model = model;
+        this.#toSql = toSql;
+        this.#querySelect = querySelect;
+        this.#queryFrom = queryFrom;
+        this.#queryJoin = queryJoin;
+        this.#queryWhere = queryWhere;
+        this.#queryGroupBy = queryGroupBy;
+        this.#queryHaving = queryHaving;
+        this.#queryOrderBy = queryOrderBy;
+        this.#limit = limit;
+        this.#offset = offset;
+        //shouldn't need this.#database because we always create a new one
+    }
+
+    /**
+     * @returns Query
+     */
+    clone() {
+        const clone = new Query();
+        clone._hydrate(
+            this.#table, this.#model, this.#toSql, this.#querySelect.clone(),
+            this.#queryFrom.clone(), this.#queryJoin.clone(), this.#queryWhere.clone(), this.#queryGroupBy.clone(),
+            this.#queryHaving.clone(), this.#queryOrderBy.clone(), this.#limit.clone(), this.#offset.clone()
+        )
+
+        return clone;
+    }
+
+    /**
      * @async
      * @param {Record<string, any>} fields
      * @returns {Promise<Boolean>}
@@ -363,7 +407,7 @@ export class Query {
      * @returns boolean
      */
     #isValueTruthy(value) {
-        if (value === null || value === undefined){
+        if (value === null || value === undefined) {
             return false;
         }
 
@@ -1145,7 +1189,7 @@ export class Query {
 
         const bindings = [];
 
-        return { query, bindings};
+        return {query, bindings};
     }
 
     #buildPartialDeleteSqlQuery() {
