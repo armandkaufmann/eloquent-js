@@ -64,6 +64,7 @@ import OrWhereNotExists from "./statement/where/OrWhereNotExists.js";
 import {Count} from "./aggregates/Count.js";
 import {Sum} from "./aggregates/Sum.js";
 import {Average} from "./aggregates/Average.js";
+import {Min} from "./aggregates/Min.js";
 
 export class Query {
     /** @type {?string} */
@@ -217,7 +218,7 @@ export class Query {
      * @param {String} column
      * @returns {Number}
      * @throws MissingRequiredArgument
-     * @description Executes the query with an aggregation for the average of a specific column
+     * @description Executes the query with an aggregation for the average value of a specific column
      */
     async avg(column) {
         return this._aggregate(Average, column);
@@ -228,10 +229,21 @@ export class Query {
      * @param {String} column
      * @returns {Number}
      * @throws MissingRequiredArgument
-     * @description Executes the query with an aggregation for the average of a specific column
+     * @description Executes the query with an aggregation for the average value of a specific column
      */
     async average(column) {
         return this.avg(column);
+    }
+
+    /**
+     * @async
+     * @param {String} column
+     * @returns {Number}
+     * @throws MissingRequiredArgument
+     * @description Executes the query with an aggregation for the minimum value of a specific column
+     */
+    async min(column) {
+        return this._aggregate(Min, column);
     }
 
     /**

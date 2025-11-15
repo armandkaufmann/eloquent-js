@@ -1874,6 +1874,36 @@ describe("QueryBuilderTest", () => {
                     expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
                 });
             });
+
+            describe("Min", () => {
+                test("It throws without specified column", async () => {
+                    await expect(
+                        async () => await Query
+                            .from('users')
+                            .where('id', '>', 20)
+                            .min()
+                    ).rejects.toThrow(MissingRequiredArgument);
+
+                    expect(DB.prototype.all).not.toHaveBeenCalled()
+                });
+
+                test("It builds query and executes with specified column", async () => {
+                    const mockReturnValue = [{aggregate: 2}]
+                    DB.prototype.all.mockResolvedValueOnce(mockReturnValue);
+
+                    const expectedQuery = "SELECT MIN(temp_table.`purchase_count`) AS aggregate FROM (SELECT * FROM `users` WHERE `id` > ?) AS temp_table";
+                    const expectedBindings = [20];
+
+                    const result = await Query
+                        .from('users')
+                        .where('id', '>', 20)
+                        .min('purchase_count');
+
+                    expect(result).toEqual(2);
+                    expect(DB.prototype.all).toHaveBeenCalledOnce();
+                    expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+                });
+            });
         });
     });
 });
