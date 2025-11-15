@@ -1494,13 +1494,39 @@ describe("QueryBuilderTest", () => {
                     .having('classes', '>', 10);
             });
 
-            test("It Can deeply clone a query object", async () => {
+            test("Clone: It Can deeply clone a query object", async () => {
                 const queryClone = query.clone();
                 const queryCloneResult = await queryClone.toSql().get();
                 const originalQueryResult = await query.toSql().get();
 
                 expect(originalQueryResult).toEqual(queryResult);
                 expect(originalQueryResult).toEqual(queryCloneResult);
+            });
+
+            test("Clone: It does not use a reference to any internal attribute objects", async () => {
+                const queryClone = query.clone();
+
+                query.where('John', 'Pork');
+
+                const queryCloneResult = await queryClone.toSql().get();
+                const originalQueryResult = await query.toSql().get();
+
+                const result = "SELECT `id`, `name`, `classes` FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` WHERE `name` = 'John' AND `John` = 'Pork' GROUP BY `class` HAVING `classes` > 10 ORDER BY `id` ASC LIMIT 2 OFFSET 5";
+
+                expect(originalQueryResult).toEqual(result);
+                expect(originalQueryResult).not.toEqual(queryCloneResult);
+            });
+
+            test("Clone Without: excludes attributes when cloned", async () => {
+                const queryClone = query.cloneWithout('select', 'where', 'having');
+
+                const queryCloneResult = await queryClone.toSql().get();
+                const originalQueryResult = await query.toSql().get();
+
+                const expectedCloneResult = "SELECT * FROM `my_table` LEFT JOIN `comments` ON `my_table`.`id` = `comments`.`my_table_id` GROUP BY `class` ORDER BY `id` ASC LIMIT 2 OFFSET 5";
+
+                expect(originalQueryResult).toEqual(queryResult);
+                expect(queryCloneResult).toEqual(expectedCloneResult);
             });
         });
     });

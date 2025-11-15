@@ -196,33 +196,62 @@ export class Query {
     }
 
     /**
-     * @param {?string} table
-     * @param {?Model} model
-     * @param {boolean} toSql
-     * @param {Builder} querySelect
-     * @param {Builder} queryFrom
-     * @param {Builder} queryJoin
-     * @param {Builder} queryWhere
-     * @param {Builder} queryGroupBy
-     * @param {Builder} queryHaving
-     * @param {Builder} queryOrderBy
-     * @param {Builder} limit
-     * @param {Builder} offset
+     * @param {Object} attributes
      */
-    _hydrate(table, model, toSql, querySelect, queryFrom, queryJoin, queryWhere, queryGroupBy, queryHaving, queryOrderBy, limit, offset) {
-        this.#table = table;
-        this.#model = model;
-        this.#toSql = toSql;
-        this.#querySelect = querySelect;
-        this.#queryFrom = queryFrom;
-        this.#queryJoin = queryJoin;
-        this.#queryWhere = queryWhere;
-        this.#queryGroupBy = queryGroupBy;
-        this.#queryHaving = queryHaving;
-        this.#queryOrderBy = queryOrderBy;
-        this.#limit = limit;
-        this.#offset = offset;
-        //shouldn't need this.#database because we always create a new one
+    _hydrate(attributes) {
+        this.#table = attributes?.table ?? this.#table;
+        this.#model = attributes?.model ?? this.#model;
+        this.#toSql = attributes?.toSql ?? this.#toSql;
+        this.#querySelect = attributes?.select ?? this.#querySelect;
+        this.#queryFrom = attributes?.from ?? this.#queryFrom;
+        this.#queryJoin = attributes?.join ?? this.#queryJoin;
+        this.#queryWhere = attributes?.where ?? this.#queryWhere;
+        this.#queryGroupBy = attributes?.groupBy ?? this.#queryGroupBy;
+        this.#queryHaving = attributes?.having ?? this.#queryHaving;
+        this.#queryOrderBy = attributes?.orderBy ?? this.#queryOrderBy;
+        this.#limit = attributes?.limit ?? this.#limit;
+        this.#offset = attributes?.offset ?? this.#offset;
+    }
+
+    /**
+     * @returns Object
+     */
+    _getAttributes() {
+        return {
+            table: this.#table,
+            model: this.#model,
+            toSql: this.#toSql,
+            select: this.#querySelect,
+            from: this.#queryFrom,
+            join: this.#queryJoin,
+            where: this.#queryWhere,
+            groupBy: this.#queryGroupBy,
+            having: this.#queryHaving,
+            orderBy: this.#queryOrderBy,
+            limit: this.#limit,
+            offset: this.#offset,
+        };
+    }
+
+    /**
+     * @param {?Array<string>} [exclude=[]]
+     * @returns Object
+     */
+    _filterAttributes(exclude = []) {
+        const attributes = this._getAttributes();
+
+        Object.keys(attributes).map((key) => {
+            if (exclude.includes(key)) {
+                delete attributes[key];
+                return;
+            }
+
+            if (attributes[key] instanceof Builder) {
+                attributes[key] = attributes[key].clone();
+            }
+        });
+
+        return attributes;
     }
 
     /**
@@ -231,11 +260,23 @@ export class Query {
      */
     clone() {
         const clone = new Query();
-        clone._hydrate(
-            this.#table, this.#model, this.#toSql, this.#querySelect.clone(),
-            this.#queryFrom.clone(), this.#queryJoin.clone(), this.#queryWhere.clone(), this.#queryGroupBy.clone(),
-            this.#queryHaving.clone(), this.#queryOrderBy.clone(), this.#limit.clone(), this.#offset.clone()
-        )
+        const attributes = this._filterAttributes();
+
+        clone._hydrate(attributes);
+
+        return clone;
+    }
+
+    /**
+     * @param {...string} attributes
+     * @returns Query
+     * @description Returns a deep clone of the current Query object, without specified attributes
+     */
+    cloneWithout(...attributes) {
+        const clone = new Query();
+        const cloneAttributes = this._filterAttributes(attributes);
+
+        clone._hydrate(cloneAttributes);
 
         return clone;
     }
