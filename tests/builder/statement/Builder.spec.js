@@ -678,48 +678,63 @@ describe('Statement: Statement Builder', () => {
     });
 
     describe("Utility functions", () => {
-       describe("Clone", () => {
-           let firstStatement;
-           let secondStatement;
-           let thirdStatement;
-           let fourthStatement;
-           let fifthStatement;
-           let sixthStatement;
-           const expectedResult = [
-               "WHERE `name` = 'John'",
-               "OR `age` > 20",
-               "AND `sex` IS NULL",
-               "OR `taco` IS NULL",
-               "AND `mouse` IS NOT NULL",
-               "AND (`name` LIKE 'Example%' OR `email` LIKE 'Example%' OR `phone` LIKE 'Example%')"
-           ];
+        describe("Clone", () => {
+            let firstStatement;
+            let secondStatement;
+            let thirdStatement;
+            let fourthStatement;
+            let fifthStatement;
+            let sixthStatement;
+            const expectedResult = [
+                "WHERE `name` = 'John'",
+                "OR `age` > 20",
+                "AND `sex` IS NULL",
+                "OR `taco` IS NULL",
+                "AND `mouse` IS NOT NULL",
+                "AND (`name` LIKE 'Example%' OR `email` LIKE 'Example%' OR `phone` LIKE 'Example%')"
+            ];
 
-           beforeEach(() => {
-               firstStatement = new Where('name', '=', 'John');
-               secondStatement = new OrWhere('age', '>', 20);
-               thirdStatement = new WhereNull('sex');
-               fourthStatement = new OrWhereNull('taco');
-               fifthStatement = new WhereNotNull('mouse');
-               sixthStatement = new WhereAny([
-                   'name',
-                   'email',
-                   'phone',
-               ], 'LIKE', 'Example%');
-           });
+            beforeEach(() => {
+                firstStatement = new Where('name', '=', 'John');
+                secondStatement = new OrWhere('age', '>', 20);
+                thirdStatement = new WhereNull('sex');
+                fourthStatement = new OrWhereNull('taco');
+                fifthStatement = new WhereNotNull('mouse');
+                sixthStatement = new WhereAny([
+                    'name',
+                    'email',
+                    'phone',
+                ], 'LIKE', 'Example%');
+            });
 
-           test("It clones builder", () => {
-               const originalBuilder = new Builder(STATEMENTS.where);
+            test("It clones builder", () => {
+                const originalBuilder = new Builder(STATEMENTS.where);
 
-               originalBuilder.push(firstStatement).push(secondStatement).push(thirdStatement)
-                   .push(fourthStatement).push(fifthStatement).push(sixthStatement);
+                originalBuilder.push(firstStatement).push(secondStatement).push(thirdStatement)
+                    .push(fourthStatement).push(fifthStatement).push(sixthStatement);
 
-               const clonedBuilder = originalBuilder.clone();
-               const originalResult = originalBuilder.toString();
-               const clonedResult = clonedBuilder.toString();
+                const clonedBuilder = originalBuilder.clone();
+                const originalResult = originalBuilder.toString();
+                const clonedResult = clonedBuilder.toString();
 
-               expect(originalResult).toEqual(expectedResult.join(" "));
-               expect(clonedResult).toEqual(expectedResult.join(" "));
-           });
-       });
+                expect(originalResult).toEqual(expectedResult.join(" "));
+                expect(clonedResult).toEqual(expectedResult.join(" "));
+            });
+        });
+
+        describe("Is Empty", () => {
+            test("Returns true if there are no statements", () => {
+                const builder = new Builder(STATEMENTS.where);
+
+                expect(builder.isEmpty()).toEqual(true);
+            });
+
+            test("Returns false if there are statements", () => {
+                const builder = new Builder(STATEMENTS.where);
+                builder.push(new Where('neo', '=', 'simulation'));
+
+                expect(builder.isEmpty()).toEqual(false);
+            });
+        });
     });
 });

@@ -122,6 +122,13 @@ export default class Builder {
     }
 
     /**
+     * @return Boolean
+     */
+    isEmpty() {
+        return this.#statements.length === 0;
+    }
+
+    /**
      * @param {Array<Base|Group>} statements
      * @param {Boolean} type
      * @param {Boolean} withStatement
