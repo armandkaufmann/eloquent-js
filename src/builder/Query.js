@@ -61,6 +61,7 @@ import WhereExists from "./statement/where/WhereExists.js";
 import OrWhereExists from "./statement/where/OrWhereExists.js";
 import WhereNotExists from "./statement/where/WhereNotExists.js";
 import OrWhereNotExists from "./statement/where/OrWhereNotExists.js";
+import {Count} from "./aggregates/Count.js";
 
 export class Query {
     /** @type {?string} */
@@ -154,7 +155,7 @@ export class Query {
     /**
      * @async
      * @throws TableNotSetError
-     * @returns {string|Promise<(Object|Model)[]>|[]}
+     * @returns {Promise<(Object|Model)[]>|Promise<[]>|[]}
      * @description Execute and return the result of the current select query. If the ```QueryBuilder``` has a reference to a model
      * then it will return the result cast into the referencing ```Model```. If ```toSql()``` is called beforehand, this will return the full query string.
      * Otherwise, this will
@@ -172,7 +173,7 @@ export class Query {
 
     /**
      * @async
-     * @returns {string|Promise<Object|Model|null>|null}
+     * @returns {Promise<Object|Model|null>|null}
      * @description Executes the query and retrieves the first result
      */
     async first() {
@@ -186,6 +187,33 @@ export class Query {
 
         const prepareObject = this.#buildSelectQuery();
         return await this.#database.get(prepareObject.query, prepareObject.bindings);
+    }
+
+    /**
+     * @async
+     * @param {String} [column="*"]
+     * @returns {Number}
+     * @description Executes the query with an aggregation for count
+     */
+    async count(column= "*") {
+        return this._aggregate(Count, column);
+    }
+
+    //todo: fix the typing on this for aggregateClass when I implement more classes
+    /**
+     * @async
+     * @param {Object} aggregateClass
+     * @param {String} column
+     * @returns {Number}
+     */
+    async _aggregate(aggregateClass, column) {
+        //todo: check for unions too
+        const clone = this.cloneWithout(this.#queryHaving.isEmpty() ? 'select' : '');
+        const countAggregation = new aggregateClass(clone, column).prepare();
+
+        const dbResult = await this.#database.all(countAggregation.query, countAggregation.bindings);
+
+        return dbResult[0]?.aggregate ?? 0;
     }
 
     /**

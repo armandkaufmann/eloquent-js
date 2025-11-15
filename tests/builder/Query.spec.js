@@ -6,7 +6,6 @@ import {
     TableNotSetError
 } from "../../src/errors/QueryBuilder/Errors.js";
 import {DB} from "../../src/DB.js";
-import {defaultConfig} from "../../src/config/Default.js";
 
 vi.mock("../../src/DB.js", () => {
     const DB = vi.fn();
@@ -1760,6 +1759,44 @@ describe("QueryBuilderTest", () => {
                 expect(DB.prototype.updateOrDelete).toHaveBeenCalledOnce();
                 expect(DB.prototype.updateOrDelete).toHaveBeenCalledWith(preparedQuery, preparedBindings);
             })
+        });
+
+        describe("Aggregates", () => {
+            describe("Count", () => {
+                test("It builds query and executes without specified column", async () => {
+                    const mockReturnValue = [{aggregate: 1}]
+                    DB.prototype.all.mockResolvedValueOnce(mockReturnValue);
+
+                    const expectedQuery = "SELECT COUNT(*) AS aggregate FROM (SELECT * FROM `users` WHERE `id` > ?) AS temp_table";
+                    const expectedBindings = [20];
+
+                    const result = await Query
+                        .from('users')
+                        .where('id', '>', 20)
+                        .count();
+
+                    expect(result).toEqual(1);
+                    expect(DB.prototype.all).toHaveBeenCalledOnce();
+                    expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+                });
+
+                test("It builds query and executes with specified column", async () => {
+                    const mockReturnValue = [{aggregate: 1}]
+                    DB.prototype.all.mockResolvedValueOnce(mockReturnValue);
+
+                    const expectedQuery = "SELECT COUNT(temp_table.`id`) AS aggregate FROM (SELECT * FROM `users` WHERE `id` > ?) AS temp_table";
+                    const expectedBindings = [20];
+
+                    const result = await Query
+                        .from('users')
+                        .where('id', '>', 20)
+                        .count('id');
+
+                    expect(result).toEqual(1);
+                    expect(DB.prototype.all).toHaveBeenCalledOnce();
+                    expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+                });
+            });
         });
     });
 });
