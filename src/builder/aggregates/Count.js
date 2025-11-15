@@ -1,39 +1,23 @@
 import {Utility} from "../../utils/Utility.js";
+import {AGGREGATE_TABLE_ALIAS, BaseAggregate} from "./BaseAggregate.js";
 
-
-export const AGGREGATE_TABLE_ALIAS = "temp_table";
-export const AGGREGATE_COLUMN_ALIAS = "aggregate";
-
-export class Count {
-    /** @type {?Query} */
-    #baseQuery = null;
-    /** @type {string} */
-    #column = "*";
-
+export class Count extends BaseAggregate {
     /**
      * @param {Query} baseQuery
      * @param {String} [column="*"]
      */
     constructor(baseQuery, column = "*") {
-        this.#baseQuery = baseQuery;
-        this.#column = column;
+        super(baseQuery, column, "COUNT");
     }
 
     /**
      * @return PrepareObject
      */
     prepare() {
-        const baseQueryPrepare = this.#baseQuery.prepare();
-
-        const columnString = this.#column[0] === "*"
+        const columnString = this._column[0] === "*"
             ? "*"
-            : `${AGGREGATE_TABLE_ALIAS}.${Utility.escapeColumnString(this.#column)}`;
+            : `${AGGREGATE_TABLE_ALIAS}.${Utility.escapeColumnString(this._column)}`;
 
-        const combinedQuery = `SELECT COUNT(${columnString}) AS ${AGGREGATE_COLUMN_ALIAS} FROM (${baseQueryPrepare.query}) AS ${AGGREGATE_TABLE_ALIAS}`;
-
-        return {
-            query: combinedQuery,
-            bindings: baseQueryPrepare.bindings
-        }
+        return this._prepareObject(columnString);
     }
 }
