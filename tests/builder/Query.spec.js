@@ -3,7 +3,7 @@ import {Query} from "../../src/builder/Query.js";
 import {
     InvalidComparisonOperatorError,
     InvalidBetweenValueArrayLength,
-    TableNotSetError
+    TableNotSetError, MissingRequiredArgument
 } from "../../src/errors/QueryBuilder/Errors.js";
 import {DB} from "../../src/DB.js";
 
@@ -1793,6 +1793,36 @@ describe("QueryBuilderTest", () => {
                         .count('id');
 
                     expect(result).toEqual(1);
+                    expect(DB.prototype.all).toHaveBeenCalledOnce();
+                    expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+                });
+            });
+
+            describe("Sum", () => {
+                test("It throws without specified column", async () => {
+                    await expect(
+                        async () => await Query
+                            .from('users')
+                            .where('id', '>', 20)
+                            .sum()
+                    ).rejects.toThrow(MissingRequiredArgument);
+
+                    expect(DB.prototype.all).not.toHaveBeenCalled()
+                });
+
+                test("It builds query and executes with specified column", async () => {
+                    const mockReturnValue = [{aggregate: 420}]
+                    DB.prototype.all.mockResolvedValueOnce(mockReturnValue);
+
+                    const expectedQuery = "SELECT SUM(temp_table.`purchase_count`) AS aggregate FROM (SELECT * FROM `users` WHERE `id` > ?) AS temp_table";
+                    const expectedBindings = [20];
+
+                    const result = await Query
+                        .from('users')
+                        .where('id', '>', 20)
+                        .sum('purchase_count');
+
+                    expect(result).toEqual(420);
                     expect(DB.prototype.all).toHaveBeenCalledOnce();
                     expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
                 });

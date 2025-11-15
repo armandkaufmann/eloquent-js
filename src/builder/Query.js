@@ -62,6 +62,7 @@ import OrWhereExists from "./statement/where/OrWhereExists.js";
 import WhereNotExists from "./statement/where/WhereNotExists.js";
 import OrWhereNotExists from "./statement/where/OrWhereNotExists.js";
 import {Count} from "./aggregates/Count.js";
+import {Sum} from "./aggregates/Sum.js";
 
 export class Query {
     /** @type {?string} */
@@ -197,6 +198,17 @@ export class Query {
      */
     async count(column= "*") {
         return this._aggregate(Count, column);
+    }
+
+    /**
+     * @async
+     * @param {String} column
+     * @returns {Number}
+     * @throws MissingRequiredArgument
+     * @description Executes the query with an aggregation for sum of a specific column
+     */
+    async sum(column) {
+        return this._aggregate(Sum, column);
     }
 
     /**
