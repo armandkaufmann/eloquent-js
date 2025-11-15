@@ -14,9 +14,9 @@ export class Count extends BaseAggregate {
      * @return PrepareObject
      */
     prepare() {
-        const columnString = this._column[0] === "*"
+        const columnString = this._column === "*"
             ? "*"
-            : `${AGGREGATE_TABLE_ALIAS}.${Utility.escapeColumnString(this._column)}`;
+            : this.buildColumn();
 
         return this._prepareObject(columnString);
     }

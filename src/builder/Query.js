@@ -199,10 +199,9 @@ export class Query {
         return this._aggregate(Count, column);
     }
 
-    //todo: fix the typing on this for aggregateClass when I implement more classes
     /**
      * @async
-     * @param {Object} aggregateClass
+     * @param {BaseAggregate} aggregateClass
      * @param {String} column
      * @returns {Number}
      */
