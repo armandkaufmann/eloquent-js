@@ -1827,6 +1827,53 @@ describe("QueryBuilderTest", () => {
                     expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
                 });
             });
+
+            describe("Average", () => {
+                test("It throws without specified column", async () => {
+                    await expect(
+                        async () => await Query
+                            .from('users')
+                            .where('id', '>', 20)
+                            .avg()
+                    ).rejects.toThrow(MissingRequiredArgument);
+
+                    expect(DB.prototype.all).not.toHaveBeenCalled()
+                });
+
+                test("Avg: It builds query and executes with specified column", async () => {
+                    const mockReturnValue = [{aggregate: 1.67}]
+                    DB.prototype.all.mockResolvedValueOnce(mockReturnValue);
+
+                    const expectedQuery = "SELECT AVG(temp_table.`purchase_count`) AS aggregate FROM (SELECT * FROM `users` WHERE `id` > ?) AS temp_table";
+                    const expectedBindings = [20];
+
+                    const result = await Query
+                        .from('users')
+                        .where('id', '>', 20)
+                        .avg('purchase_count');
+
+                    expect(result).toEqual(1.67);
+                    expect(DB.prototype.all).toHaveBeenCalledOnce();
+                    expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+                });
+
+                test("Average: It builds query and executes with specified column", async () => {
+                    const mockReturnValue = [{aggregate: 1.67}]
+                    DB.prototype.all.mockResolvedValueOnce(mockReturnValue);
+
+                    const expectedQuery = "SELECT AVG(temp_table.`purchase_count`) AS aggregate FROM (SELECT * FROM `users` WHERE `id` > ?) AS temp_table";
+                    const expectedBindings = [20];
+
+                    const result = await Query
+                        .from('users')
+                        .where('id', '>', 20)
+                        .average('purchase_count');
+
+                    expect(result).toEqual(1.67);
+                    expect(DB.prototype.all).toHaveBeenCalledOnce();
+                    expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+                });
+            });
         });
     });
 });

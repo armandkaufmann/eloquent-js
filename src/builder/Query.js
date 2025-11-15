@@ -63,6 +63,7 @@ import WhereNotExists from "./statement/where/WhereNotExists.js";
 import OrWhereNotExists from "./statement/where/OrWhereNotExists.js";
 import {Count} from "./aggregates/Count.js";
 import {Sum} from "./aggregates/Sum.js";
+import {Average} from "./aggregates/Average.js";
 
 export class Query {
     /** @type {?string} */
@@ -209,6 +210,28 @@ export class Query {
      */
     async sum(column) {
         return this._aggregate(Sum, column);
+    }
+
+    /**
+     * @async
+     * @param {String} column
+     * @returns {Number}
+     * @throws MissingRequiredArgument
+     * @description Executes the query with an aggregation for the average of a specific column
+     */
+    async avg(column) {
+        return this._aggregate(Average, column);
+    }
+
+    /**
+     * @async
+     * @param {String} column
+     * @returns {Number}
+     * @throws MissingRequiredArgument
+     * @description Executes the query with an aggregation for the average of a specific column
+     */
+    async average(column) {
+        return this.avg(column);
     }
 
     /**
