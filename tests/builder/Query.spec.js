@@ -1904,6 +1904,36 @@ describe("QueryBuilderTest", () => {
                     expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
                 });
             });
+
+            describe("Max", () => {
+                test("It throws without specified column", async () => {
+                    await expect(
+                        async () => await Query
+                            .from('users')
+                            .where('id', '>', 20)
+                            .max()
+                    ).rejects.toThrow(MissingRequiredArgument);
+
+                    expect(DB.prototype.all).not.toHaveBeenCalled()
+                });
+
+                test("It builds query and executes with specified column", async () => {
+                    const mockReturnValue = [{aggregate: 1337}]
+                    DB.prototype.all.mockResolvedValueOnce(mockReturnValue);
+
+                    const expectedQuery = "SELECT MAX(temp_table.`purchase_count`) AS aggregate FROM (SELECT * FROM `users` WHERE `id` > ?) AS temp_table";
+                    const expectedBindings = [20];
+
+                    const result = await Query
+                        .from('users')
+                        .where('id', '>', 20)
+                        .max('purchase_count');
+
+                    expect(result).toEqual(1337);
+                    expect(DB.prototype.all).toHaveBeenCalledOnce();
+                    expect(DB.prototype.all).toHaveBeenCalledWith(expectedQuery, expectedBindings);
+                });
+            });
         });
     });
 });

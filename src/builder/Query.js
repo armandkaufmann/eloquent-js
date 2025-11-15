@@ -65,6 +65,7 @@ import {Count} from "./aggregates/Count.js";
 import {Sum} from "./aggregates/Sum.js";
 import {Average} from "./aggregates/Average.js";
 import {Min} from "./aggregates/Min.js";
+import {Max} from "./aggregates/Max.js";
 
 export class Query {
     /** @type {?string} */
@@ -244,6 +245,17 @@ export class Query {
      */
     async min(column) {
         return this._aggregate(Min, column);
+    }
+
+    /**
+     * @async
+     * @param {String} column
+     * @returns {Number}
+     * @throws MissingRequiredArgument
+     * @description Executes the query with an aggregation for the maximum value of a specific column
+     */
+    async max(column) {
+        return this._aggregate(Max, column);
     }
 
     /**
